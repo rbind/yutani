@@ -1,30 +1,18 @@
 +++
-title = "About Hugo"
-date = "2014-04-09"
+title = "About"
+date = "2017-07-15"
 menu = "main"
 +++
 
-Hugo is a static site engine written in Go.
+Hi! I'm Hiroaki Yutani.
 
+This blog is where I struggle to learn about R (and improve my poor English).
 
-It makes use of a variety of open source projects including:
+I belong to [Hoxo-m Inc.](http://hoxo-m.com/), a group of R-enthusiasts in Japan. My interests are mainly focused on data visualization, data manipulation and web APIs. I maintain several R packages:
 
-* [Cobra](https://github.com/spf13/cobra)
-* [Viper](https://github.com/spf13/viper)
-* [J Walter Weatherman](https://github.com/spf13/jWalterWeatherman)
-* [Cast](https://github.com/spf13/cast)
+* [datadogr](https://cran.r-project.org/package=datadogr): R Client for [Datadog](https://www.datadoghq.com/) API
+* [kntnr](https://cran.r-project.org/package=kntnr): R Client for [kintone](https://www.kintone.com/) API
+* [qiitr](https://cran.r-project.org/package=qiitr): R Interface to [Qiita](http://qiita.com/) API
+* [estatapi](https://cran.r-project.org/package=estatapi): R Interface to e-Stat API, the one-stop service for official statistics of the Japanese government
+* [kokudosuuchi](https://cran.r-project.org/package=kokudosuuchi): R Interface to Kokudo Suuchi API, the GIS data service of the Japanese government
 
-Learn more and contribute on [GitHub](https://github.com/spf13).
-
-## Setup
-
-Some fun facts about [Hugo](http://gohugo.io/):
-
-* Built in [Go](http://golang.org/)
-* Loosely inspired by [Jekyll](http://jekyllrb.com/)
-* Primarily developed by [spf13](http://spf13.com/) on the train while commuting to and from Manhattan.
-* Coded in [Vim](http://vim.org) using [spf13-vim](http://vim.spf13.com/)
-
-Have questions or suggestions? Feel free to [open an issue on GitHub](https://github.com/spf13/hugo/issues/new) or [ask me on Twitter](https://twitter.com/spf13).
-
-Thanks for reading!
