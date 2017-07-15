@@ -1,0 +1,24 @@
+baseurl = "https://yutani.rbind.io"
+languageCode = "en"
+title = "Hiroaki Yutani"
+theme = "hemingway2"
+disqusShortname = "shortname"
+googleAnalytics = ""
+
+[params]
+
+[params.highlight]
+style = "github"
+languages = ["r"]
+
+[[params.social]]
+url = "https://github.com/yutannihilation"
+fa_icon = "fa-github"
+
+[[params.social]]
+url = "https://twitter.com/yutannihilation"
+fa_icon = "fa-twitter"
+
+[[params.social]]
+url = "/index.xml"
+fa_icon = "fa-rss"
