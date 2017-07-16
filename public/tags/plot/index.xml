@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Plot on Hiroaki Yutani</title>
-    <link>https://washer-lion-41334.netlify.com/tags/plot/</link>
+    <link>https://yutani.rbind.io/tags/plot/</link>
     <description>Recent content in Plot on Hiroaki Yutani</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 16 Jul 2017 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://washer-lion-41334.netlify.com/tags/plot/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://yutani.rbind.io/tags/plot/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Hello R Markdown</title>
-      <link>https://washer-lion-41334.netlify.com/post/2015-07-23-r-rmarkdown/</link>
+      <link>https://yutani.rbind.io/post/2015-07-23-r-rmarkdown/</link>
       <pubDate>Sun, 16 Jul 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://washer-lion-41334.netlify.com/post/2015-07-23-r-rmarkdown/</guid>
+      <guid>https://yutani.rbind.io/post/2015-07-23-r-rmarkdown/</guid>
       <description>Including Plotsplot(2)Figure 1: A fancy pie chart.</description>
     </item>
     
