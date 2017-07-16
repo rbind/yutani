@@ -1,4 +1,4 @@
-baseurl = "https://test-yutani.rbind.io/"
+baseurl = "https://test-yutani.netlify.com/"
 languageCode = "en"
 title = "Hiroaki Yutani"
 theme = "hemingway2"
