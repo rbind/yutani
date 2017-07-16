@@ -5,7 +5,7 @@
 <meta content="{{ delimit .Keywords ", " }}" name="keywords">
 <meta content="{{ $isHomePage := eq .Title .Site.Title }}{{ .Title }}{{ if eq $isHomePage false }} - {{ .Site.Title }}{{ end }}" property="og:title">
 <title>{{ .Title }}{{ if eq .IsHome false }} | {{ .Site.Title }}{{ end }}</title>
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 {{ with .Site.Params.highlight.style }}
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/{{ . }}.min.css">
