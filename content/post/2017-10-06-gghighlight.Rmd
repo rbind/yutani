@@ -1,9 +1,9 @@
 ---
-title: ""
+title: "gghighlight: Highlight ggplot's Lines and Points with Predicates"
 date: "2017-10-06"
 categories: ["R"]
 tags: ["gghighlight", "ggplot", "package"]
-
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
@@ -50,7 +50,7 @@ ggplot() +
 
 But, what if I want to change the threshold in predicate (`max(.data$value) > 20`) and highlight other series as well? It's a bit tiresome to type all the code above again every time I replace `20` with some other value.
 
-**gghighlight** package provides two functions to do this job. `gghighlight_line()` is the one for lines. The code equivalent to above (and more) is bellow:
+**gghighlight** package provides two functions to do this job. `gghighlight_line()` is the one for lines. The code equivalent to above (and more) can be this few lines:
 
 ```{r gghighlight-line-basic}
 library(gghighlight)
@@ -58,3 +58,16 @@ library(gghighlight)
 gghighlight_line(d, aes(idx, value, colour = type), max(value) > 20)
 ```
 
+As `gghighlight_*()` returns a ggplot object, it is fully customizable just as we usually do with ggplot2 like custom themes and facetting.
+
+```{r gghighlight-theme}
+library(ggplot2)
+
+gghighlight_line(d, aes(idx, value, colour = type), max(value) > 20) +
+  theme_minimal()
+```
+
+```{r gghighlight-facet}
+gghighlight_line(d, aes(idx, value, colour = type), max(value) > 20) +
+  facet_wrap(~ type)
+```

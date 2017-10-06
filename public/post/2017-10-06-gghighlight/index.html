@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="" name="keywords">
-<meta content=" - Hiroaki Yutani" property="og:title">
-<title> | Hiroaki Yutani</title>
+<meta content="gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates - Hiroaki Yutani" property="og:title">
+<title>gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates | Hiroaki Yutani</title>
 <link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
@@ -51,7 +51,7 @@
   <section class="section">
     <div class="container">
       <h2 class="subtitle is-6">October 6, 2017</h2>
-      <h1 class="title"></h1>
+      <h1 class="title">gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates</h1>
       
       <div class="tags">
     
@@ -94,11 +94,20 @@ ggplot() +
   geom_line(aes(idx, value, colour = type), data = d_filtered)</code></pre>
 <p><img src="/post/2017-10-06-gghighlight_files/figure-html/dplyr-1.png" width="672" /></p>
 <p>But, what if I want to change the threshold in predicate (<code>max(.data$value) &gt; 20</code>) and highlight other series as well? It’s a bit tiresome to type all the code above again every time I replace <code>20</code> with some other value.</p>
-<p><strong>gghighlight</strong> package provides two functions to do this job. <code>gghighlight_line()</code> is the one for lines. The code equivalent to above (and more) is bellow:</p>
+<p><strong>gghighlight</strong> package provides two functions to do this job. <code>gghighlight_line()</code> is the one for lines. The code equivalent to above (and more) can be this few lines:</p>
 <pre class="r"><code>library(gghighlight)
 
 gghighlight_line(d, aes(idx, value, colour = type), max(value) &gt; 20)</code></pre>
 <p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-line-basic-1.png" width="672" /></p>
+<p>As <code>gghighlight_*()</code> returns a ggplot object, it is fully customizable just as we usually do with ggplot2 like custom themes and facetting.</p>
+<pre class="r"><code>library(ggplot2)
+
+gghighlight_line(d, aes(idx, value, colour = type), max(value) &gt; 20) +
+  theme_minimal()</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-theme-1.png" width="672" /></p>
+<pre class="r"><code>gghighlight_line(d, aes(idx, value, colour = type), max(value) &gt; 20) +
+  facet_wrap(~ type)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-facet-1.png" width="672" /></p>
 
       </div>
     </div>
