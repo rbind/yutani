@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="" name="keywords">
-<meta content="R Markdown - Hiroaki Yutani" property="og:title">
-<title>R Markdown | Hiroaki Yutani</title>
+<meta content="Ggplot - Hiroaki Yutani" property="og:title">
+<title>Ggplot | Hiroaki Yutani</title>
 <link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
@@ -53,21 +53,30 @@
       
       <article>
         <h2 class="subtitle is-6">October 6, 2017</h2>
-        <h1 class="title"><a href="https://yutani.rbind.io/post/2015-07-23-r-rmarkdown/">Hello R Markdown</a></h1>
+        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-06-gghighlight/"></a></h1>
         
         <div class="tags">
     
-        <a class="button is-link" href="/tags/r-markdown">R Markdown</a>
+        <a class="button is-link" href="/tags/gghighlight">gghighlight</a>
     
-        <a class="button is-link" href="/tags/plot">plot</a>
+        <a class="button is-link" href="/tags/ggplot">ggplot</a>
     
-        <a class="button is-link" href="/tags/regression">regression</a>
+        <a class="button is-link" href="/tags/package">package</a>
     
 </div>
 
         
         <div class="content">
-          Including Plotsplot(2)Figure 1: A fancy pie chart.
+          Suppose we have a data that has too many series like this:
+set.seed(2)d &lt;- purrr::map_dfr(letters,~ data.frame(idx = 1:400,value = cumsum(runif(400, -1, 1)),type = .,stringsAsFactors = FALSE))For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.
+library(ggplot2)ggplot(d) +geom_line(aes(idx, value, colour = type))So, I am motivated to filter data and map colour only on that, using dplyr:
+          
+          ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-06-gghighlight/" style="height:28px">
+            Read more
+            <span class="icon is-small">
+              <i class="fa fa-angle-double-right"></i>
+            </span>
+          </a>
           
         </div>
       </article>

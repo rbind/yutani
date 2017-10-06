@@ -6,35 +6,35 @@
     <description>Recent content in Tags on Hiroaki Yutani</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 16 Jul 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 06 Oct 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://yutani.rbind.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Plot</title>
-      <link>https://yutani.rbind.io/tags/plot/</link>
-      <pubDate>Sun, 16 Jul 2017 00:00:00 +0000</pubDate>
+      <title>Gghighlight</title>
+      <link>https://yutani.rbind.io/tags/gghighlight/</link>
+      <pubDate>Fri, 06 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://yutani.rbind.io/tags/plot/</guid>
+      <guid>https://yutani.rbind.io/tags/gghighlight/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>R Markdown</title>
-      <link>https://yutani.rbind.io/tags/r-markdown/</link>
-      <pubDate>Sun, 16 Jul 2017 00:00:00 +0000</pubDate>
+      <title>Ggplot</title>
+      <link>https://yutani.rbind.io/tags/ggplot/</link>
+      <pubDate>Fri, 06 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://yutani.rbind.io/tags/r-markdown/</guid>
+      <guid>https://yutani.rbind.io/tags/ggplot/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Regression</title>
-      <link>https://yutani.rbind.io/tags/regression/</link>
-      <pubDate>Sun, 16 Jul 2017 00:00:00 +0000</pubDate>
+      <title>Package</title>
+      <link>https://yutani.rbind.io/tags/package/</link>
+      <pubDate>Fri, 06 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://yutani.rbind.io/tags/regression/</guid>
+      <guid>https://yutani.rbind.io/tags/package/</guid>
       <description></description>
     </item>
     

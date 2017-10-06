@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="" name="keywords">
-<meta content="Hello R Markdown - Hiroaki Yutani" property="og:title">
-<title>Hello R Markdown | Hiroaki Yutani</title>
+<meta content=" - Hiroaki Yutani" property="og:title">
+<title> | Hiroaki Yutani</title>
 <link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
@@ -51,30 +51,54 @@
   <section class="section">
     <div class="container">
       <h2 class="subtitle is-6">October 6, 2017</h2>
-      <h1 class="title">Hello R Markdown</h1>
+      <h1 class="title"></h1>
       
       <div class="tags">
     
-        <a class="button is-link" href="/tags/r-markdown">R Markdown</a>
+        <a class="button is-link" href="/tags/gghighlight">gghighlight</a>
     
-        <a class="button is-link" href="/tags/plot">plot</a>
+        <a class="button is-link" href="/tags/ggplot">ggplot</a>
     
-        <a class="button is-link" href="/tags/regression">regression</a>
+        <a class="button is-link" href="/tags/package">package</a>
     
 </div>
 
       
       <div class="content">
-        <div id="including-plots" class="section level1">
-<h1>Including Plots</h1>
-<pre class="r"><code>plot(2)</code></pre>
-<div class="figure"><span id="fig:pie"></span>
-<img src="/post/2015-07-23-r-rmarkdown_files/figure-html/pie-1.png" alt="A fancy pie chart." width="672" />
-<p class="caption">
-Figure 1: A fancy pie chart.
-</p>
-</div>
-</div>
+        <p>Suppose we have a data that has too many series like this:</p>
+<pre class="r"><code>set.seed(2)
+d &lt;- purrr::map_dfr(
+  letters,
+  ~ data.frame(idx = 1:400,
+               value = cumsum(runif(400, -1, 1)),
+               type = .,
+               stringsAsFactors = FALSE))</code></pre>
+<p>For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.</p>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(d) +
+  geom_line(aes(idx, value, colour = type))</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/plot-1.png" width="672" /></p>
+<p>So, I am motivated to filter data and map colour only on that, using dplyr:</p>
+<pre class="r"><code>library(dplyr, warn.conflicts = FALSE)
+
+d_filtered &lt;- d %&gt;%
+  group_by(type) %&gt;% 
+  filter(max(value) &gt; 20) %&gt;%
+  ungroup()
+
+ggplot() +
+  # draw the original data series with grey
+  geom_line(aes(idx, value, group = type), data = d, colour = alpha(&quot;grey&quot;, 0.7)) +
+  # colourise only the filtered data
+  geom_line(aes(idx, value, colour = type), data = d_filtered)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/dplyr-1.png" width="672" /></p>
+<p>But, what if I want to change the threshold in predicate (<code>max(.data$value) &gt; 20</code>) and highlight other series as well? It’s a bit tiresome to type all the code above again every time I replace <code>20</code> with some other value.</p>
+<p><strong>gghighlight</strong> package provides two functions to do this job. <code>gghighlight_line()</code> is the one for lines. The code equivalent to above (and more) is bellow:</p>
+<pre class="r"><code>library(gghighlight)
+
+gghighlight_line(d, aes(idx, value, colour = type), max(value) &gt; 20)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-line-basic-1.png" width="672" /></p>
 
       </div>
     </div>

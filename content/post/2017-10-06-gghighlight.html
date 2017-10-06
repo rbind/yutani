@@ -1,0 +1,44 @@
+---
+title: ""
+date: "2017-10-06"
+categories: ["R"]
+tags: ["gghighlight", "ggplot", "package"]
+
+---
+
+
+
+<p>Suppose we have a data that has too many series like this:</p>
+<pre class="r"><code>set.seed(2)
+d &lt;- purrr::map_dfr(
+  letters,
+  ~ data.frame(idx = 1:400,
+               value = cumsum(runif(400, -1, 1)),
+               type = .,
+               stringsAsFactors = FALSE))</code></pre>
+<p>For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.</p>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(d) +
+  geom_line(aes(idx, value, colour = type))</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/plot-1.png" width="672" /></p>
+<p>So, I am motivated to filter data and map colour only on that, using dplyr:</p>
+<pre class="r"><code>library(dplyr, warn.conflicts = FALSE)
+
+d_filtered &lt;- d %&gt;%
+  group_by(type) %&gt;% 
+  filter(max(value) &gt; 20) %&gt;%
+  ungroup()
+
+ggplot() +
+  # draw the original data series with grey
+  geom_line(aes(idx, value, group = type), data = d, colour = alpha(&quot;grey&quot;, 0.7)) +
+  # colourise only the filtered data
+  geom_line(aes(idx, value, colour = type), data = d_filtered)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/dplyr-1.png" width="672" /></p>
+<p>But, what if I want to change the threshold in predicate (<code>max(.data$value) &gt; 20</code>) and highlight other series as well? It’s a bit tiresome to type all the code above again every time I replace <code>20</code> with some other value.</p>
+<p><strong>gghighlight</strong> package provides two functions to do this job. <code>gghighlight_line()</code> is the one for lines. The code equivalent to above (and more) is bellow:</p>
+<pre class="r"><code>library(gghighlight)
+
+gghighlight_line(d, aes(idx, value, colour = type), max(value) &gt; 20)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-line-basic-1.png" width="672" /></p>
