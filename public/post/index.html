@@ -53,7 +53,7 @@
       
       <article>
         <h2 class="subtitle is-6">October 6, 2017</h2>
-        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-06-gghighlight/">gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates</a></h1>
+        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-06-gghighlight/">Introduction to gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates</a></h1>
         
         <div class="tags">
     
@@ -69,26 +69,7 @@
         <div class="content">
           Suppose we have a data that has too many series like this:
 set.seed(2)d &lt;- purrr::map_dfr(letters,~ data.frame(idx = 1:400,value = cumsum(runif(400, -1, 1)),type = .,stringsAsFactors = FALSE))For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.
-library(ggplot2)ggplot(d) +geom_line(aes(idx, value, colour = type))So, I am motivated to filter data and map colour only on that, using dplyr:
-          
-          ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-06-gghighlight/" style="height:28px">
-            Read more
-            <span class="icon is-small">
-              <i class="fa fa-angle-double-right"></i>
-            </span>
-          </a>
-          
-        </div>
-      </article>
-      
-      <article>
-        <h2 class="subtitle is-6">January 1, 0001</h2>
-        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-06-gghighlight/"></a></h1>
-        
-        <div class="content">
-          Suppose we have a data that has too many series like this:
-set.seed(2) d &lt;- purrr::map_dfr( letters, ~ data.frame(idx = 1:400, value = cumsum(runif(400, -1, 1)), type = ., stringsAsFactors = FALSE))  For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.
-library(ggplot2) ggplot(d) + geom_line(aes(idx, value, colour = type))  So, I am motivated to filter data and map colour only on that, using dplyr:
+library(ggplot2)ggplot(d) +geom_line(aes(idx, value, colour = type))Highlight lines with ggplot2 + dplyrSo, I am motivated to filter data and map colour only on that, using dplyr:
           
           ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-06-gghighlight/" style="height:28px">
             Read more
