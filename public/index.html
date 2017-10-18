@@ -52,6 +52,35 @@
     <div class="container">
       
       <article>
+        <h2 class="subtitle is-6">October 18, 2017</h2>
+        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-18-circleci/">Use CircleCI for R Projects</a></h1>
+        
+        <div class="tags">
+    
+        <a class="button is-link" href="/tags/testthat">testthat</a>
+    
+        <a class="button is-link" href="/tags/circleci">CircleCI</a>
+    
+</div>
+
+        
+        <div class="content">
+          Why CircleCI? Yes, I know using Travis CI is this easy, thanks to devtools package:
+devtools::use_travis()  Travis CI is OK most of the time. Still, CircleCI has some advantages:
+ arbitrary Docker images cool test summaries  Arbitrary Docker images Compared to Travis CI, CircleCI allows the users to use any docker images. For example, my WIP package which provides DBI-compatible interface to Redash uses these images:
+docker: - image: rocker/tidyverse:latest - image: redis:3.
+          
+          ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-18-circleci/" style="height:28px">
+            Read more
+            <span class="icon is-small">
+              <i class="fa fa-angle-double-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </article>
+      
+      <article>
         <h2 class="subtitle is-6">October 6, 2017</h2>
         <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-06-gghighlight/">Introduction to gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates</a></h1>
         

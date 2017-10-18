@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta content="" name="keywords">
-<meta content="Posts - Hiroaki Yutani" property="og:title">
-<title>Posts | Hiroaki Yutani</title>
+<meta content="Circleci - Hiroaki Yutani" property="og:title">
+<title>Circleci | Hiroaki Yutani</title>
 <link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
@@ -71,36 +71,6 @@ devtools::use_travis()  Travis CI is OK most of the time. Still, CircleCI has so
 docker: - image: rocker/tidyverse:latest - image: redis:3.
           
           ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-18-circleci/" style="height:28px">
-            Read more
-            <span class="icon is-small">
-              <i class="fa fa-angle-double-right"></i>
-            </span>
-          </a>
-          
-        </div>
-      </article>
-      
-      <article>
-        <h2 class="subtitle is-6">October 6, 2017</h2>
-        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-06-gghighlight/">Introduction to gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates</a></h1>
-        
-        <div class="tags">
-    
-        <a class="button is-link" href="/tags/gghighlight">gghighlight</a>
-    
-        <a class="button is-link" href="/tags/ggplot">ggplot</a>
-    
-        <a class="button is-link" href="/tags/package">package</a>
-    
-</div>
-
-        
-        <div class="content">
-          Suppose we have a data that has too many series like this:
-set.seed(2)d &lt;- purrr::map_dfr(letters,~ data.frame(idx = 1:400,value = cumsum(runif(400, -1, 1)),type = .,stringsAsFactors = FALSE))For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.
-library(ggplot2)ggplot(d) +geom_line(aes(idx, value, colour = type))Highlight lines with ggplot2 + dplyrSo, I am motivated to filter data and map colour only on that, using dplyr:
-          
-          ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-06-gghighlight/" style="height:28px">
             Read more
             <span class="icon is-small">
               <i class="fa fa-angle-double-right"></i>

@@ -30,8 +30,8 @@ ggplot(d) +
   geom_line(aes(idx, value, colour = type))
 ```
 
-Highlight lines with ggplot2 + dplyr
-------------------------------------
+
+## Highlight lines with ggplot2 + dplyr
 
 So, I am motivated to filter data and map colour only on that, using dplyr:
 
@@ -52,8 +52,7 @@ ggplot() +
 
 But, what if I want to change the threshold in predicate (`max(.data$value) > 20`) and highlight other series as well? It's a bit tiresome to type all the code above again every time I replace `20` with some other value.
 
-Highlight lines with gghighlight
--------------------------------
+## Highlight lines with gghighlight
 
 **gghighlight** package provides two functions to do this job. You can install this via [CRAN](https://cran.r-project.org/package=gghighlight) (or [GitHub](https://github.com/yutannihilation/gghighlight/))
 
@@ -90,8 +89,7 @@ gghighlight_line(d, aes(idx, value, colour = type), value > 20)
 ```
 
 
-Highlight points with gghighlight
----------------------------------
+## Highlight points with gghighlight
 
 `gghighlight_point()` highlight points. While `gghighlight_line()` evaluates `predicate` by grouped calculation (`dplyr::group_by()`), by default, this function evaluates it by ungrouped calculation.
 
@@ -115,8 +113,7 @@ gghighlight_point(d2, aes(idx, value, colour = type), max(value) > 15, label_key
                   use_group_by = TRUE)
 ```
 
-Non-logical predicate
----------------------
+## Non-logical predicate
 
 (Does "non-logical predicate" make sense...? Due to my poor English skill, I couldn't come up with a good term other than this. Any suggestions are wellcome.)
 
@@ -133,14 +130,12 @@ gghighlight_line(d, aes(idx, value, colour = type), predicate = max(value),
                  max_highlight = 6)
 ```
 
-Caveats
--------
+## Caveats
 
 Seems cool? gghighlight is good to explore data by changing a threshlold little by little. But, the internals are not so efficient, as it does almost the same calculation everytime you execute `gghighlight_*()`, which may get slower when it works with larger data. Consider doing this by using vanilla dplyr to filter data.
 
 
-Summary
--------
+## Summary
 
 gghighlight package is a tool to highlight charactaristic data series among too many ones. Please try!
 

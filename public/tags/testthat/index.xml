@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Testthat on Hiroaki Yutani</title>
+    <link>https://yutani.rbind.io/tags/testthat/</link>
+    <description>Recent content in Testthat on Hiroaki Yutani</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 18 Oct 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://yutani.rbind.io/tags/testthat/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Use CircleCI for R Projects</title>
+      <link>https://yutani.rbind.io/post/2017-10-18-circleci/</link>
+      <pubDate>Wed, 18 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yutani.rbind.io/post/2017-10-18-circleci/</guid>
+      <description>Why CircleCI? Yes, I know using Travis CI is this easy, thanks to devtools package:
+devtools::use_travis()  Travis CI is OK most of the time. Still, CircleCI has some advantages:
+ arbitrary Docker images cool test summaries  Arbitrary Docker images Compared to Travis CI, CircleCI allows the users to use any docker images. For example, my WIP package which provides DBI-compatible interface to Redash uses these images:
+docker: - image: rocker/tidyverse:latest - image: redis:3.</description>
+    </item>
+    
+  </channel>
+</rss>

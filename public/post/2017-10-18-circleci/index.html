@@ -1,0 +1,255 @@
+<body>
+  <!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Use CircleCI for R Projects - Hiroaki Yutani" property="og:title">
+<title>Use CircleCI for R Projects | Hiroaki Yutani</title>
+<link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://yutani.rbind.io/"><h1 class="title is-3">Hiroaki Yutani</h1></a>
+      </div>
+      <div class="nav-left">
+        <a class="nav-item" href="https://yutani.rbind.io/about/"><p class="title is-5">About</p></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/yutannihilation">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/yutannihilation">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="subtitle is-6">October 18, 2017</h2>
+      <h1 class="title">Use CircleCI for R Projects</h1>
+      
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/testthat">testthat</a>
+    
+        <a class="button is-link" href="/tags/circleci">CircleCI</a>
+    
+</div>
+
+      
+      <div class="content">
+        
+
+<p>Why CircleCI? Yes, I know using Travis CI is this easy, thanks to devtools package:</p>
+
+<pre><code class="language-r">devtools::use_travis()
+</code></pre>
+
+<p>Travis CI is OK most of the time. Still, CircleCI has some advantages:</p>
+
+<ul>
+<li>arbitrary Docker images</li>
+<li>cool test summaries</li>
+</ul>
+
+<h2 id="arbitrary-docker-images">Arbitrary Docker images</h2>
+
+<p>Compared to Travis CI, CircleCI allows the users to use any docker images. For example, my WIP package which provides DBI-compatible interface to <a href="https://redash.io/">Redash</a> uses these images:</p>
+
+<pre><code class="language-yaml">     docker:
+       - image: rocker/tidyverse:latest
+
+       - image: redis:3.0-alpine
+
+       - image: postgres:9.5.6-alpine
+
+       - image: redash/redash:latest
+         command: [server]
+         environment:
+           PYTHONUNBUFFERED: 0
+           REDASH_LOG_LEVEL: &quot;INFO&quot;
+           REDASH_REDIS_URL: &quot;redis://localhost:6379/0&quot;
+           REDASH_DATABASE_URL: &quot;postgresql://postgres@localhost/postgres&quot;
+           REDASH_COOKIE_SECRET: veryverysecret
+           REDASH_WEB_WORKERS: 4
+
+       - image: redash/redash:latest
+         command: [scheduler]
+         environment:
+           PYTHONUNBUFFERED: 0
+           REDASH_LOG_LEVEL: &quot;INFO&quot;
+           REDASH_REDIS_URL: &quot;redis://localhost:6379/0&quot;
+           REDASH_DATABASE_URL: &quot;postgresql://postgres@localhost/postgres&quot;
+           QUEUES: &quot;queries,scheduled_queries,celery&quot;
+           WORKERS_COUNT: 2
+</code></pre>
+
+<p>(<a href="https://github.com/yutannihilation/Redashr/blob/71b525872c0c7b7f7d7cf8f3eaee8ad4d869b89e/.circleci/config.yml#L82-L110">https://github.com/yutannihilation/Redashr/blob/71b525872c0c7b7f7d7cf8f3eaee8ad4d869b89e/.circleci/config.yml#L82-L110</a>)</p>
+
+<p>While Redis and PostgresSQL services are <a href="https://docs.travis-ci.com/user/database-setup/">available in Travis CI</a>, users have to compile Redash, which takes some time. It tends to fail again and again due to lack of commands or library needed for compiling. Sigh.</p>
+
+<p>Though Travis can cache the setup once it succeeds, it is good if we can save time to setup testing environment by using existing Docker images.</p>
+
+<h2 id="test-summaries">Test summaries</h2>
+
+<p>CircleCI displays the test summary in this pretty way:</p>
+
+<p><img src="/images/2017-10-18-circleci-test-summary.png" alt="" />
+(<a href="https://circleci.com/gh/yutannihilation/testthatJunitRporterTest/25">https://circleci.com/gh/yutannihilation/testthatJunitRporterTest/25</a>)</p>
+
+<p>This is cool as I don&rsquo;t need to dig raw outputs anymore. This is possible by <code>JunitReporter</code>, which will be introduced the next version (v2.0.0?) of testthat package.</p>
+
+<p>All I had to do was two steps.</p>
+
+<p>First, pass <code>JunitReporter</code> instance with the location of the result XML file to <code>test_check()</code> in <code>tests/testthat.R</code>:</p>
+
+<pre><code class="language-r">library(testthat)
+library(mypackage)
+
+test_check(&quot;mypackage&quot;,
+           reporter = JunitReporter$new(file = &quot;junit_result.xml&quot;))
+</code></pre>
+
+<p>Second, specify <code>store_test_result</code> on <code>config.yml</code> for CircleCI:</p>
+
+<pre><code class="language-yaml">    - store_test_results:
+        path: /path/to/tests/
+        when: always
+</code></pre>
+
+<p>So simple!</p>
+
+<h2 id="sample-yaml-file">Sample YAML file</h2>
+
+<p>The bellow is the CircleCI setting I tried to do roughly the same as <a href="https://github.com/travis-ci/travis-build/blob/master/lib/travis/build/script/r.rb">what Travis CI does</a>. If you have some suggestions, please let me know!</p>
+
+<pre><code class="language-yaml">defaults: &amp;steps
+  steps:
+    - checkout
+
+    ## setup -------------------------------
+
+    - run:
+        name: Set environmental variables
+        command: |
+          Rscript --vanilla \
+            -e 'dsc &lt;- read.dcf(&quot;DESCRIPTION&quot;)' \
+            -e 'cat(sprintf(&quot;export PKG_TARBALL=%s_%s.tar.gz\n&quot;, dsc[,&quot;Package&quot;], dsc[,&quot;Version&quot;]))' \
+            -e 'cat(sprintf(&quot;export RCHECK_DIR=%s.Rcheck\n&quot;, dsc[,&quot;Package&quot;]))' \
+            &gt;&gt; ${BASH_ENV}
+
+    ## install dependencies ------------------
+
+    - run:
+        name: Install devtools and dependencies
+        command: |
+          Rscript \
+            -e 'if (!requireNamespace(&quot;devtools&quot;, quietly = TRUE)) install.packages(&quot;devtools&quot;)' \
+            -e 'devtools::install_deps(dependencies = TRUE)'
+
+    ## build and test -----------------
+
+    - run:
+        name: Build package
+        command: R CMD build .
+
+    - run:
+        name: Check package
+        command: R CMD check &quot;${PKG_TARBALL}&quot; --as-cran --no-manual
+    - run:
+        name: Check failures
+        command: |
+          Rscript -e &quot;message(devtools::check_failures(path = '${RCHECK_DIR}'))&quot;
+          # warnings are errors
+          # - run: if grep -q -R &quot;WARNING&quot; &quot;${RCHECK_DIR}/00check.log&quot;; then exit 1; fi
+
+    ## store artifacts -----------------
+
+    - run:
+        command: mv ${RCHECK_DIR} /tmp/Rcheck
+        when: always
+    - store_test_results:
+        path: /tmp/Rcheck/tests/
+        when: always
+    - store_artifacts:
+        path: /tmp/Rcheck
+        when: always
+
+version: 2
+jobs:
+  &quot;r-release&quot;:
+     docker:
+       - image: rocker/tidyverse:latest
+     &lt;&lt;: *steps
+
+  &quot;r-devel&quot;:
+     docker:
+       - image: rocker/tidyverse:devel
+     &lt;&lt;: *steps
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - &quot;r-release&quot;
+      - &quot;r-devel&quot;
+</code></pre>
+
+      </div>
+    </div>
+  </section>
+  
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'yutani';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+  <section class="section">
+  <div class="container has-text-centered">
+    <p></p>
+  </div>
+</section>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+</body>
