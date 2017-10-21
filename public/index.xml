@@ -6,10 +6,23 @@
     <description>Recent content on Hiroaki Yutani</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 18 Oct 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 21 Oct 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://yutani.rbind.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Confession: It&#39;s Me Who Committed the Change to Suppress .Rd Diffs On GitHub</title>
+      <link>https://yutani.rbind.io/post/2017-10-21-rd-diff/</link>
+      <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://yutani.rbind.io/post/2017-10-21-rd-diff/</guid>
+      <description>You may notice that diffs of .Rd files are suppressed by default on GitHub since some time.
+Do you wonder who did this? It&amp;rsquo;s me, yay! This is my pull request:
+Ignore roxygen2 generated files by yutannihilation · Pull Request #3373 · github/linguist
+Though I thought I&amp;rsquo;ve done the right thing at that time, now I&amp;rsquo;m afraid this change may be bad for some cases&amp;hellip;
+After the relese of roxygen2 6.</description>
+    </item>
     
     <item>
       <title>Use CircleCI for R Projects</title>
