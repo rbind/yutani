@@ -1,58 +1,3 @@
-# functions -------------------------------
-
-library(shiny)
-library(miniUI)
-library(purrr)
-
-select_Rmd <- function(Rmd_files) {
-  # knit only ones that needs updated
-  md_files  <- sub("\\.Rmd$", ".md", Rmd_files)
-  needs_knitted <- !file.exists(md_files) | utils::file_test("-ot", md_files, Rmd_files)
-  
-  if (!interactive()) {
-    message("skip: \n    ", paste(Rmd_files[!needs_knitted], collapse = "\n    "))
-    return(Rmd_files[needs_knitted])
-  }
-  
-  # TODO
-  labels <- Rmd_files %>%
-    set_names() %>% 
-    map(rmarkdown::yaml_front_matter, encoding = "UTF-8") %>%
-    map_dfr(`[`, c("title", "date"), .id = "filename") %>%
-    glue::glue_data("{title} ({date}, {filename})")
-  
-  ui <- miniPage(
-    gadgetTitleBar("Choose Rmd files to knit"),
-    miniContentPanel(
-      uiOutput('choose_file')
-    )
-  )
-  
-  server <- function(input, output) {
-    output$choose_file <- renderUI({
-      checkboxGroupInput("files",
-                         label = "",
-                         width = "100%",
-                         choiceNames = labels,
-                         choiceValues = Rmd_files,
-                         selected = Rmd_files[needs_knitted])
-    })
-    
-    shiny::observe({
-      if (input$done > 0)   shiny::stopApp(shiny::isolate(input$files))
-      if (input$cancel > 0) shiny::stopApp(NULL)
-    })
-  }
-  
-  shiny::runApp(
-    shiny::shinyApp(
-      ui = ui,
-      server = server
-    )
-  )
-}
-
-
 # main ------------------------------------
 
 # catch "local" arg passed from blogdown::build_site()
@@ -68,18 +13,28 @@ knitr::opts_chunk$set(
   cache.path = normalizePath("cache/", mustWork = TRUE)
 )
 
+# list up Rmd files
 Rmd_files <- list.files("content", "[\\.]Rmd$", recursive = TRUE, full.names = TRUE)
 
-for (rmd in select_Rmd(Rmd_files)) {
-  wo_ext <- tools::file_path_sans_ext(rmd)
-  md <- glue::glue("{wo_ext}.md")
-  
+# list up md files
+md_files  <- sub("\\.Rmd$", ".md", Rmd_files)
+names(md_files) <- Rmd_files
+
+# knit it when:
+#   1) the correspondent md file does not exist yet
+#   2) the Rmd file was updated after the last time md file had been generated 
+needs_knitted <- !file.exists(md_files) | utils::file_test("-ot", md_files, Rmd_files)
+
+message("skip: \n    ", paste(Rmd_files[!needs_knitted], collapse = "\n    "))
+
+for (rmd in Rmd_files[needs_knitted]) {
+  base_name <- tools::file_path_sans_ext(basename(rmd))
   knitr::opts_chunk$set(
-    fig.path = glue::glue("post/{basename(wo_ext)}_files/figure-html/")
+    fig.path = glue::glue("post/{base_name}_files/figure-html/")
   )
   
   set.seed(1984)
-  knitr::knit(input = rmd, output = md, encoding = "UTF-8")
+  knitr::knit(input = rmd, output = md_files[rmd], encoding = "UTF-8")
 }
 
 blogdown::hugo_build(local = local)
