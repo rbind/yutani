@@ -1,0 +1,200 @@
+<body>
+  <!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Hiroaki Yutani" property="og:title">
+<title>Hiroaki Yutani</title>
+<link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://yutani.rbind.io/"><h1 class="title is-3">Hiroaki Yutani</h1></a>
+      </div>
+      <div class="nav-left">
+        <a class="nav-item" href="https://yutani.rbind.io/about/"><p class="title is-5">About</p></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/yutannihilation">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/yutannihilation">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+  <section class="section">
+    <div class="container">
+      
+      <article>
+        <h2 class="subtitle is-6">October 21, 2017</h2>
+        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-21-rd-diff/">Confession: It&#39;s Me Who Committed the Change to Suppress .Rd Diffs On GitHub</a></h1>
+        
+        <div class="tags">
+    
+        <a class="button is-link" href="/tags/github">GitHub</a>
+    
+</div>
+
+        
+        <div class="content">
+          You may notice that diffs of .Rd files are suppressed by default on GitHub since some time.
+Do you wonder who did this? It&rsquo;s me, yay! This is my pull request:
+Ignore roxygen2 generated files by yutannihilation · Pull Request #3373 · github/linguist
+Though I thought I&rsquo;ve done the right thing at that time, now I&rsquo;m afraid this change may be bad for some cases&hellip;
+After the relese of roxygen2 6.
+          
+          ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-21-rd-diff/" style="height:28px">
+            Read more
+            <span class="icon is-small">
+              <i class="fa fa-angle-double-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </article>
+      
+      <article>
+        <h2 class="subtitle is-6">October 18, 2017</h2>
+        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-18-circleci/">Use CircleCI for R Projects</a></h1>
+        
+        <div class="tags">
+    
+        <a class="button is-link" href="/tags/testthat">testthat</a>
+    
+        <a class="button is-link" href="/tags/circleci">CircleCI</a>
+    
+</div>
+
+        
+        <div class="content">
+          Why CircleCI? Yes, I know using Travis CI is this easy, thanks to devtools package:
+devtools::use_travis()  Travis CI is OK most of the time. Still, CircleCI has some advantages:
+ arbitrary Docker images cool test summaries  Arbitrary Docker images Compared to Travis CI, CircleCI allows the users to use any docker images. For example, my WIP package which provides DBI-compatible interface to Redash uses these images:
+docker: - image: rocker/tidyverse:latest - image: redis:3.
+          
+          ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-18-circleci/" style="height:28px">
+            Read more
+            <span class="icon is-small">
+              <i class="fa fa-angle-double-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </article>
+      
+      <article>
+        <h2 class="subtitle is-6">October 6, 2017</h2>
+        <h1 class="title"><a href="https://yutani.rbind.io/post/2017-10-06-gghighlight/">Introduction to gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates</a></h1>
+        
+        <div class="tags">
+    
+        <a class="button is-link" href="/tags/gghighlight">gghighlight</a>
+    
+        <a class="button is-link" href="/tags/ggplot">ggplot</a>
+    
+        <a class="button is-link" href="/tags/package">package</a>
+    
+</div>
+
+        
+        <div class="content">
+          Suppose we have a data that has too many series like this:
+set.seed(2)d &lt;- purrr::map_dfr(letters,~ data.frame(idx = 1:400,value = cumsum(runif(400, -1, 1)),type = .,stringsAsFactors = FALSE))For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.
+library(ggplot2)ggplot(d) +geom_line(aes(idx, value, colour = type))Highlight lines with ggplot2 + dplyrSo, I am motivated to filter data and map colour only on that, using dplyr:
+          
+          ...<a class="button is-link" href="https://yutani.rbind.io/post/2017-10-06-gghighlight/" style="height:28px">
+            Read more
+            <span class="icon is-small">
+              <i class="fa fa-angle-double-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </article>
+      
+      <article>
+        <h2 class="subtitle is-6">July 15, 2017</h2>
+        <h1 class="title"><a href="https://yutani.rbind.io/about/">About</a></h1>
+        
+        <div class="content">
+          Hi! I&rsquo;m Hiroaki Yutani.
+This blog is where I struggle to learn about R (and improve my poor English).
+I belong to Hoxo-m Inc., a group of R-enthusiasts in Japan. My interests are mainly focused on data visualization, data manipulation and web APIs. I maintain several R packages:
+ datadogr: R Client for Datadog API kntnr: R Client for kintone API qiitr: R Interface to Qiita API estatapi: R Interface to e-Stat API, the one-stop service for official statistics of the Japanese government kokudosuuchi: R Interface to Kokudo Suuchi API, the GIS data service of the Japanese government  
+          
+        </div>
+      </article>
+      
+    </div>
+  </section>
+  <section class="section">
+  <div class="container">
+    <nav class="level is-mobile">
+      <div class="level-left">
+        <div class="level-item">
+          
+          <a class="button is-disabled">
+            <span class="icon is-small is-marginless">
+              <i class="fa fa-angle-left"></i>
+            </span>
+            Newer
+          </a>
+          
+        </div>
+      </div>
+      <div class="level-right is-marginless">
+        <div class="level-item">
+          
+          <a class="button is-disabled">
+            Older
+            <span class="icon is-small is-marginless">
+              <i class="fa fa-angle-right"></i>
+            </span>
+          </a>
+          
+        </div>
+      </div>
+    </nav>
+  </div>
+</section>
+
+  <section class="section">
+  <div class="container has-text-centered">
+    <p></p>
+  </div>
+</section>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+</body>
+

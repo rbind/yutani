@@ -1,0 +1,119 @@
+<body>
+  <!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Confession: It&#39;s Me Who Committed the Change to Suppress .Rd Diffs On GitHub - Hiroaki Yutani" property="og:title">
+<title>Confession: It&#39;s Me Who Committed the Change to Suppress .Rd Diffs On GitHub | Hiroaki Yutani</title>
+<link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://yutani.rbind.io/"><h1 class="title is-3">Hiroaki Yutani</h1></a>
+      </div>
+      <div class="nav-left">
+        <a class="nav-item" href="https://yutani.rbind.io/about/"><p class="title is-5">About</p></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/yutannihilation">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/yutannihilation">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="subtitle is-6">October 21, 2017</h2>
+      <h1 class="title">Confession: It&#39;s Me Who Committed the Change to Suppress .Rd Diffs On GitHub</h1>
+      
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/github">GitHub</a>
+    
+</div>
+
+      
+      <div class="content">
+        <p>You may notice that diffs of .Rd files are suppressed by default on GitHub since some time.</p>
+
+<p><img src="/images/2017-10-21-diff-suppressed.png" alt="" /></p>
+
+<p>Do you wonder who did this? It&rsquo;s me, yay! This is my pull request:</p>
+
+<p><a href="https://github.com/github/linguist/pull/3373">Ignore roxygen2 generated files by yutannihilation · Pull Request #3373 · github/linguist</a></p>
+
+<p>Though I thought I&rsquo;ve done the right thing at that time, now I&rsquo;m afraid this change may be bad for some cases&hellip;</p>
+
+<p>After the relese of roxygen2 6.0.0, the game has changed a bit. We can use Markdown to write package document now.</p>
+
+<p><a href="https://blog.rstudio.com/2017/02/01/roxygen2-6-0-0/">roxygen2 6.0.0 | RStudio Blog</a></p>
+
+<p>The feature itself is so cool (I use it often), but sometimes it behaves against our expectations:</p>
+
+<ul>
+<li><a href="https://github.com/tidyverse/dplyr/pull/2801">https://github.com/tidyverse/dplyr/pull/2801</a></li>
+<li><a href="https://github.com/tidyverse/purrr/pull/361">https://github.com/tidyverse/purrr/pull/361</a></li>
+</ul>
+
+<p>Should we stop suppressing the .Rd diffs to review with the eyes? If you think so, please send the revert pull request to <a href="(https://github.com/github/linguist)">github/linguist</a>. But I hope my effort improved the experience of R development on GitHub.</p>
+
+      </div>
+    </div>
+  </section>
+  
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'yutani';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+  <section class="section">
+  <div class="container has-text-centered">
+    <p></p>
+  </div>
+</section>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+</body>

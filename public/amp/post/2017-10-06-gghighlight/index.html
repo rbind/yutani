@@ -1,0 +1,191 @@
+<body>
+  <!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="" name="keywords">
+<meta content="Introduction to gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates - Hiroaki Yutani" property="og:title">
+<title>Introduction to gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates | Hiroaki Yutani</title>
+<link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+
+  <section class="section">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-item" href="https://yutani.rbind.io/"><h1 class="title is-3">Hiroaki Yutani</h1></a>
+      </div>
+      <div class="nav-left">
+        <a class="nav-item" href="https://yutani.rbind.io/about/"><p class="title is-5">About</p></a>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-item level is-mobile">
+          
+          <a class="level-item" href="https://github.com/yutannihilation">
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="https://twitter.com/yutannihilation">
+            <span class="icon">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          
+          <a class="level-item" href="/index.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+          </a>
+          
+        </nav>
+      </div>
+    </nav>
+  </div>
+</section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="subtitle is-6">October 6, 2017</h2>
+      <h1 class="title">Introduction to gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates</h1>
+      
+      <div class="tags">
+    
+        <a class="button is-link" href="/tags/gghighlight">gghighlight</a>
+    
+        <a class="button is-link" href="/tags/ggplot">ggplot</a>
+    
+        <a class="button is-link" href="/tags/package">package</a>
+    
+</div>
+
+      
+      <div class="content">
+        <p>Suppose we have a data that has too many series like this:</p>
+<pre class="r"><code>set.seed(2)
+d &lt;- purrr::map_dfr(
+  letters,
+  ~ data.frame(idx = 1:400,
+               value = cumsum(runif(400, -1, 1)),
+               type = .,
+               stringsAsFactors = FALSE))</code></pre>
+<p>For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.</p>
+<pre class="r"><code>library(ggplot2)
+
+ggplot(d) +
+  geom_line(aes(idx, value, colour = type))</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/plot-1.png" width="672" /></p>
+<div id="highlight-lines-with-ggplot2-dplyr" class="section level2">
+<h2>Highlight lines with ggplot2 + dplyr</h2>
+<p>So, I am motivated to filter data and map colour only on that, using dplyr:</p>
+<pre class="r"><code>library(dplyr, warn.conflicts = FALSE)
+
+d_filtered &lt;- d %&gt;%
+  group_by(type) %&gt;% 
+  filter(max(value) &gt; 20) %&gt;%
+  ungroup()
+
+ggplot() +
+  # draw the original data series with grey
+  geom_line(aes(idx, value, group = type), data = d, colour = alpha(&quot;grey&quot;, 0.7)) +
+  # colourise only the filtered data
+  geom_line(aes(idx, value, colour = type), data = d_filtered)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/dplyr-1.png" width="672" /></p>
+<p>But, what if I want to change the threshold in predicate (<code>max(.data$value) &gt; 20</code>) and highlight other series as well? It’s a bit tiresome to type all the code above again every time I replace <code>20</code> with some other value.</p>
+</div>
+<div id="highlight-lines-with-gghighlight" class="section level2">
+<h2>Highlight lines with gghighlight</h2>
+<p><strong>gghighlight</strong> package provides two functions to do this job. You can install this via <a href="https://cran.r-project.org/package=gghighlight">CRAN</a> (or <a href="https://github.com/yutannihilation/gghighlight/">GitHub</a>)</p>
+<pre class="r"><code>install.packages(&quot;gghighlight&quot;)</code></pre>
+<p><code>gghighlight_line()</code> is the one for lines. The code equivalent to above (and more) can be this few lines:</p>
+<pre class="r"><code>library(gghighlight)
+
+gghighlight_line(d, aes(idx, value, colour = type), predicate = max(value) &gt; 20)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-line-basic-1.png" width="672" /></p>
+<p>As <code>gghighlight_*()</code> returns a ggplot object, it is fully customizable just as we usually do with ggplot2 like custom themes and facetting.</p>
+<pre class="r"><code>library(ggplot2)
+
+gghighlight_line(d, aes(idx, value, colour = type), max(value) &gt; 20) +
+  theme_minimal()</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-theme-1.png" width="672" /></p>
+<pre class="r"><code>gghighlight_line(d, aes(idx, value, colour = type), max(value) &gt; 20) +
+  facet_wrap(~ type)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-facet-1.png" width="672" /></p>
+<p>By default, <code>gghighlight_line()</code> calculates <code>predicate</code> per group, more precisely, <code>dplyr::group_by()</code> + <code>dplyr::summarise()</code>. So if the predicate expression returns multiple values per group, it ends up with an error like this:</p>
+<pre class="r"><code>gghighlight_line(d, aes(idx, value, colour = type), value &gt; 20)
+## Error in summarise_impl(.data, dots): Column `predicate..........` must be length 1 (a summary value), not 400</code></pre>
+</div>
+<div id="highlight-points-with-gghighlight" class="section level2">
+<h2>Highlight points with gghighlight</h2>
+<p><code>gghighlight_point()</code> highlight points. While <code>gghighlight_line()</code> evaluates <code>predicate</code> by grouped calculation (<code>dplyr::group_by()</code>), by default, this function evaluates it by ungrouped calculation.</p>
+<pre class="r"><code>set.seed(19)
+d2 &lt;- sample_n(d, 100L)
+
+gghighlight_point(d2, aes(idx, value), value &gt; 10)
+## Warning in gghighlight_point(d2, aes(idx, value), value &gt; 10): Using type
+## as label for now, but please provide the label_key explicity!</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-point-1.png" width="672" /></p>
+<p>As the job is done without grouping, it’s better to provide <code>gghighlight_point()</code> a proper key for label, though it tries to choose proper one automatically. Specifying <code>label_key = type</code> will stop the warning above:</p>
+<pre class="r"><code>gghighlight_point(d2, aes(idx, value), value &gt; 10, label_key = type)</code></pre>
+<p>You can control whether to do things with grouping by <code>use_group_by</code> argument. If this set to <code>TRUE</code>, <code>gghighlight_point()</code> evaluate <code>predicate</code> by grouped calculation.</p>
+<pre class="r"><code>gghighlight_point(d2, aes(idx, value, colour = type), max(value) &gt; 15, label_key = type,
+                  use_group_by = TRUE)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/gghighlight-point-grouped-1.png" width="672" /></p>
+</div>
+<div id="non-logical-predicate" class="section level2">
+<h2>Non-logical predicate</h2>
+<p>(Does “non-logical predicate” make sense…? Due to my poor English skill, I couldn’t come up with a good term other than this. Any suggestions are wellcome.)</p>
+<p>By the way, to construct a predicate expression like bellow, we need to determine a threshold (in this example, <code>20</code>). But it is difficult to choose a nice one before we draw plots. This is a chicken or the egg situation.</p>
+<pre class="r"><code>max(value) &gt; 20</code></pre>
+<p>So, <code>gghiglight_*()</code> allows predicates that will be evaluated into non-logical values. The result value will be used to sort data, and the top <code>max_highlight</code> data points/series will be highlighted. For example:</p>
+<pre class="r"><code>gghighlight_line(d, aes(idx, value, colour = type), predicate = max(value),
+                 max_highlight = 6)</code></pre>
+<p><img src="/post/2017-10-06-gghighlight_files/figure-html/non-logical-predicate-1.png" width="672" /></p>
+</div>
+<div id="caveats" class="section level2">
+<h2>Caveats</h2>
+<p>Seems cool? gghighlight is good to explore data by changing a threshlold little by little. But, the internals are not so efficient, as it does almost the same calculation everytime you execute <code>gghighlight_*()</code>, which may get slower when it works with larger data. Consider doing this by using vanilla dplyr to filter data.</p>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>gghighlight package is a tool to highlight charactaristic data series among too many ones. Please try!</p>
+<p>Bug reports or feature requests are welcome! -&gt; <a href="https://github.com/yutannihilation/gghighlight/issues" class="uri">https://github.com/yutannihilation/gghighlight/issues</a></p>
+</div>
+
+      </div>
+    </div>
+  </section>
+  
+<section class="section">
+  <div class="container">
+    <aside><div id="disqus_thread"></div></aside>
+    <script type="text/javascript">
+      var disqus_shortname = 'yutani';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+  <section class="section">
+  <div class="container has-text-centered">
+    <p></p>
+  </div>
+</section>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+</body>
