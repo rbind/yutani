@@ -5,10 +5,6 @@ theme = "hucore"
 disqusShortname = "yutani"
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
-[taxonomies]
-tag = "tags"
-category = "categories"
-
 [params]
 description = "Rstats-fu wannabe in the Far East"
 keywords = ["rstats", "R"]
