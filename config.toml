@@ -1,12 +1,15 @@
 baseurl = "https://yutani.rbind.io/"
 languageCode = "en"
-title = "Hiroaki Yutani"
-theme = "hemingway2"
+title = "Hiroaki Yutani's Blog"
+theme = "Hucore"
 disqusShortname = "yutani"
-googleAnalytics = ""
-ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [params]
+description = "Rstats-fu wannabe in the Far East"
+keywords = ["rstats", "R"]
+author = "Hiroaki Yutani"
+sharingicons = true
+displayauthor = true
 
 [params.highlight]
 style = "github"

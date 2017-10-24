@@ -1,42 +1,55 @@
-<body>
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta content="" name="keywords">
-<meta content="Use CircleCI for R Projects - Hiroaki Yutani" property="og:title">
-<title>Use CircleCI for R Projects | Hiroaki Yutani</title>
-<link rel="stylesheet" href="https://yutani.rbind.io/css/style.css">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<meta content="rstats, R" name="keywords">
+<meta content="Hiroaki Yutani" name="author">
+<meta property="og:title" content="Use CircleCI for R Projects - Hiroaki Yutani&#39;s Blog">
+<meta property="og:url" content="/post/2017-10-18-circleci/">
+<meta property="og:description" content="Rstats-fu wannabe in the Far East">
+<meta property="og:type" content="website" />
+<title>Use CircleCI for R Projects | Hiroaki Yutani&#39;s Blog</title>
 
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="shortcut icon" href="/wave.ico">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
 
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/github.min.css">
 
-  <section class="section">
+</head>
+
+<body>
+<section class="section">
   <div class="container">
     <nav class="nav">
       <div class="nav-left">
-        <a class="nav-item" href="https://yutani.rbind.io/"><h1 class="title is-3">Hiroaki Yutani</h1></a>
-      </div>
-      <div class="nav-left">
-        <a class="nav-item" href="https://yutani.rbind.io/about/"><p class="title is-5">About</p></a>
+        <a class="nav-item" href="/"><h1 class="title is-4">Hiroaki Yutani&#39;s Blog</h1></a>
       </div>
       <div class="nav-right">
         <nav class="nav-item level is-mobile">
           
-          <a class="level-item" href="https://github.com/yutannihilation">
+          <a class="level-item" href="https://github.com/yutannihilation" target="_blank">
             <span class="icon">
               <i class="fa fa-github"></i>
             </span>
           </a>
           
-          <a class="level-item" href="https://twitter.com/yutannihilation">
+          <a class="level-item" href="https://twitter.com/yutannihilation" target="_blank">
             <span class="icon">
               <i class="fa fa-twitter"></i>
             </span>
           </a>
           
-          <a class="level-item" href="/index.xml">
+          <a class="level-item" href="/index.xml" target="_blank">
             <span class="icon">
               <i class="fa fa-rss"></i>
             </span>
@@ -48,11 +61,11 @@
   </div>
 </section>
 
-  <section class="section">
-    <div class="container">
-      <h2 class="subtitle is-6">October 18, 2017</h2>
-      <h1 class="title">Use CircleCI for R Projects</h1>
-      
+<section class="section">
+  <div class="container">
+    <h1 class="title">Use CircleCI for R Projects</h1>
+    <h2 class="subtitle is-5">October 18, 2017 by Hiroaki Yutani</h2>
+    
       <div class="tags">
     
         <a class="button is-link" href="/tags/testthat">testthat</a>
@@ -61,9 +74,9 @@
     
 </div>
 
+    
+    <div class="content">
       
-      <div class="content">
-        
 
 <p>Why CircleCI? Yes, I know using Travis CI is this easy, thanks to devtools package:</p>
 
@@ -220,10 +233,19 @@ workflows:
       - &quot;r-devel&quot;
 </code></pre>
 
-      </div>
     </div>
-  </section>
-  
+    
+        <div class="nav-left">
+    <p class="share-label">Share:</p> 
+    <a class="nav-item" href="https://twitter.com/home?status=Use%20CircleCI%20for%20R%20Projects - %2fpost%2f2017-10-18-circleci%2f" title="Tweet this" target="_blank"><span class="fa fa-twitter fa-lg"></span></a>
+    <a class="nav-item" href="https://www.facebook.com/sharer/sharer.php?u=%2fpost%2f2017-10-18-circleci%2f" title="Share on Facebook" target="_blank"><span class="fa fa-facebook fa-lg" aria-hidden="true"></span></a>
+    <a class="nav-item" href="http://www.reddit.com/submit?url=%2fpost%2f2017-10-18-circleci%2f&title=Use%20CircleCI%20for%20R%20Projects" title="Share on Reddit" target="_blank"><span class="fa fa-reddit-alien fa-lg" aria-hidden="true"></span></a>
+    
+    </div>
+    
+  </div>
+</section>
+
 <section class="section">
   <div class="container">
     <aside><div id="disqus_thread"></div></aside>
@@ -240,14 +262,17 @@ workflows:
 </section>
 
 
-  <section class="section">
+<section class="section">
   <div class="container has-text-centered">
     <p></p>
   </div>
 </section>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js" integrity="sha256-+bhVTaRmJ/c07eV80nU8gD2cBBF0rYkf1txqXlrbvb0=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/r.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js"></script>
 
 <script>hljs.initHighlightingOnLoad();</script>
 

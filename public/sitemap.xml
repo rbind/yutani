@@ -3,86 +3,86 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://yutani.rbind.io/post/2017-10-21-rd-diff/</loc>
+    <loc>/post/2017-10-21-rd-diff/</loc>
     <lastmod>2017-10-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/post/2017-10-18-circleci/</loc>
+    <loc>/post/2017-10-18-circleci/</loc>
     <lastmod>2017-10-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/post/2017-10-06-gghighlight/</loc>
+    <loc>/post/2017-10-06-gghighlight/</loc>
     <lastmod>2017-10-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/about/</loc>
+    <loc>/about/</loc>
     <lastmod>2017-07-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/categories/</loc>
+    <loc>/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/tags/circleci/</loc>
+    <loc>/tags/circleci/</loc>
     <lastmod>2017-10-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/tags/gghighlight/</loc>
+    <loc>/tags/gghighlight/</loc>
     <lastmod>2017-10-06T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/tags/ggplot/</loc>
+    <loc>/tags/ggplot/</loc>
     <lastmod>2017-10-06T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/tags/github/</loc>
+    <loc>/tags/github/</loc>
     <lastmod>2017-10-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/</loc>
+    <loc>/</loc>
     <lastmod>2017-10-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/tags/package/</loc>
+    <loc>/tags/package/</loc>
     <lastmod>2017-10-06T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/post/</loc>
+    <loc>/post/</loc>
     <lastmod>2017-10-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/categories/r/</loc>
+    <loc>/categories/r/</loc>
     <lastmod>2017-10-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2017-10-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yutani.rbind.io/tags/testthat/</loc>
+    <loc>/tags/testthat/</loc>
     <lastmod>2017-10-18T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
