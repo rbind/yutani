@@ -1,26 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Gghighlight on Hiroaki Yutani</title>
-    <link>https://yutani.rbind.io/tags/gghighlight/</link>
-    <description>Recent content in Gghighlight on Hiroaki Yutani</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Fri, 06 Oct 2017 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://yutani.rbind.io/tags/gghighlight/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>Introduction to gghighlight: Highlight ggplot&#39;s Lines and Points with Predicates</title>
-      <link>https://yutani.rbind.io/post/2017-10-06-gghighlight/</link>
-      <pubDate>Fri, 06 Oct 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://yutani.rbind.io/post/2017-10-06-gghighlight/</guid>
-      <description>Suppose we have a data that has too many series like this:
-set.seed(2)d &amp;lt;- purrr::map_dfr(letters,~ data.frame(idx = 1:400,value = cumsum(runif(400, -1, 1)),type = .,stringsAsFactors = FALSE))For such data, it is almost impossible to identify a series by its colour as their differences are so subtle.
-library(ggplot2)ggplot(d) +geom_line(aes(idx, value, colour = type))Highlight lines with ggplot2 + dplyrSo, I am motivated to filter data and map colour only on that, using dplyr:</description>
-    </item>
-    
-  </channel>
-</rss>
