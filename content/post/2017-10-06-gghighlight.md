@@ -30,7 +30,7 @@ ggplot(d) +
   geom_line(aes(idx, value, colour = type))
 ```
 
-![plot of chunk plot](static/figure/content/post/2017-10-06-gghighlight/plot-1.png)
+![plot of chunk plot](/post/2017-10-06-gghighlight_files/figure-html/plot-1.png)
 
 
 ## Highlight lines with ggplot2 + dplyr
@@ -53,7 +53,7 @@ ggplot() +
   geom_line(aes(idx, value, colour = type), data = d_filtered)
 ```
 
-![plot of chunk dplyr](static/figure/content/post/2017-10-06-gghighlight/dplyr-1.png)
+![plot of chunk dplyr](/post/2017-10-06-gghighlight_files/figure-html/dplyr-1.png)
 
 But, what if I want to change the threshold in predicate (`max(.data$value) > 20`) and highlight other series as well? It's a bit tiresome to type all the code above again every time I replace `20` with some other value.
 
@@ -75,7 +75,7 @@ library(gghighlight)
 gghighlight_line(d, aes(idx, value, colour = type), predicate = max(value) > 20)
 ```
 
-![plot of chunk gghighlight-line-basic](static/figure/content/post/2017-10-06-gghighlight/gghighlight-line-basic-1.png)
+![plot of chunk gghighlight-line-basic](/post/2017-10-06-gghighlight_files/figure-html/gghighlight-line-basic-1.png)
 
 As `gghighlight_*()` returns a ggplot object, it is fully customizable just as we usually do with ggplot2 like custom themes and facetting.
 
@@ -87,7 +87,7 @@ gghighlight_line(d, aes(idx, value, colour = type), max(value) > 20) +
   theme_minimal()
 ```
 
-![plot of chunk gghighlight-theme](static/figure/content/post/2017-10-06-gghighlight/gghighlight-theme-1.png)
+![plot of chunk gghighlight-theme](/post/2017-10-06-gghighlight_files/figure-html/gghighlight-theme-1.png)
 
 
 ```r
@@ -95,7 +95,7 @@ gghighlight_line(d, aes(idx, value, colour = type), max(value) > 20) +
   facet_wrap(~ type)
 ```
 
-![plot of chunk gghighlight-facet](static/figure/content/post/2017-10-06-gghighlight/gghighlight-facet-1.png)
+![plot of chunk gghighlight-facet](/post/2017-10-06-gghighlight_files/figure-html/gghighlight-facet-1.png)
 
 By default, `gghighlight_line()` calculates `predicate` per group, more precisely, `dplyr::group_by()` + `dplyr::summarise()`. So if the predicate expression returns multiple values per group, it ends up with an error like this:
 
@@ -120,7 +120,7 @@ gghighlight_point(d2, aes(idx, value), value > 10)
 ## as label for now, but please provide the label_key explicity!
 ```
 
-![plot of chunk gghighlight-point](static/figure/content/post/2017-10-06-gghighlight/gghighlight-point-1.png)
+![plot of chunk gghighlight-point](/post/2017-10-06-gghighlight_files/figure-html/gghighlight-point-1.png)
 
 As the job is done without grouping, it's better to provide `gghighlight_point()` a proper key for label, though it tries to choose proper one automatically. Specifying `label_key = type` will stop the warning above:
 
@@ -137,7 +137,7 @@ gghighlight_point(d2, aes(idx, value, colour = type), max(value) > 15, label_key
                   use_group_by = TRUE)
 ```
 
-![plot of chunk gghighlight-point-grouped](static/figure/content/post/2017-10-06-gghighlight/gghighlight-point-grouped-1.png)
+![plot of chunk gghighlight-point-grouped](/post/2017-10-06-gghighlight_files/figure-html/gghighlight-point-grouped-1.png)
 
 ## Non-logical predicate
 
@@ -158,7 +158,7 @@ gghighlight_line(d, aes(idx, value, colour = type), predicate = max(value),
                  max_highlight = 6)
 ```
 
-![plot of chunk non-logical-predicate](static/figure/content/post/2017-10-06-gghighlight/non-logical-predicate-1.png)
+![plot of chunk non-logical-predicate](/post/2017-10-06-gghighlight_files/figure-html/non-logical-predicate-1.png)
 
 ## Caveats
 
