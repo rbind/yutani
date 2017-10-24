@@ -1,9 +1,12 @@
-rmds <- list.files("content", "[\\.]Rmd$", recursive = TRUE, full.names = TRUE)
+# passed from blogdown::build_site()
+local <- commandArgs(TRUE)[1] == "TRUE"
 
 knitr::opts_knit$set(
   base.dir = normalizePath("static/", mustWork = TRUE),
   base.url = "/"
 )
+
+rmds <- list.files("content", "[\\.]Rmd$", recursive = TRUE, full.names = TRUE)
 
 for (rmd in rmds) {
   wo_ext <- tools::file_path_sans_ext(rmd)
@@ -22,4 +25,4 @@ for (rmd in rmds) {
   knitr::knit(input = rmd, output = md, encoding = "UTF-8")
 }
 
-blogdown::hugo_build(local = TRUE)
+blogdown::hugo_build(local = local)
