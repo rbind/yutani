@@ -11,3 +11,5 @@ for (rmd in rmds) {
   
   knitr::knit(input = rmd, output = md, encoding = "UTF-8")
 }
+
+blogdown::hugo_build(local = TRUE)
