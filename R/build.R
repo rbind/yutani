@@ -1,4 +1,9 @@
-rmds <- list.files('content', '[\\.]Rmd$', recursive = TRUE, full.names = TRUE)
+rmds <- list.files("content", "[\\.]Rmd$", recursive = TRUE, full.names = TRUE)
+
+# knitr::opts_knit$set(
+#   base.dir = normalizePath("static/", mustWork = TRUE),
+#   base.url = "/"
+# )
 
 for (rmd in rmds) {
   wo_ext <- tools::file_path_sans_ext(rmd)
@@ -9,6 +14,11 @@ for (rmd in rmds) {
     next
   }
   
+  knitr::opts_chunk$set(
+    fig.path = glue::glue("static/figure/{wo_ext}/")
+  )
+  
+  set.seed(1984)
   knitr::knit(input = rmd, output = md, encoding = "UTF-8")
 }
 
