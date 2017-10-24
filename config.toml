@@ -6,7 +6,7 @@ disqusShortname = "yutani"
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [params]
-description = "Rstats-fu wannabe in the Far East"
+description = "A Wannabe rstats-fu in the Far East"
 keywords = ["rstats", "R"]
 author = "Hiroaki Yutani"
 sharingicons = true
