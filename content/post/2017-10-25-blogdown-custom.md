@@ -12,7 +12,7 @@ As stated in the documentation, `build_site()` will
 > Compile all Rmd files and build the site through Hugo.  
 (`?build_site`)
 
-Compiling all Rmd files is "safe" in the sense that we notice if some Rmd becomes impossible to compile due to some breaking changes of some package. But, it may be time-consuming and can be a problem for those who have a lot of .Rmd files.
+Compiling all Rmd files is "safe" in the sense that we can notice if some Rmd becomes impossible to compile due to some breaking changes of some package. But, it may be time-consuming and can be a problem for those who have a lot of .Rmd files.
 
 Though I don't find the best practice yet, I noticed using a custom build script (`R/build.R`) is useful for this purpose. (Note that I've aquired many tips from [Yihui's repo](https://github.com/rbind/yihui). Thanks Yihui for being great as usual!)
 
@@ -37,6 +37,13 @@ if (file.exists('~/.Rprofile')) sys.source('~/.Rprofile', envir = environment())
 ```
 
 ## Write `R/build.R`
+
+Next, write a custom script and save it as `R/build.R`. If `R/build.R` exists, blogdown executes it:
+
+> For all rendering methods, a custom R script ‘R/build.R’ will be executed if you have provided it under the root directory of the website  
+(`?build_site`)
+
+This occurs regardless of which method we choose. By using `R/build.R`, you can add some preprocessing phase when `method = "html"`, or you can replace the whole process of building the website when `method = "custom"`.
 
 Here is my `R/build.R` (Some explanations follow). You can find other scripts by [searching on GitHub](https://github.com/search?utf8=%E2%9C%93&q=org%3Arbind+path%3AR+filename%3Abuild.R&type=).
 
