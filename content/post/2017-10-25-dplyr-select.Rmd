@@ -36,8 +36,10 @@ x <- c("col1", "col2")
 select(some_data, x)
 ```
 
-But, be fareful. `x` can be ambiguous, depending on whether `some_data` has a column named `x` or not.
-To avoid troubles, you should explicitly unquote `x` by `!!` or `!!!` (both are ok in this case).
+But, be fareful, `x` can be ambiguous.
+If `some_data` has a column named `x`, it selects the column `x` instead of `col1` and `col2`, the content of the variable `x`.
+
+To avoid these troubles, you should explicitly unquote `x` by `!!` or `!!!` (both are ok in this case).
 
 ```{r select-tidyeval, eval=FALSE}
 x <- c("col1", "col2")
