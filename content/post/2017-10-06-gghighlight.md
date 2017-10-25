@@ -5,8 +5,6 @@ categories: ["R"]
 tags: ["gghighlight", "ggplot", "package"]
 ---
 
-
-
 Suppose we have a data that has too many series like this:
 
 

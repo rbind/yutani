@@ -5,10 +5,6 @@ categories: ["R"]
 tags: ["gghighlight", "ggplot", "package"]
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE)
-```
-
 Suppose we have a data that has too many series like this:
 
 ```{r set-data}

@@ -1,5 +1,3 @@
-# main ------------------------------------
-
 # catch "local" arg passed from blogdown::build_site()
 local <- commandArgs(TRUE)[1] == "TRUE"
 
@@ -10,7 +8,8 @@ knitr::opts_knit$set(
 )
 
 knitr::opts_chunk$set(
-  cache.path = normalizePath("cache/", mustWork = TRUE)
+  cache.path = normalizePath("cache/", mustWork = TRUE),
+  collapse = TRUE
 )
 
 # list up Rmd files
