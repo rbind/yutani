@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 
 # list up Rmd files
-Rmd_files <- list.files("content", "[\\.]Rmd$", recursive = TRUE, full.names = TRUE)
+Rmd_files <- list.files("content", "\\.Rmd$", recursive = TRUE, full.names = TRUE)
 
 # list up md files
 md_files  <- sub("\\.Rmd$", ".md", Rmd_files)
