@@ -1,0 +1,55 @@
+---
+title: "dplyr::select() Accepts Characters Since Version 0.7.0"
+date: "2017-10-25"
+categories: ["R"]
+tags: ["dplyr", "tidyeval"]
+---
+
+Some of my friends didn't aware that dplyr now accepts characters. Did you?
+
+For example, this expression
+
+```{r select-nse, eval=FALSE}
+select(iris, Sepal.Length, Petal.Length)
+```
+
+can be also written in this way:
+
+```{r select-character, eval=FALSE}
+select(iris, "Sepal.Length", "Petal.Length")
+```
+
+or in this way:
+
+```{r select-character2, eval=FALSE}
+select(iris, c("Sepal.Length", "Petal.Length"))
+```
+
+For the semantics of `select()`, you can find a good explanation in [the vignette](http://dplyr.tidyverse.org/articles/dplyr.html#selecting-operations).
+
+## Tidyeval?
+
+You may want to write some code that selects columns programmatically using variables.
+
+```{r select-danager, eval=FALSE}
+x <- c("col1", "col2")
+select(some_data, x)
+```
+
+But, be fareful. `x` can be ambiguous, depending on whether `some_data` has a column named `x` or not.
+To avoid troubles, you should explicitly unquote `x` by `!!` or `!!!` (both are ok in this case).
+
+```{r select-tidyeval, eval=FALSE}
+x <- c("col1", "col2")
+select(some_data, !! x)
+```
+
+`rlang::expr()` can show how the expression is unquoted.
+
+```{r select-tidyeval2}
+x <- c("col1", "col2")
+
+rlang::expr(select(some_data, !! x))
+
+rlang::expr(select(some_data, !!! x))
+```

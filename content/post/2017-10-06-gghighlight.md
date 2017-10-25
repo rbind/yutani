@@ -100,7 +100,7 @@ By default, `gghighlight_line()` calculates `predicate` per group, more precisel
 
 ```r
 gghighlight_line(d, aes(idx, value, colour = type), value > 20)
-## Error in summarise_impl(.data, dots): Column `predicate..........` must be length 1 (a summary value), not 400
+#> Error in summarise_impl(.data, dots): Column `predicate..........` must be length 1 (a summary value), not 400
 ```
 
 
@@ -114,8 +114,8 @@ set.seed(19)
 d2 <- sample_n(d, 100L)
 
 gghighlight_point(d2, aes(idx, value), value > 10)
-## Warning in gghighlight_point(d2, aes(idx, value), value > 10): Using type
-## as label for now, but please provide the label_key explicity!
+#> Warning in gghighlight_point(d2, aes(idx, value), value > 10): Using type
+#> as label for now, but please provide the label_key explicity!
 ```
 
 ![plot of chunk gghighlight-point](/post/2017-10-06-gghighlight_files/figure-html/gghighlight-point-1.png)
