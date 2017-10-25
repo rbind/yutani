@@ -56,8 +56,8 @@ select(some_data, !! x)
 x <- c("col1", "col2")
 
 rlang::expr(select(some_data, !! x))
-## select(some_data, c("col1", "col2"))
+#> select(some_data, c("col1", "col2"))
 
 rlang::expr(select(some_data, !!! x))
-## select(some_data, "col1", "col2")
+#> select(some_data, "col1", "col2")
 ```
