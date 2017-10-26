@@ -1,13 +1,13 @@
 ---
-title: "Post R Markdown to Medium via An RStudio Addin"
+title: "Publish R Markdown to Medium via An RStudio Addin"
 date: "2017-10-26"
 categories: ["R"]
 tags: ["Medium", "Web API"]
 ---
 
-I created a experimental package to work with [Medium API](https://github.com/Medium/medium-api-docs).
+I created an experimental package to work with [Medium API](https://github.com/Medium/medium-api-docs).
 
-mediumr
+mediumr:
 https://github.com/yutannihilation/mediumr/
 
 mediumr allows you to knit and post R Markdown to Medium.
