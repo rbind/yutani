@@ -30,7 +30,8 @@ MEDIUM_API_TOKEN='<your api token here>'
 
 ## Usage
 
-The usage is quite simple. Focus on the Rmd file that you want to publish and choose "Post to Medium" from Addins menu:
+The usage is quite simple. Focus on the Rmd file that you want to publish and choose "Post to Medium" from Addins menu
+(Or, you can execute `mediumr::medium_create_post_from_Rmd("path/to/file.Rmd")` in your console.):
 
 ![](/images/2017-10-26-screenshot_addin.png)
 
@@ -38,7 +39,7 @@ The addin knits the Rmd and shows the preview dialog. If it looks ok, click "Pub
 
 ![](/images/2017-10-26-screenshot.png)
 
-After successfully upload the content to Medium, addin launches a web browser and jumps to the post:
+After successfully uploading the content to Medium, the addin launches a web browser and jumps to the post:
 
 ![](/images/2017-10-26-screenshot_medium.png)
 
