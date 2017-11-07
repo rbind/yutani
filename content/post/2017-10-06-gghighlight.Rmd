@@ -2,7 +2,7 @@
 title: "Introduction to gghighlight: Highlight ggplot's Lines and Points with Predicates"
 date: "2017-10-06"
 categories: ["R"]
-tags: ["gghighlight", "ggplot", "package"]
+tags: ["gghighlight", "ggplot2", "package"]
 ---
 
 Suppose we have a data that has too many series like this:

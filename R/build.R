@@ -10,7 +10,10 @@ knitr::opts_knit$set(
 knitr::opts_chunk$set(
   cache.path = normalizePath("cache/", mustWork = TRUE),
   collapse = TRUE,
-  comment  = "#>"
+  comment  = "#>",
+  fig.height = 6,
+  fig.width = 8,
+  dpi = 100
 )
 
 # list up Rmd files
