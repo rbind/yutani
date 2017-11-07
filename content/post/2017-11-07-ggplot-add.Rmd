@@ -114,7 +114,6 @@ add_ggplot <- function(p, object, objectname) {
 
 By using this, I can implement the proof-of-concept version of `geom_highlight_point()` as bellow:
 
-
 ```{r define-geom-highlight-poc}
 geom_highlight_point <- function(expr) {
   structure(list(expr = rlang::enquo(expr)), class = "highlight")
@@ -141,3 +140,5 @@ ggplot(d, aes(foo, bar)) +
   geom_highlight_point(bar > 20 & baz == "A") +
   geom_point()  # for comparison
 ```
+
+I'm not sure if this is the intended usage of `ggplot_add()`, but this seems very nice. Looking forward to the next release of ggplot2!

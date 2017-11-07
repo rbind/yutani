@@ -115,7 +115,6 @@ add_ggplot <- function(p, object, objectname) {
 By using this, I can implement the proof-of-concept version of `geom_highlight_point()` as bellow:
 
 
-
 ```r
 geom_highlight_point <- function(expr) {
   structure(list(expr = rlang::enquo(expr)), class = "highlight")
@@ -145,3 +144,5 @@ ggplot(d, aes(foo, bar)) +
 ```
 
 ![plot of chunk use-geom-highlight-poc](/post/2017-11-07-ggplot-add_files/figure-html/use-geom-highlight-poc-1.png)
+
+I'm not sure if this is the intended usage of `ggplot_add()`, but this seems very nice. Looking forward to the next release of ggplot2!
