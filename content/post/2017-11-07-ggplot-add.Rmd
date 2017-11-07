@@ -115,8 +115,7 @@ add_ggplot <- function(p, object, objectname) {
 By using this, I can implement the proof-of-concept version of `geom_highlight_point()` as bellow:
 
 
-
-```r
+```{r define-geom-highlight-poc}
 geom_highlight_point <- function(expr) {
   structure(list(expr = rlang::enquo(expr)), class = "highlight")
 }
@@ -132,8 +131,7 @@ ggplot_add.highlight <- function(object, plot, object_name) {
 }
 ```
 
-
-```r
+```{r use-geom-highlight-poc}
 library(ggplot2)
 
 d <- data.frame(foo = 11:30, bar = 11:30, baz = rep(c("A", "B", "C"), length.out = 20),
@@ -143,5 +141,3 @@ ggplot(d, aes(foo, bar)) +
   geom_highlight_point(bar > 20 & baz == "A") +
   geom_point()  # for comparison
 ```
-
-![plot of chunk use-geom-highlight-poc](/post/2017-11-07-ggplot-add_files/figure-html/use-geom-highlight-poc-1.png)
