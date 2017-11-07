@@ -1,5 +1,5 @@
 ---
-title: "ggplot_add() Will Allow Us to Create More Flexible ggplot2 Extension"
+title: "An Example Usage of ggplot_add()"
 date: "2017-11-07"
 categories: ["R"]
 tags: ["gghighlight", "ggplot2", "package"]
@@ -28,12 +28,12 @@ ggplot(d, aes(idx, value)) +
 
 Let me explain a bit.
 
-### `geom_*()` doesn't know about the other layers
+## `geom_*()` doesn't know about the other layers
 
 `geom_highlight_point(value > 20)` is passed `value > 20` without the data `d`, with which the expression should be evaluated. 
-`d` is specified in `ggplot(...)`.
+It needs `d` specified in `ggplot(...)`.
 
-Considering the structure of the above code, `geom_highlight_point(...)` cannot access to the result of `ggplot(...)` in any usual way:
+But, considering the structure of the above code, `geom_highlight_point(...)` cannot access to the result of `ggplot(...)` in any usual way:
 
 ```r
 `+`(ggplot(...), geom_highlight_point(...))
@@ -45,8 +45,28 @@ If ggplot2 were designed pipe-friendly, this
 `%>%`(ggplot(...), geom_highlight_point(...))
 ```
 
-will be evaluated as this, which means `geom_highlight_point(...)` could take `d` from `ggplot(...)`...
+would be evaluated as this, which means `geom_highlight_point(...)` could take `d` from `ggplot(...)`...
 
 ```r
 geom_highlight_point(ggplot(...), ...)
 ```
+
+Anyway, let's give up here. All I have to do is set this expression as an attribute of a custom `Geom` and pray that it will be evaluated with the proper data in the phase of building a plot.
+
+## `*Geom` doesn't know about the original data
+
+Take a look at the simplest example in [the vignette "Extending ggplot2"](http://ggplot2.tidyverse.org/articles/extending-ggplot2.html):
+
+```r
+StatChull <- ggproto("StatChull", Stat,
+  compute_group = function(data, scales) {
+    data[chull(data$x, data$y), , drop = FALSE]
+  },
+
+  required_aes = c("x", "y")
+)
+```
+
+You may notice that `compute_group()` expects `data` has the fixed column `x` and `y`. Actually, `data` is not the original data but the one the mapping is already applied. So, there is no column `value` anymore; it is renamed to `y`.
+
+## Overwrite `+.gg`?
