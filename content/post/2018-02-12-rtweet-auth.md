@@ -21,7 +21,7 @@ literally this:
 
 ### Step1: Create a Twitter account
 
-(I can easily assume that you are already Twitter-holic, right?)
+(I think you can skip this step; I bet you are Twitter-addicted already, given that you are interested in the data about Twitter, right...?)
 
 ### Step2: Install rtweet package
 
@@ -31,20 +31,22 @@ Install the package from CRAN as usual:
 install.packages("rtweet")
 ```
 
-### Step3: Use any function of rtweet package
+### Step3: Use whatever function of rtweet you like
 
-For example, if you run this first time, the browser will be launched:
+If the function invokes the API calls and it is the first time you run such kind of functions, the browser will be automatically launched to ask for your permission. For example:
 
 ```r
 tw <- search_tweets("#rstats", include_rts = FALSE)
 ```
 
-And, all you need to do is just click "Authorise App" button.
+And, all you need to do is just click "Authorise App" button on the browser.
 
 ![](/images/2018-02-12-rtweet.png)
 
-That's all! Super easy!
+Now, the token is aquired and saved in `~/.rtweet_token.rds`. That's all!
 
-## Yet, you need your own app in some cases
+Super easy!
+
+## (Yet, you need your own app in some cases)
 
 As you notice the screenshot above, the default app embeded in rtweet package has read-only permission. So, if you want to do further actions like tweeting and following/unfollowing, you need to create your own app.
