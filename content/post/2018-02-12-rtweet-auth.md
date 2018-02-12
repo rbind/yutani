@@ -33,7 +33,7 @@ install.packages("rtweet")
 
 ### Step3: Use whatever function of rtweet you like
 
-If the function invokes the API calls and it is the first time you run such kind of functions, the browser will be automatically launched to ask for your permission. For example:
+If the function invokes the API calls and it is the first time you run such kind of functions, the browser will be launched to ask for your permission. For example:
 
 ```r
 tw <- search_tweets("#rstats", include_rts = FALSE)
@@ -43,7 +43,7 @@ And, all you need to do is just click "Authorise App" button on the browser.
 
 ![](/images/2018-02-12-rtweet.png)
 
-Now, the token is aquired and saved in `~/.rtweet_token.rds`. That's all!
+Now, the token is aquired and saved in `~/.rtweet_token.rds`, which will be automatically used from the next time. That's all!
 
 Super easy!
 
