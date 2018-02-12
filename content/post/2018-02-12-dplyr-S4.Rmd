@@ -5,9 +5,9 @@ categories: ["R"]
 tags: ["dplyr"]
 ---
 
-I've seen sooo many (duplicated) issues on this topic are opened on dplyr's repo and lubridate's repo.
+I've seen sooo many (duplicated) issues on this topic were opened on dplyr's repo and lubridate's repo.
 
-For example, you cannot `filter()` `interval`s. consider the data below:
+For example, you cannot `filter()` `interval`s. Consider the data below:
 
 ```{r interval-define}
 library(lubridate)
@@ -22,7 +22,7 @@ d <- data.frame(
 d
 ```
 
-Let's select the second row.
+Let's select the second row by `filter()`.
 
 ```{r interval-filter}
 d %>% 
@@ -41,7 +41,7 @@ As you see, the result should be `3000-01-01 UTC--3000-01-02 UTC`, whereas `filt
 str(d$i)
 ```
 
-`interval` objects consists of 3 slots, 2 of which have the same length.
+`interval` objects consist of 3 slots, 2 of which have the same length.
 This means, to subset this vector, we need to subset `.Data` and `start` in the same way. But...
 
 
@@ -51,7 +51,7 @@ d %>%
   str()
 ```
 
-You can notice that it failed to subset `start`. In contrast, `subset()` properly subsets it as well:
+You can notice that it failed to subset `start`. In contrast, `subset()` properly subsets the slot as well:
 
 ```{r interval-str3}
 str(subset(d, value == 2L))
