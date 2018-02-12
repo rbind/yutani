@@ -39,7 +39,7 @@ If the function invokes the API calls and it is the first time you run such kind
 tw <- search_tweets("#rstats", include_rts = FALSE)
 ```
 
-And, all you need to do is just click "Authorise App" button on the browser.
+And, all you need to do is just click "Authorise app" button on the browser.
 
 ![](/images/2018-02-12-rtweet.png)
 
