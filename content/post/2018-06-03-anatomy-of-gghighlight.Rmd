@@ -1,0 +1,226 @@
+---
+title: "Anatomy of gghighlight"
+date: "2018-06-03"
+categories: ["R"]
+tags: ["gghighlight", "ggplot2"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+knit_print.ggplot <- function(x, ...) {
+  x <- x  +
+    theme_minimal() +
+    scale_x_continuous(expand = expand_scale(mult = 0.5)) +
+    scale_y_continuous(expand = expand_scale(mult = 0.2))
+  ggplot2:::print.ggplot(x, ...)
+}
+```
+
+I'm overhauling my [gghighlight](https://github.com/yutannihilation/gghighlight) package toward the upcoming release of ggplot2 2.3.0. I think I will introduce about the new `gghighlight()` soon, but before that, I want to write out the ideas behind gghighlight.
+
+Note that what I'll write here contains few new things, as the basic idea is already covered by this great post:
+
+* [Plotting background data for groups with ggplot2](https://drsimonj.svbtle.com/plotting-background-data-for-groups-with-ggplot2)
+
+My post is mainly for organizing my thought, yet I hope someone find this useful :)
+
+```{r tweak}
+# tweak for plotting
+knit_print.ggplot <- function(x, ...) {
+  x <- x  +
+    theme_minimal() +
+    scale_x_continuous(expand = expand_scale(mult = 0.5)) +
+    scale_y_continuous(expand = expand_scale(mult = 0.2))
+  ggplot2:::print.ggplot(x, ...)
+}
+```
+
+
+## Data
+
+Supose we have this data:
+
+```{r data, echo=FALSE}
+d <- tibble::tribble(
+  ~x, ~y, ~type, ~value,
+   3,  3,   "a",     0,
+   8,  3,   "a",     1,
+  13,  3,   "a",     0,
+   2,  2,   "b",     0,
+   7,  2,   "b",    10,
+  12,  2,   "b",    10,
+   1,  1,   "c",    10,
+   6,  1,   "c",    20,
+  11,  1,   "c",     0
+)
+
+knitr::kable(d)
+```
+
+## Simple plot
+
+If we plot the data very simply, the code would be like this:
+
+```{r plot1, message=FALSE}
+library(tidyverse)
+
+ggplot(d, aes(x, y, colour = type)) +
+  geom_point(size = 10)
+```
+
+## Highlighted plot
+
+Now, what if we want to highlight only the points of records those `type` are `"b"`?
+
+We need two layers:
+
+1. unhighlighted layer
+2. highlighted layer
+
+### Create an unhighlighted layer
+
+An unhiglighted layer is the colorless version of the above points with the same data.
+To create this, we can simply remove `colour` from `aes()` and specify a static colour `"grey"`. I call this operation as *bleach*.
+
+```{r unhighlighted-layer}
+bleached_layer <- geom_point(data = d, aes(x, y),
+                             size = 10, colour = "grey")
+```
+
+If we plot this, the result would be below:
+
+```{r unhighlighted-layer-plot}
+ggplot() +
+  bleached_layer
+```
+
+### Create a highlighted layer
+
+A highlighted layer is the fewer-data version of the above points with (not necessarily the same) colors.
+To create this, we need some data manipulation. Let's filter the data.
+
+```{r sieve-data}
+d_sieved <- filter(d, type == "b")
+```
+
+Then the layer we want can be created like below. I call this operation as *sieve* (*filter* might be a better word, but I wanted to choose another word than dplyr's verbs to avoid confusion).
+
+```{r highlighted-layer}
+sieved_layer <- geom_point(data = d_sieved, aes(x, y, colour = type),
+                           size = 10)
+```
+
+If we plot this, the result would be below:
+
+```{r highligted-layer-plot}
+ggplot() +
+  sieved_layer
+```
+
+### Join the two layers
+
+Now we can draw the highlighted version of the plot as below:
+
+```{r highlighted-plot}
+ggplot() +
+  bleached_layer +
+  sieved_layer
+```
+
+## "by point" vs "by group"
+
+So far, so good. Then, let's consider a bit about the case when the geom is not point, but line.
+
+While points can be plotted one by one, lines cannot be drawn without the relationship between points. For example, haven't you experienced an unexpected zig zag line?
+
+```{r lines-strange}
+ggplot(d, aes(x, y)) +
+  geom_line(size = 3)
+```
+
+Lines need `group` variable, which indicates the series of data points.
+
+```{r lines-ok}
+ggplot(d, aes(x, y, group = type)) +
+  geom_line(size = 3)
+```
+
+Note that `group` doesn't need to be declared explicitly, as ggplot2 infers the groups from the specified variables. More precisely, it calculates group IDs based on the combination of discrete variables [here](https://github.com/tidyverse/ggplot2/blob/8778b48b37d8b7e41c0f4f213031fb47810e70aa/R/grouping.r#L11-L28). So, usually, specifying a discrete variable on `colour` or `fill` is enough.
+
+```{r lines-ok-colour}
+ggplot(d, aes(x, y, colour = type)) +
+  geom_line(size = 3)
+```
+
+Anyway, lines need groups. Accordingly, we need to consider the group when we *sieve* the data. Otherwise, the lines will be incomplete as this example:
+
+```{r lines-ungrouped-sieve}
+# data whose values are >=10
+d_sieved2 <- filter(d, value >= 10)
+
+ggplot() +
+  geom_line(data = d, aes(x, y, group = type), size = 3, colour = "grey") +
+  geom_line(data = d_sieved2, aes(x, y, colour = type), size = 3)
+```
+
+So, the correct way of doing this is to use `group_by()` and some aggregate functions like `max()` so that the calculations are done by group.
+
+```{r lines-grouped-sieve}
+# data series whose max values are >=10
+d_sieved3 <- d %>%
+  group_by(type) %>% 
+  filter(max(value) >= 10)
+
+ggplot() +
+  geom_line(data = d, aes(x, y, group = type), size = 3, colour = "grey") +
+  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3)
+```
+
+## Prevent unhighlighted layer from facetted
+
+Next topic is facetting. Let's naively facet the plot above.
+
+```{r lines-grouped-sieve-facet}
+ggplot() +
+  geom_line(data = d, aes(x, y, group = type), size = 3, colour = "grey") +
+  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3) +
+  facet_wrap(~ type)
+```
+
+Hmm..., unhighlighted lines are facetted. But, maybe we want the grey ones exists in all of the panels.
+
+`facet_*()` facets all layers if the data contains the specified variable, in this case `type`. In other words, if the layer's data doesn't have the variable, it won't get facetted. Let's rename it.
+
+```{r lines-grouped-sieve-facet2}
+d_bleached <- d
+names(d_bleached)[3] <- "GROUP"
+
+ggplot() +
+  geom_line(data = d_bleached, aes(x, y, group = GROUP), size = 3, colour = "grey") +
+  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3) +
+  facet_wrap(~ type)
+```
+
+You may notice about one more good thing; the panel for `"a"` disappeared.
+This is because now `d_sieved3` is the only data that contains `type` and it has only records of `"b"` and `"c"`.
+
+## Some spoilers
+
+The next version of gghighlight will do the above things almost automatically. All you have to do is just adding `gghighlight()`.
+
+```{r gghighlight1}
+library(gghighlight)
+
+ggplot(d, aes(x, y, colour = type)) +
+  geom_point(size = 10) +
+  gghighlight(type == "b")
+```
+
+```{r gghighlight2}
+ggplot(d, aes(x, y, colour = type)) +
+  geom_line(size = 3) +
+  gghighlight(max(value) >= 10)
+```
+
+Stay tuned!
