@@ -30,7 +30,7 @@ knit_print.ggplot <- function(x, ...) {
 
 ## Data
 
-Supose we have this data:
+Suppose we have this data:
 
 
 |  x|  y|type | value|
@@ -61,7 +61,7 @@ ggplot(d, aes(x, y, colour = type)) +
 
 ## Highlighted plot
 
-Now, what if we want to highlight only the points of records those `type` are `"b"`?
+Now, what if we want to highlight only the points of records whose `type` are `"b"`?
 
 We need two layers:
 
@@ -70,7 +70,7 @@ We need two layers:
 
 ### Create an unhighlighted layer
 
-An unhiglighted layer is the colorless version of the above points with the same data.
+An unhighlighted layer is the colorless version of the above points with the same data.
 To create this, we can simply remove `colour` from `aes()` and specify a static colour `"grey"`. I call this operation as *bleach*.
 
 
@@ -134,7 +134,7 @@ ggplot() +
 
 So far, so good. Then, let's consider a bit about the case when the geom is not point, but line.
 
-While points can be plotted one by one, lines cannot be drawn without the relationship between points. For example, haven't you experienced an unexpected zig zag line?
+While points can be plotted one by one, lines cannot be drawn without the relationship between points. For example, haven't you experienced an unexpected zigzag line?
 
 
 ```r
