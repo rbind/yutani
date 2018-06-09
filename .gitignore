@@ -8,3 +8,6 @@
 
 # knitr cache
 /cache
+
+# data
+/data/osm-tiles
