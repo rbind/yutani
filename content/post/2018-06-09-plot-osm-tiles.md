@@ -93,7 +93,7 @@ So, as I'm not browser-based, I can choose arbitrary one.
 
 ### `zoom`
 
-Zoom parameter is an integer number from 0 to 19. If `zoom` is 0, there's only one tile. Likewise 2 x 2 tiles for zoom `1`, 4 x 4 tiles for zoom `2`, and so on. Then, which one to choose? This can be roughly determined based on the size of the bbox (boundary box) of the `sf` object.
+Zoom parameter is an integer number from 0 to 19. If `zoom` is 0, there's only one tile. Likewise 2 x 2 tiles for zoom `1`, 4 x 4 tiles for zoom `2`, and so on. Then, which one sould I choose? This can be roughly determined based on the size of the bbox (boundary box) of the `sf` object.
 
 
 ```r
@@ -123,7 +123,7 @@ But, since the tile is so small as 256 × 256 pixel, it's often better to zoom m
 zoom <- zoom + 2
 ```
 
-(To do this correctly, I guess the zoom level should be determined by the size of the plot canvas, not the bbox.)
+(I'm not sure how to do this correctly, I guess the zoom level should be determined by the size of the plot canvas, not the bbox.)
 
 ### `x` and `y`
 
@@ -147,7 +147,7 @@ lonlat2xy <- function(lat_deg, lon_deg, zoom) {
 }
 ```
 
-But, how can I find the tiles which covers the whole bbox?
+But, how can I find the set of tiles which covers the whole bbox?
 
 
 ```r
@@ -163,7 +163,7 @@ p
 ![plot of chunk bbox-plot](/post/2018-06-09-plot-osm-tiles_files/figure-html/bbox-plot-1.png)
 
 This problem can be simplified; I can focus only two corners, the north-west and the south-east.
-If I calculate which tiles of `x` and `y` those two point fall in, I can find the rest of the tiles by filling the sequence of `x` and `y` between these two tiles.
+If I calculate which tiles of `x` and `y` those two points fall in, I can find the rest of the tiles by filling the sequences of `x` and `y` between these two tiles.
 
 
 
@@ -281,7 +281,7 @@ Yay, confirmed! Let's proceed to the next step.
 ## Get tile data
 
 If I just get the response from a URL, `httr::GET()` is handy.
-But, this time, for the requirement of caching, I have to save the response to the disk first.
+But, this time, for the requirement of caching, I have to save the responses to disk first.
 So, I use `curl::curl_download()` here.
 
 Note that PNG data can be read into R session by `png::readPNG()`.
@@ -344,7 +344,12 @@ args
 #> 6 -81.6  36.6 -78.8  34.3 <dbl [256 x 256 x 3]>
 #> 7 -78.8  36.6 -75.9  34.3 <dbl [256 x 256 x 3]>
 #> 8 -75.9  36.6 -73.1  34.3 <dbl [256 x 256 x 3]>
+```
 
+Now I can plot tiles at last.
+
+
+```r
 ggplot(nc) +
   pmap(args, annotation_raster, interpolate = TRUE) +
   geom_sf(fill = alpha("red", 0.3)) +
