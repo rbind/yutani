@@ -93,7 +93,7 @@ So, as I'm not browser-based, I can choose arbitrary one.
 
 ### `zoom`
 
-Zoom parameter is an integer number from 0 to 19. If `zoom` is 0, there's only one tile. Likewise 2 x 2 tiles for zoom `1`, 4 x 4 tiles for zoom `2`, and so on. Then, which one sould I choose? This can be roughly determined based on the size of the bbox (boundary box) of the `sf` object.
+Zoom parameter is an integer number from 0 to 19. If `zoom` is 0, there's only one tile. Likewise 2 x 2 tiles for zoom `1`, 4 x 4 tiles for zoom `2`, and so on. Then, which one should I choose? This can be roughly determined based on the size of the bbox (boundary box) of the `sf` object.
 
 
 ```r
@@ -389,7 +389,7 @@ nc_4326 <- sf::st_transform(nc, 4326)
 ```
 
 
-Fortunately, the difference between EPSG 4267 and EPSG 4326 is rather negligible for this scale, so the result map should look alomost same if I used `nc_4326` instead of `nc`. Here's the difference (can you see there's a little red colors?):
+Fortunately, the difference between EPSG 4267 and EPSG 4326 is rather negligible for this scale, so the result map should look almost same if I used `nc_4326` instead of `nc`. Here's the difference (can you see there's a little red colors?):
 
 
 ```r
