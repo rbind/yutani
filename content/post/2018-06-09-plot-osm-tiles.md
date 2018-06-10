@@ -398,10 +398,8 @@ nc_4326_not_transformed <- sf::`st_crs<-`(nc, 4326)
 #> for that
 
 ggplot() +
-  geom_sf(data = nc_4326_not_transformed,
-          fill = "transparent", colour = alpha("red", 1)) +
-  geom_sf(data = nc_4326,
-          fill = "transparent", colour = alpha("blue", 1)) +
+  geom_sf(data = nc_4326_not_transformed, fill = "transparent", colour = "red") +
+  geom_sf(data = nc_4326, fill = "transparent", colour = "blue") +
   theme_minimal()
 ```
 
