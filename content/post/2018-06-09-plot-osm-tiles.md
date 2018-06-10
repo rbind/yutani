@@ -366,5 +366,44 @@ But, I didn't expect the code would be this long... Maybe I need to create a pac
 
 ## Caveats
 
-Note that, I didn't care about the CRS because `nc`'s CRS is fortunately EPSG 3857, which OpenStreetMap uses.
-If the `sf` object I want to plot has the different CRS, there may be a bit more to consider (and I don't understand the CRS well...).
+<strike>Note that, I didn't care about the CRS because `nc`'s CRS is fortunately EPSG 3857, which OpenStreetMap uses.
+If the `sf` object I want to plot has the different CRS, there may be a bit more to consider (and I don't understand the CRS well...).</strike>
+
+**Update:**
+
+Sorry, I was wrong... `nc`'s CRS is EPSG 4267 and OpenStreetMap tiles use EPSG 4326. Thanks Edzer for [pointing this out](https://twitter.com/edzerpebesma/status/1005494350585978893)!
+
+
+```r
+sf::st_crs(nc)
+#> Coordinate Reference System:
+#>   EPSG: 4267 
+#>   proj4string: "+proj=longlat +datum=NAD27 +no_defs"
+```
+
+So, I should have converted `nc` to the CRS first.
+
+
+```r
+nc_4326 <- sf::st_transform(nc, 4326)
+```
+
+
+Fortunately, the difference between EPSG 4267 and EPSG 4326 is rather negligible for this scale, so the result map should look alomost same if I used `nc_4326` instead of `nc`. Here's the difference (can you see there's a little red colors?):
+
+
+```r
+nc_4326_not_transformed <- sf::`st_crs<-`(nc, 4326)
+#> Warning: st_crs<- : replacing crs does not reproject data; use st_transform
+#> for that
+
+ggplot() +
+  geom_sf(data = nc_4326_not_transformed,
+          fill = "transparent", colour = alpha("red", 1)) +
+  geom_sf(data = nc_4326,
+          fill = "transparent", colour = alpha("blue", 1)) +
+  theme_minimal()
+```
+
+![plot of chunk difference](/post/2018-06-09-plot-osm-tiles_files/figure-html/difference-1.png)
+
