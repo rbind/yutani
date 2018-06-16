@@ -90,7 +90,7 @@ ggplot(d_filtered) +
 
 But, it seems not so handy. For example, what if I want to change the threshold in predicate (`max(value) > 20`) and highlight other series as well? It’s a bit tiresome to type all the code above again every time I replace `20` with some other value...
 
-So, I want `filter()` for ggplot2, which. This is my initial impulse to create gghighlight.
+So, I want `filter()` for ggplot2. This is my initial impulse to create gghighlight.
 
 ### Highlighting is better than filtering
 
