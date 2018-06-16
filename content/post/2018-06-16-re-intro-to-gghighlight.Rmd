@@ -8,12 +8,12 @@ editor_options:
 ---
 
 Half a year ago, I've [introduced gghighlight](/post/2017-10-06-gghighlight/) package.
-I didn't expect so much R people get interested in my package. Thanks for your attension!
+I didn't expect so much R people get interested in my package. Thanks for your attention!
 
 But, please forget about this gghighlight; gghighlight has become far more powerful and simple!
 So, let me re-introduce about gghighlight.
 
-(Note that this version of gghighlight is not yet on CRAN at the time of this writing.)
+(Note that this version of gghighlight is not yet on CRAN at the time of this writing. Please install by `devtools::install_github("yutannihilation/gghighlight")` for the time being)
 
 ## Motivation
 
@@ -137,7 +137,7 @@ ggplot(d) +
 
 The plot also can be facetted:
 
-```{r gghiglight-facet}
+```{r gghighlight-facet}
 ggplot(d) +
   geom_line(aes(idx, value, colour = type)) +
   gghighlight(max(value) > 19) +
@@ -194,7 +194,7 @@ Note that, in this case, `label_key = type` is needed to show labels because `gg
 
 ### Sf
 
-For the proof of gghiglight's capability, here's highlighted `geom_sf()`:
+For the proof of gghighlight's capability, here's highlighted `geom_sf()`:
 
 ```{r sf}
 nc <- sf::st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
@@ -235,8 +235,8 @@ The design of them was due to [the limitation of extendability of ggplot's `+` o
 
 ## Caveats
 
-gghighlight is good to explore data by changing a threshlold little by little.
-But, the internals are not so efficient, as it does almost the same calculation everytime you execute `gghighlight()`, which may get slower when it works with larger data. Consider doing this by using vanilla dplyr to filter data.
+gghighlight is good to explore data by changing a threshold little by little.
+But, the internals are not so efficient, as it does almost the same calculation every time you execute `gghighlight()`, which may get slower when it works with larger data. Consider doing this by using vanilla dplyr to filter data.
 
 ## Alternative
 
