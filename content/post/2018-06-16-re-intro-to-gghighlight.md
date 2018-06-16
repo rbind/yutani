@@ -8,7 +8,7 @@ editor_options:
 ---
 
 Half a year ago, I've [introduced gghighlight](/post/2017-10-06-gghighlight/) package.
-I didn't expect so much R peeps get interested in my package. Thanks for your attension!
+I didn't expect so much R people get interested in my package. Thanks for your attension!
 
 But, please forget about this gghighlight; gghighlight has become far more powerful and simple!
 So, let me re-introduce about gghighlight.
