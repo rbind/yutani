@@ -10,7 +10,7 @@ editor_options:
 Half a year ago, I've [introduced gghighlight](/post/2017-10-06-gghighlight/) package.
 I didn't expect so much R people get interested in my package. Thanks for your attention!
 
-But, please forget about this gghighlight; gghighlight has become far more powerful and simple!
+But, please forget about that gghighlight; gghighlight has become far more powerful and simple!
 So, let me re-introduce about gghighlight.
 
 (Note that this version of gghighlight is not yet on CRAN at the time of this writing. Please install by `devtools::install_github("yutannihilation/gghighlight")` for the time being)
