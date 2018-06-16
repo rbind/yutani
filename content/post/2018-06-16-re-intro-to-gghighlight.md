@@ -243,8 +243,8 @@ nc <- sf::st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
 
 ggplot(nc) +
   geom_sf(aes(fill = AREA)) +
-  gghighlight(grepl("^A", NAME)) +
-  ggtitle("Polygons whose names start with A are highlighted!")
+  gghighlight(grepl("^[A-C]", NAME)) +
+  ggtitle("Polygons whose names start with A-C are highlighted!")
 ```
 
 ![plot of chunk sf](/post/2018-06-16-re-intro-to-gghighlight_files/figure-html/sf-1.png)
