@@ -170,7 +170,7 @@ ggplot(d) +
 #> label_key: type
 ```
 
-![plot of chunk gghiglight-facet](/post/2018-06-16-re-intro-to-gghighlight_files/figure-html/gghiglight-facet-1.png)
+![plot of chunk gghighlight-facet](/post/2018-06-16-re-intro-to-gghighlight_files/figure-html/gghighlight-facet-1.png)
 
 ## Geoms
 
