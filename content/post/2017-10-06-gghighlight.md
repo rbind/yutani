@@ -5,6 +5,8 @@ categories: ["R"]
 tags: ["gghighlight", "ggplot2", "package"]
 ---
 
+(**Update**: The functions introduced here is deprecated now. Please use [`gghighlight()`](https://yutani.rbind.io/post/2018-06-16-re-intro-to-gghighlight/), which is far nicer one)
+
 Suppose we have a data that has too many series like this:
 
 
