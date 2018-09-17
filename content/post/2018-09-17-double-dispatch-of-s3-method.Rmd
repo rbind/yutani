@@ -70,7 +70,7 @@ Why is this needed? According to [Advanced R](https://adv-r.hadley.nz/s3.html#do
 
 To ensure this, if both `a` and `b` are S3 objects, the method chosen in `a + b` can be (c.f. [how `do_arith()` works with S3 objects](https://gist.github.com/yutannihilation/1c227c6d662c991cc2c66ca146de80ea#gistcomment-2708322)):
 
-| Does `a` have an S3 method | Does `b` have an S3 method | Are the methods same? | Whet method is chosen? |
+| Does `a` have an S3 method? | Does `b` have an S3 method? | Are the methods same? | Whet method is chosen? |
 |:---------------------------|:---------------------------|:----------------------|:-----------------------|
 | yes                        | yes                        | yes                   | `a`'s method or `b`'s method (they are the same) |
 | yes                        | yes                        | no                    | internal method |
