@@ -40,7 +40,7 @@ quote_x_and_y(x, y)
 #>   env:  global
 ```
 
-Lionel Henry, the tidyeval super hero, [answered my qustion on RStudio Community](https://community.rstudio.com/t/a-difference-between-tidyeval-and-substitute-when-the-promise-is-already-evaluated/15480/4?u=yutannihilation):
+This is because `x` is evaluated when `is.null()` is called before quoting, whereas `y` is intact. Lionel Henry, the tidyeval super hero, [answered my qustion on RStudio Community](https://community.rstudio.com/t/a-difference-between-tidyeval-and-substitute-when-the-promise-is-already-evaluated/15480/4?u=yutannihilation):
 
 > A forced promise can no longer be captured correctly because it no longer carries an environment.
 
