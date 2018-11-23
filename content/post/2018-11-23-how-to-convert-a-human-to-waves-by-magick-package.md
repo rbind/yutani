@@ -269,4 +269,4 @@ image_animate(imgs, fps = 50)
 
 ![plot of chunk unnamed-chunk-9](/post/2018-11-23-how-to-convert-a-human-to-waves-by-magick-package_files/figure-html/unnamed-chunk-9-1.gif)
 
-I'm grad I've finally proved I can live without Mathematica!
+I'm grad I've finally proven that I can live without Mathematica!

@@ -238,4 +238,4 @@ dev.off()
 image_animate(imgs, fps = 50)
 ```
 
-I'm grad I've finally proved I can live without Mathematica!
+I'm grad I've finally proven that I can live without Mathematica!
