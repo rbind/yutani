@@ -128,7 +128,7 @@ zoom_rose(2)
 ![plot of chunk unnamed-chunk-6](/post/2018-11-23-how-to-convert-a-human-to-waves-by-magick-package_files/figure-html/unnamed-chunk-6-2.png)
 
 The function can be applied to the vector of zoom levels by `lapply()`.
-Note that, to make the zoom speed looks constant, we need to power the step.
+Note that, to make the zoom speed looks constant, we need to power the steps.
 
 
 ```r

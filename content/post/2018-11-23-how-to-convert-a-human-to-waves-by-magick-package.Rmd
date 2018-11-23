@@ -106,7 +106,7 @@ zoom_rose(2)
 ```
 
 The function can be applied to the vector of zoom levels by `lapply()`.
-Note that, to make the zoom speed looks constant, we need to power the step.
+Note that, to make the zoom speed looks constant, we need to power the steps.
 
 ```{r}
 steps <- 100
