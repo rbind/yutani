@@ -18,7 +18,7 @@ You might want to `debug()` the methods of `Geom`s or `Stat`s.
 debug(GeomPoint$draw_panel)
 ```
 
-But, this is not effective because the `geom_point()` generates different instances, so their `draw_panel` are all different objects (c.f. R6 classes have [`debug` method](https://cran.r-project.org/web/packages/R6/vignettes/Debugging.html) for this).
+~~But, this is not effective because the `geom_point()` generates different instances, so their `draw_panel` are all different objects (c.f. R6 classes have [`debug` method](https://cran.r-project.org/web/packages/R6/vignettes/Debugging.html) for this).~~ (edit: [@BrodieGaslam told me I'm wrong](https://twitter.com/BrodieGaslam/status/1083763764682465280). The reason we can't do `debug(GeomPoint$draw_panel)` s because `$` is overridden and `debug("draw_panel", GeomPoint)` definitely works.)
 
 Then what about RStudio's [nice breakpoint features](https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-RStudio#stopping-on-a-line)?
 
