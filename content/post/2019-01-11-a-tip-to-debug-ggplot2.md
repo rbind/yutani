@@ -47,4 +47,4 @@ Then, you'll be on debug mode at last!
 
 ## YMMV
 
-That's all for this posts. But, I guess there are many alternative ways to achieve this, and I'm almost sure, at the end of the developer day, I will feel shame to have published this post, which just describes my debug skill is so poor... I'm really looking forward to learning others. See you there!
+That's all for this posts. But, I guess there are many alternative ways to achieve this, and I'm almost sure, at the end of the developer day, I will feel shame to have published this post, which just describes my debug skill is so poor... I'm really looking forward to learning from others. See you there!
