@@ -1,0 +1,50 @@
+---
+title: A Tip to Debug ggplot2
+date: '2019-01-11'
+slug: a-tip-to-debug-ggplot2
+categories:
+  - R
+tags:
+  - package development
+---
+
+Since [the tidyverse developer day](https://www.tidyverse.org/articles/2018/11/tidyverse-developer-day-2019/) is near, I share my very very secret technique to debug ggplot2. Though this is a very small thing, hope this helps someone a bit.
+
+## ggplot2 is unbreakable!
+
+You might want to `debug()` the methods of `Geom`s or `Stat`s.
+
+``` r
+debug(GeomPoint$draw_panel)
+```
+
+But, this is not effective because the `geom_point()` generates different instances, so their `draw_panel` are all different objects (c.f. R6 classes have [`debug` method](https://cran.r-project.org/web/packages/R6/vignettes/Debugging.html) for this).
+
+Then what about RStudio's [nice breakpoint features](https://support.rstudio.com/hc/en-us/articles/205612627-Debugging-with-RStudio#stopping-on-a-line)?
+
+![](/images/2019-01-11-breakpoint.jpg)
+
+Usually, this is enough. But, ggplot2's `ggproto`s are not the case. You cannot use breakpoints to dig into them.
+
+![](/images/2019-01-11-breakpoint2.jpg)
+
+Hmm... But, no, you don't need to scratch your head. The solution is pretty simple.
+
+## Use `browser()`
+
+You just need to 
+
+1. add `browser()` on the line where you want to debug, and
+2. load all (`Cmd+Shift+L` for Mac, `Ctrl+Shift+L` for Windows, and `C-c C-w l` for Emacs/ESS).
+
+![](/images/2019-01-11-browser.jpg)
+
+Then, you'll be on debug mode at last!
+
+![](/images/2019-01-11-break1.jpg)
+
+![](/images/2019-01-11-break2.jpg)
+
+## YMMV
+
+That's all for this posts. But, I guess there are many alternative ways to achieve this, and I'm almost sure, at the end of the developer day, I will feel shame to have published this post, which just describes my debug skill is so poor... I'm really looking forward to learning others. See you there!
