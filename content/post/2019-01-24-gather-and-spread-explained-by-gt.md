@@ -971,7 +971,7 @@ deframe(enframe(x))
 
 ### `gather()`
 
-First, split the data by `time`.
+First, nest the data by `time`.
 
 
 ```r
@@ -1035,7 +1035,7 @@ Done.
 
 ### `spread()`
 
-First step is the same as `gather()`. Just split the data by `time`.
+First step is the same as `gather()`. Just nest the data by `time`.
 
 
 ```r
