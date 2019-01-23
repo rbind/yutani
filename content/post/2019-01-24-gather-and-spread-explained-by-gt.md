@@ -25,7 +25,7 @@ This post might seem to introduce the different semantics from the current tidyr
 I now think `gather()` and `spread()` are about
 
 1. grouping and
-2. `enframe()` and `deframe()` within each group
+2. `enframe()`ing and `deframe()`ing within each group
 
 Do you get what I mean? Let me explain step by step.
 
