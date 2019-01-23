@@ -31,7 +31,7 @@ Do you get what I mean? Let me explain step by step.
 
 ## What does gt teach us?
 
-A while ago, [gt package](https://gt.rstudio.com/), [Richard Iannone](https://twitter.com/riannone)'s work-in-progress great work, is made public.
+A while ago, [gt package](https://gt.rstudio.com/), [Richard Iannone](https://twitter.com/riannone)'s work-in-progress great work, was made public.
 
 <img src="/images/2019-01-24-gt-logo.svg" width="35%" />
 
