@@ -642,7 +642,7 @@ stocksm
 #> 9 2009-01-03 Z      2.30
 ```
 
-This can be represented in a similar way. This time, a group doesn't consist of a single row, but the rows with the same grouping values.
+This can be represented in a similar way. This time, a group doesn't consist of a single row, but the rows with the same grouping values. Accordingly, the grouping is the same as above.
 
 
 ```r
