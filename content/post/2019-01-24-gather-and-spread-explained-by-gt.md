@@ -35,7 +35,11 @@ A while ago, [gt package](https://gt.rstudio.com/), [Richard Iannone](https://tw
 
 <img src="/images/2019-01-24-gt-logo.svg" width="35%" />
 
-gt package is wonderful, especially in that it makes us rethink about the possible semantics of columns. I mean, not all columns are equal. No, I don't say anything new; this is what you already know with `spread()` and `gather()`. Take a look at this example data, a simpler version of the one in `?gather`:
+gt package is wonderful, especially in that it makes us rethink about the possible semantics of columns. I mean, not all columns are equal. No, I don't say anything new; this is what you already know with `spread()` and `gather()`.
+
+### `spread()`ed data explained
+
+Take a look at this example data, a simpler version of the one in `?gather`:
 
 
 ```r
@@ -59,8 +63,6 @@ stocks
 #> 2 2009-01-02  0.184  0.659  2.95
 #> 3 2009-01-03 -0.836 -1.64   2.30
 ```
-
-### `spread()`ed data explained
 
 Here, `X`, `Y`, and `Z` are the prices of stock X, Y, and Z.
 Of course, we can `gather()` the columns as this is the very example for this, but, we also can *bundle* these columns using `tab_spanner()`:
