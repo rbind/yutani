@@ -32,7 +32,7 @@ This is always necessary. Since rlang is very fundamental package, it might be l
 
 ![](/images/2019-01-25-restart.jpg)
 
-But, this is not enough...
+For usual packages, this is enough. But, rlang is not the case...
 
 ## Use `remotes::install_github()` instead of devtools
 
