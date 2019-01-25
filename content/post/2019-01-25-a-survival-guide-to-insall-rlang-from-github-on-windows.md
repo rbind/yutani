@@ -36,7 +36,7 @@ For usual packages, this is enough. But, rlang is not the case...
 
 ## Use `remotes::install_github()` instead of devtools
 
-`devtools::install_github()` is just re-exported from remotes. So, are the same one. But, if I use `devtools::`, devtools dependencies are loaded, and, at the moment, rlang is included here. So, the same error will occur.
+`devtools::install_github()` is just re-exported from remotes package. So, are the same one. But, if I use `devtools::`, devtools's dependencies are loaded, and, at the moment, rlang is included here. So, the same error will occur.
 
 On the other hand, `remotes::` doesn't need rlang directly or indirectly. So, run
 
