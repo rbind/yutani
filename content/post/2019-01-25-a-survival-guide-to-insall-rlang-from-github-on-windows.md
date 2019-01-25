@@ -1,0 +1,73 @@
+---
+title: A Survival Guide To Insall rlang From GitHub On Windows
+author: ''
+date: '2019-01-25'
+slug: a-survival-guide-to-insall-rlang-from-github-on-windows
+categories:
+  - R
+tags:
+  - rlang
+  - Windows
+---
+
+I don't have any strong feelings about OSs. They are just tools. I had been a Mac user for
+10+ years since I was 10, and now I'm using Windows for no reason. All OSs have their pros
+and cons. For example, I like Mac, but, in the late 90s, I was very disappointed at Mac
+because it didn't have fonts to display [Shift_JIS art](https://en.wikipedia.org/wiki/Shift_JIS_art) nicely.
+
+Anyway, I'm using Windows and I need to survive. Here's an error I often see when I try to install [rlang](https://rlang.r-lib.org/) package from GitHub by `devtools::install_github()`:
+
+```
+installing to C:/path/to/R/win-library/3.5/rlang/libs/x64
+Error in file.copy(files, dest, overwrite = TRUE) : 
+  (converted from warning) problem copying .\rlang.dll to
+C:\path\to\R\win-library\3.5\rlang\libs\x64\rlang.dll: Permission denied
+```
+
+This is because `rlang.dll` is used by the current R session (or other session?), so Windows won't let me overwrite it. What should I do? Here's some advices.
+
+## Restart the R session
+
+This is always necessary. Since rlang is very fundamental package, it might be loaded as a dependency of some attached package (if you are curious about the diffrences between load and attach, [R Packages](http://r-pkgs.had.co.nz/namespace.html#search-path) helps). You need a fresh session. On RStudio, `Ctrl+Shift+F10`, or "Restart R" in "Session" menu.
+
+![](/images/2019-01-25-restart.jpg)
+
+But, this is not enough...
+
+## Use `remotes::install_github()` instead of devtools
+
+`devtools::install_github()` is just re-exported from remotes. So, are the same one. But, if I use `devtools::`, devtools dependencies are loaded, and, at the moment, rlang is included here. So, the same error will occur.
+
+On the other hand, `remotes::` doesn't need rlang directly or indirectly. So, run
+
+``` r
+remotes::install_github("r-lib/rlang")
+```
+
+(You might also need `remotes::install_github()` for other dependency packages like glue.)
+
+Note that, [pkg](https://github.com/r-lib/pkg#installation) package seems aware of this kind of problems, so we'll be free from this kind of problems when pkg is mature!
+
+## Extra steps?
+
+Usually, restarting the session + using `remotes::install_github()` works.
+But, in the past, I needed some extra steps. I don't know why, but it seemed RStudio loads rlang in background (c.f. <https://github.com/r-lib/remotes/issues/131>). So, for future references, I note some. Hope this will never be needed again...
+
+### Remove rlang
+
+Removing package might help, since removed package cannot be loaded.
+
+``` r
+remove.packages("rlang")
+```
+
+### Use `git clone`, `R CMD build` and `R CMD INSTALL`
+
+If you really need to be away from RStudio, or even from any R sessions.
+In those cases, you can use `git` and `R CMD build` and `R CMD INSTALL` on console.
+
+``` sh
+git clone https://github.com/r-lib/rlang
+R.exe CMD build --no-manual --no-build-vignettes rlang/
+R.exe CMD INSTALL [--some-options-i-dont-remember] rlang_*.tar.gz
+```
