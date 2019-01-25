@@ -1,8 +1,8 @@
 ---
-title: A Survival Guide To Insall rlang From GitHub On Windows
+title: A Survival Guide To Install rlang From GitHub On Windows
 author: ''
 date: '2019-01-25'
-slug: a-survival-guide-to-insall-rlang-from-github-on-windows
+slug: a-survival-guide-to-install-rlang-from-github-on-windows
 categories:
   - R
 tags:
@@ -24,11 +24,11 @@ Error in file.copy(files, dest, overwrite = TRUE) :
 C:\path\to\R\win-library\3.5\rlang\libs\x64\rlang.dll: Permission denied
 ```
 
-This is because `rlang.dll` is used by the current R session (or other session?), so Windows won't let me overwrite it. What should I do? Here's some advices.
+This is because `rlang.dll` is used by the current R session (or other session?), so Windows won't let me overwrite it. What should I do? Here's some advice.
 
 ## Restart the R session
 
-This is always necessary. Since rlang is very fundamental package, it might be loaded as a dependency of some attached or loaded package (if you are curious about the diffrences between load and attach, [R Packages](http://r-pkgs.had.co.nz/namespace.html#search-path) helps). You need a fresh session with no packages (except for base packages) loaded. On RStudio, `Ctrl+Shift+F10`, or "Restart R" in "Session" menu.
+This is always necessary. Since rlang is very fundamental package, it might be loaded as a dependency of some attached or loaded package (if you are curious about the differences between load and attach, [R Packages](http://r-pkgs.had.co.nz/namespace.html#search-path) helps). You need a fresh session with no packages (except for base packages) loaded. On RStudio, `Ctrl+Shift+F10`, or "Restart R" in "Session" menu.
 
 ![](/images/2019-01-25-restart.jpg)
 
