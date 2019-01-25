@@ -28,7 +28,7 @@ This is because `rlang.dll` is used by the current R session (or other session?)
 
 ## Restart the R session
 
-This is always necessary. Since rlang is very fundamental package, it might be loaded as a dependency of some attached package (if you are curious about the diffrences between load and attach, [R Packages](http://r-pkgs.had.co.nz/namespace.html#search-path) helps). You need a fresh session. On RStudio, `Ctrl+Shift+F10`, or "Restart R" in "Session" menu.
+This is always necessary. Since rlang is very fundamental package, it might be loaded as a dependency of some attached or loaded package (if you are curious about the diffrences between load and attach, [R Packages](http://r-pkgs.had.co.nz/namespace.html#search-path) helps). You need a fresh session with no packages (except for base packages) loaded. On RStudio, `Ctrl+Shift+F10`, or "Restart R" in "Session" menu.
 
 ![](/images/2019-01-25-restart.jpg)
 
