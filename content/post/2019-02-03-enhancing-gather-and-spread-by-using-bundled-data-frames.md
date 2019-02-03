@@ -1624,8 +1624,9 @@ d %>%
 
 ## `spread()` to the bundles
 
-As it's possible to `gather()` multiple bundles, we can `spread()` multiple columns into multiple bundles vice versa.
-I think this is obvious and just a matter of the interface. So, let me skip the details here.
+As we already saw it's possible to `gather()` multiple bundles, now it's obvious that we can `spread()` multiple columns into multiple bundles vice versa. So, let me skip the details here.
+
+We can multi-`spread()`:
 
 
 ```r
@@ -1641,7 +1642,7 @@ d_bundled_again
 #> 3 Man              0   401   268      1995  3589  2459
 ```
 
-`unbundle()` can flatten the bundles to prefixes. So, it's done.
+Then, `unbundle()` flattens the bundles to prefixes.
 
 
 ```r
@@ -1655,7 +1656,7 @@ d_bundled_again %>%
 #> 3 Man              0       401         268      1995    3589      2459
 ```
 
-By combining these two steps, multi-`spread()` is something like this:
+It's done. By combining these two steps, multi-`spread()` is something like this:
 
 
 ```r
@@ -1705,4 +1706,4 @@ I'm yet to see if we can improve the current `spread()` and `gather()` to handle
 Probably, this post is too much about the implementational details.
 I need to think about the interfaces before proposing this on tidyr's repo.
 
-Feedbacks are welcome!
+Any suggestions or feedbacks are welcome!
