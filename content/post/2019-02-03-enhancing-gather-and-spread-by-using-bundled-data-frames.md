@@ -24,8 +24,8 @@ So, please forget the post, and read this with fresh eyes!
 
 ## Wait, what is multi-`gather()` and multi-`spread()`??
 
-In short, the current `gather()` and `spread()` has a limitation; they can gather from or spread into one column at once.
-So, if we want to handle multiple columns, we need to coerce them to one column before the actual gathering or spreading.
+In short, the current `gather()` and `spread()` have a limitation; they can gather from or spread into only one column at once.
+So, if we want to handle multiple columns, we need to coerce them to one column before actually gathering or spreading.
 
 This is especially problematic when the columns have different types.
 For example, `date` column is unexpectedly converted to integers with the following code:
@@ -59,7 +59,7 @@ d %>%
 #> 3 c3       17928 ok             NA <NA>
 ```
 
-Here, we need better `spread()` and `gather()`, that can handle multiple columns.
+Here, we need better `spread()` and `gather()`, which can handle multiple columns.
 For more discussions, you can read the following issues:
 
 * <https://github.com/tidyverse/tidyr/issues/149>
@@ -676,7 +676,7 @@ bundle(d, foo = c(x = X, y = Y, z = Z))
 ### `unbundle()`
 
 `unbundle()` unbundles columns. This operation is almost the opposite of what `bundle()` does;
-one difference is that this adds the name of the bundle as prefix by default in order to avoid name collisions.
+one difference is that this adds the names of the bundle as prefixes in order to avoid name collisions.
 In case the prefix is not needed, we can use `sep = NULL`.
 
 
@@ -1602,7 +1602,7 @@ d_gathered
 <!--gt table end-->
 </div><!--/html_preserve-->
 
-Now we have all parts for implementing multi-`gather()`. I did bundling by manual, but we can have a helper to find the common prefix and bundle them automatically. So, multi-`gather()` is something like:
+Now we have all parts for implementing multi-`gather()`. I did bundling by manual, but we can have a helper function to find the common prefixes and bundle them automatically. So, multi-`gather()` will be something like:
 
 
 ```r
@@ -1656,7 +1656,7 @@ d_bundled_again %>%
 #> 3 Man              0       401         268      1995    3589      2459
 ```
 
-It's done. By combining these two steps, multi-`spread()` is something like this:
+It's done. By combining these two steps, multi-`spread()` will be something like this:
 
 
 ```r
@@ -1668,7 +1668,7 @@ d_gathered %>%
 ## Considerations
 
 As I described above, multi-`gather()` doesn't need the column name for `value`.
-On the other hand, usual `gather()` need a new colname. An atomic column doesn't have inner names, yet it needs a name to become a column.
+On the other hand, usual `gather()` needs a new colname. Because, while it needs a name to become a column, an atomic column doesn't have inner names.
 
 Similarly, usual `spread()` can be considered as a special version of multi-`spread()`. Consider the case when we multi-`spread()`ing one column:
 
