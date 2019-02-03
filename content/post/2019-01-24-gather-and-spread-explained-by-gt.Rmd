@@ -7,6 +7,7 @@ categories:
   - R
 tags:
   - tidyr
+  - tidy data
   - gt
 ---
 
