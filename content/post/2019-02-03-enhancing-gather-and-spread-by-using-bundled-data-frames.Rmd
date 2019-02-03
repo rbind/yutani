@@ -143,7 +143,7 @@ d %>%
 ## Expose hidden structures in colnames as bundles
 
 One of the meaningful usage of bundled data.frame is to express the structure of a data.
-Suppose we have this data (from [tidyverse/tidyr#150](https://github.com/tidyverse/tidyr/issues/150#issuecomment-168829613):
+Suppose we have this data (from [tidyverse/tidyr#150](https://github.com/tidyverse/tidyr/issues/150#issuecomment-168829613)):
 
 ```{r}
 d <- tribble(
