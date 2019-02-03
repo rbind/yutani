@@ -24,7 +24,7 @@ So, please forget the post, and read this with fresh eyes!
 
 ## Wait, what is multi-`gather()` and multi-`spread()`??
 
-In short, the current `gather()` and `spread()` have a limitation; they can gather from or spread into only one column at once.
+In short, the current `gather()` and `spread()` have a limitation; they can gather into or spread from only one column at once.
 So, if we want to handle multiple columns, we need to coerce them to one column before actually gathering or spreading.
 
 This is especially problematic when the columns have different types.
