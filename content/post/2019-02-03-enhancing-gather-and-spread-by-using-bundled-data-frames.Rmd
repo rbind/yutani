@@ -1,5 +1,5 @@
 ---
-title: Enhancing gather() and spread() By Using "Bundled" data.frames
+title: Enhancing gather() and spread() by Using "Bundled" data.frames
 author: ''
 date: '2019-02-03'
 slug: enhancing-gather-and-spread-by-using-bundled-data-frames
