@@ -7,6 +7,8 @@ knitr::opts_knit$set(
   base.url = "/"
 )
 
+dir.create("cache/", showWarnings = FALSE)
+
 knitr::opts_chunk$set(
   cache.path = normalizePath("cache/", mustWork = TRUE),
   collapse = TRUE,
