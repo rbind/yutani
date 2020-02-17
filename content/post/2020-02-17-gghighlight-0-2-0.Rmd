@@ -12,36 +12,36 @@ tags:
 description: ''
 ---
 
-gghighlight 0.2.0 is on CRAN a while ago. Though most of the development effort of this 1.5 year is about internal improvements, let me introduce some new features.
+[gghighlight 0.2.0](https://yutannihilation.github.io/gghighlight/news/index.html#gghighlight-020) is on CRAN a while ago. This post briefly introduces the three new features. For basic usages, please refer to "[Introduction to gghighlight](https://yutannihilation.github.io/gghighlight/articles/gghighlight.html)".
 
 ## `keep_scales`
 
 To put it simply, gghighlight doesn't drop any data points but drops their colours.
 This means, while non-colour scales (e.g. `x`, `y` and `size`) are kept as they are,
-colour scales get shirinked. This might be inconvenient when we want to compare the
-original version and the highlighted version, or multiple highlighted versions.
+colour scales get shrinked. This might be inconvenient when we want to compare the
+original version and the highlighted version, or the multiple highlighted versions.
 
 
 ```{r keep_scale}
 library(gghighlight)
 library(patchwork)
 
-set.seed(1)
+set.seed(3)
 
 d <- data.frame(
-  value = c( 1, 2, 3,10,11,12, 9,10,11),
+  value = 1:9,
   category = rep(c("a","b","c"), 3),
   cont_var = runif(9),
   stringsAsFactors = FALSE
 )
 
 p <- ggplot(d, aes(x = category, y = value, color = cont_var)) +
-  geom_point(size = 8) +
+  geom_point(size = 10) +
   scale_colour_viridis_c()
 
 p1 <- p + ggtitle("original")
 p2 <- p + 
-  gghighlight(cont_var < 0.5,
+  gghighlight(dplyr::between(cont_var, 0.3, 0.7),
               use_direct_label = FALSE) +
   ggtitle("highlighted")
 
@@ -55,12 +55,63 @@ hood, gghighlight simply copies the original data to `geom_blank()`).
 
 ```{r keep_scale2}
 p3 <- p +
-  gghighlight(cont_var < 0.5,
+  gghighlight(dplyr::between(cont_var, 0.3, 0.7),
               keep_scales = TRUE,
               use_direct_label = FALSE) +
   ggtitle("highlighted (keep_scale = TRUE)")
 
-p1 / p3
+p1 * p3
+```
+
+## `calculate_per_facet`
+
+When used with `facet_*()`, `gghighlight()` puts unhighlighted data on all facets and calculate the predicates on the whole data.
+
+```{r calculate_per_facet1}
+Sys.setlocale(locale = "C")
+set.seed(16)
+
+d <- tibble::tibble(
+  day = rep(as.Date("2020-01-01") + 0:89, times = 4),
+  month = lubridate::ceiling_date(day, "month"),
+  value = c(
+    cumsum(runif(90, -1.0, 1.0)),
+    cumsum(runif(90, -1.1, 1.1)),
+    cumsum(runif(90, -1.1, 1.0)),
+    cumsum(runif(90, -1.0, 1.1))
+  ),
+  id = rep(c("a", "b", "c", "d"), each = 90)
+)
+
+p <- ggplot(d) +
+  geom_line(aes(day, value, colour = id)) +
+  facet_wrap(~ month, scales = "free_x")
+
+p + 
+  gghighlight(mean(value) > 0, keep_scales = TRUE)
+```
+
+But, it sometimes feels better to highlight facet by facet.
+For such a need, `gghighlight()` now has a new argument `calculate_per_facet`.
+
+```{r calculate_per_facet2}
+p + 
+  gghighlight(mean(value) > 0,
+              calculate_per_facet = TRUE,
+              keep_scales = TRUE)
+```
+
+Note that, as a general rule, only the layers **before** adding `gghighlight()` are modified.
+So, if you add facet_*() after adding gghighlight(), this option doesn’t work (though this
+behaviour might also be useful in some cases).
+
+```{r calculate_per_facet3}
+ggplot(d) +
+  geom_line(aes(day, value, colour = id)) +
+  gghighlight(mean(value) > 0,
+              calculate_per_facet = TRUE,
+              keep_scales = TRUE) +
+  facet_wrap(~ month, scales = "free_x")
 ```
 
 ## `unhighlighted_params`
@@ -104,11 +155,33 @@ p +
 ```
 
 You should notice that these vertical lines still have their colours.
-To grey them out, we can specify `point_colour = "grey80"`^[Be careful, `point_color` doesn't work...] on `unhighlighted_params`.
+To grey them out, we can specify `point_colour = "grey80"` on `unhighlighted_params` (Be careful, `point_color` doesn't work...).
 
-```{r unghighlighted_params2}
+```{r unhighlighted_params2}
 p + 
   gghighlight(sd(height) < 5.5, 
               unhighlighted_params = list(point_colour = "grey80"))
+```
+
+`unhighlighted_params` is also useful when you want more significant difference between the highlighted data and unhighligted ones. In the following example, `size` and `colour` are set differently.
+
+
+```{r unhighlighted_params3}
+set.seed(2)
+d <- purrr::map_dfr(
+  letters,
+  ~ data.frame(
+      idx = 1:400,
+      value = cumsum(runif(400, -1, 1)),
+      type = .,
+      flag = sample(c(TRUE, FALSE), size = 400, replace = TRUE),
+      stringsAsFactors = FALSE
+    )
+)
+
+ggplot(d) +
+  geom_line(aes(idx, value, colour = type), size = 5) +
+  gghighlight(max(value) > 19,
+              unhighlighted_params = list(size = 1, colour = alpha("pink", 0.4)))
 ```
 
