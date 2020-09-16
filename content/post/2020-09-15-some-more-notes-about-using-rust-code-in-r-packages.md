@@ -23,7 +23,7 @@ I learned this from [the code on clauswilke/sinab](https://github.com/clauswilke
 
 For example, let's consider an improved version of `hellorust::hello()` that takes an argument `name` to say hello to.
 
-### R
+### R code
 
 Let's name it `hello2`.
 
@@ -33,7 +33,7 @@ hello2 <- function(name) {
 }
 ```
 
-### C
+### C code
 
 `hello_wrapper2` would be like the code below.
 `STRING_ELT(x, i)` takes `i`-th element of a character vector `x`, and `Rf_translateCharUTF8()`
@@ -54,7 +54,7 @@ The string is passed as `const char *`.
 char * string_from_rust2(const char *);
 ```
 
-### Rust
+### Rust code
 
 The function takes the string as `*const c_char`.
 If we process the string in Rust code, we need to create a `String`.
@@ -128,7 +128,7 @@ pub struct Slice {
 }
 ```
 
-### R
+### R code
 
 The R code is pretty simple.
 
@@ -139,7 +139,7 @@ rev <- function(x) {
 }
 ```
 
-### C
+### C code
 
 We need to allocate a `REALSXP` vector and
 copy the result into it.
@@ -159,7 +159,7 @@ SEXP rev_wrapper(SEXP x){
 }
 ```
 
-### Rust
+### Rust code
 
 To convert the `Slice` into Rust's slice,
 we can use [`std::slice::from_raw_parts_mut`](https://doc.rust-lang.org/beta/std/slice/fn.from_raw_parts_mut.html).
@@ -201,7 +201,7 @@ This was my nice lesson to learn that Rust is not always automatically saving me
 Of course we can free it, but it's a bit tricky. Since `Slice` is allocated by
 Rust, it needs to be freed by Rust (c.f. [How to return byte array from Rust function to FFI C? - help - The Rust Programming Language Forum](https://users.rust-lang.org/t/how-to-return-byte-array-from-rust-function-to-ffi-c/18136/4)). (IIUC, if the length is known in advance, it might be good idea to allocate on C's side and pass it to the Rust, as the answer on the forum above suggests. `rev()` is the case, but let me explain the different one for now...)
 
-### Rust
+### Rust code
 
 Let's define a Rust function to free the memory.
 [`Box::from_raw()`](https://doc.rust-lang.org/std/boxed/struct.Box.html#method.from_raw) constructs a `Box`, a pointer for 
@@ -222,7 +222,7 @@ pub extern "C" fn free_slice(s: Slice) {
 
 I still don't understand how to use `Box` properly, but it seems `Sized` structs can be handled simpler using `Box` in the argument: <https://doc.rust-lang.org/std/boxed/index.html#memory-layout>
 
-### C
+### C code
 
 Call the function above from C to free the memory as soon as it's no longer in use.
 
@@ -252,11 +252,12 @@ The full diff is here:
 <https://github.com/r-rust/hellorust/commit/97b3628b4a66eae9e25898a79ebf20fa59741063>
 
 
-### Can we do zero-copy?
+### Can I do zero-copy?
 
 Copying memory to memory is not very cool, but it just works. I don't know any nicer way yet.
 [Apache Arrow](https://arrow.apache.org/) seems a overkill for this simple usage, but
 will I need it in future...? Or [flatbuffer](https://google.github.io/flatbuffers/)?
+This seems a battle for another day, so I'll stop here for now.
 
 ## Precompiled binary for Windows
 
