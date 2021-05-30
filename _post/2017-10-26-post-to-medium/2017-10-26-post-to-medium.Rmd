@@ -6,7 +6,7 @@ output:
   distill::distill_article:
     self_contained: false
 creative_commons: CC BY
-preview: https://yutani.rbind.io/posts/2017-10-26-post-to-medium/images/2017-10-26-screenshot_medium.png
+preview: https://yutani.rbind.io/post/2017-10-26-post-to-medium/images/2017-10-26-screenshot_medium.png
 ---
 
 I created an experimental package to work with [Medium API](https://github.com/Medium/medium-api-docs).

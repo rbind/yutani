@@ -6,7 +6,7 @@ output:
   distill::distill_article:
     self_contained: false
 creative_commons: CC BY
-preview: https://yutani.rbind.io/posts/2017-11-07-ggplot-add/2017-11-07-ggplot-add_files/figure-html/use-geom-highlight-poc-1.png
+preview: https://yutani.rbind.io/post/2017-11-07-ggplot-add/2017-11-07-ggplot-add_files/figure-html/use-geom-highlight-poc-1.png
 ---
 
 A generic function `ggplot_add()` was added to ggplot2 by this PR:

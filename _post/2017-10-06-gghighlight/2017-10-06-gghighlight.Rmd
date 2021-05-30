@@ -6,7 +6,7 @@ output:
   distill::distill_article:
     self_contained: false
 creative_commons: CC BY
-preview: https://yutani.rbind.io/posts/2017-10-06-gghighlight/2017-10-06-gghighlight_files/figure-html/non-logical-predicate-1.png
+preview: https://yutani.rbind.io/post/2017-10-06-gghighlight/2017-10-06-gghighlight_files/figure-html/non-logical-predicate-1.png
 ---
 (**Update**: The functions introduced here is deprecated now. Please use [`gghighlight()`](https://yutani.rbind.io/2018-06-16-re-intro-to-gghighlight/), which is far nicer one)
 

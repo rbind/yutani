@@ -11,7 +11,7 @@ output:
   distill::distill_article:
     self_contained: false
 creative_commons: CC BY
-preview: https://yutani.rbind.io/posts/2018-11-23-how-to-convert-a-human-to-waves-by-magick-package/images/preview.png
+preview: https://yutani.rbind.io/post/2018-11-23-how-to-convert-a-human-to-waves-by-magick-package/images/preview.png
 ---
 
 I saw this tweet about Mathematica last year, which naturally urged me to write the R version of this code.
