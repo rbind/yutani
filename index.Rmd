@@ -1,3 +1,5 @@
 ---
-site: blogdown:::blogdown_site
+title: "Wannabe Rstats-fu"
+site: distill::distill_website
+listing: posts
 ---

@@ -1,0 +1,12 @@
+name: "yutani.rbind.io_tmp"
+title: "Wannabe Rstats-fu"
+description: |
+  Wannabe Rstats-fu
+output_dir: "_site"
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "About"
+      href: about.html
+output: distill::distill_article

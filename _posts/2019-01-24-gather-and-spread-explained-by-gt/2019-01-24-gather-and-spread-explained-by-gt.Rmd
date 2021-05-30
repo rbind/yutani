@@ -1,0 +1,177 @@
+---
+title: gather() and spread() Explained By gt
+author: ''
+date: '2019-01-24'
+slug: gather-and-spread-explained-by-gt
+categories:
+  - tidyr
+  - tidy data
+  - gt
+output:
+  distill::distill_article:
+    self_contained: false
+creative_commons: CC BY
+---
+
+<style>
+table {
+  width: 50%;
+  font-size: 80%;
+}
+</style>
+
+This is episode 0 of my long adventure to [multi-spread](https://github.com/tidyverse/tidyr/issues/149) and [multi-gather](https://github.com/tidyverse/tidyr/issues/150) (this is my homework I got at [the tidyverse developer day](https://www.tidyverse.org/articles/2018/11/tidyverse-developer-day-2019/)...).
+This post might seem to introduce the different semantics from the current tidyr's one, but it's probably just because my idea is still vague. So, I really appreciate any feedbacks!
+
+## tl;dr
+
+I now think `gather()` and `spread()` are about
+
+1. grouping and
+2. `enframe()`ing and `deframe()`ing within each group
+
+Do you get what I mean? Let me explain step by step.
+
+## What does gt teach us?
+
+A while ago, [gt package](https://gt.rstudio.com/), [Richard Iannone](https://twitter.com/riannone)'s work-in-progress great work, was made public.
+
+gt package is wonderful, especially in that it makes us rethink about the possible semantics of columns. I mean, not all columns are equal. No, I don't say anything new; this is what you already know with `spread()` and `gather()`.
+
+### `spread()`ed data explained
+
+Take a look at this example data, a simpler version of the one in `?gather`:
+
+```{r data}
+library(tibble)
+library(gt)
+
+set.seed(1)
+# example in ?gather
+stocks <- tibble(
+  time = as.Date('2009-01-01') + 0:2,
+  X = rnorm(3, 0, 1),
+  Y = rnorm(3, 0, 2),
+  Z = rnorm(3, 0, 4)
+)
+
+stocks
+```
+
+Here, `X`, `Y`, and `Z` are the prices of stock X, Y, and Z.
+Of course, we can `gather()` the columns as this is the very example for this, but, we also can *bundle* these columns using `tab_spanner()`:
+
+```{r tab_spanner}
+gt(stocks) %>%
+  tab_spanner("price", vars(X, Y, Z))
+```
+
+Yet another option is to specify `groupname_col`. We roughly think each row is a group and `time` is the grouping variable here:
+
+```{r groupname_col}
+gt(stocks, groupname_col = "time")
+```
+
+### `gather()`ed data explained
+
+Let's see the gathered version next. Here's the data:
+
+```{r gather}
+stocksm <- stocks %>%
+  tidyr::gather("name", "value", X:Z)
+
+stocksm
+```
+
+This can be represented in a similar way. This time, a group doesn't consist of a single row, but the rows with the same grouping values. Accordingly, the grouping is the same as above.
+
+```{r groupname_col2}
+stocksm %>%
+  gt(groupname_col = "time")
+```
+
+You can see the only difference is the rotation. So, theoretically, this can be implemented as grouping + rotating.
+
+## Do it yourself by `enframe()` and `deframe()`
+
+Before entering into the implementations, I explain two tibble's functions, `enframe()` and `deframe()` briefly. They can convert a vector to/from a two-column data.frame.
+
+```{r enframe}
+library(tibble)
+
+x <- 1:3
+names(x) <- c("foo", "bar", "baz")
+
+enframe(x)
+```
+
+```{r deframe}
+deframe(enframe(x))
+```
+
+### `gather()`
+
+First, nest the data by `time`.
+
+```{r gather1}
+d <- dplyr::group_nest(stocks, time)
+d
+```
+
+Then, coerce the columns of the 1-row data.frames to vectors.
+(In practice, we should check if the elements are all coercible.)
+
+```{r gather2}
+d$data <- purrr::map(d$data, ~ vctrs::vec_c(!!! .))
+d
+```
+
+Lastly, `enframe()` the vectors and unnest the whole data.
+
+```{r gather3}
+d$data <- purrr::map(d$data, enframe)
+d
+```
+
+```{r gather4}
+tidyr::unnest(d)
+```
+
+Done.
+
+### `spread()`
+
+First step is the same as `gather()`. Just nest the data by `time`.
+
+```{r spread1}
+d <- dplyr::group_nest(stocksm, time)
+d
+```
+
+Then, `deframe()` the data.frames.
+(In practice, we have to fill the missing rows to ensure all data.frames have the same variables.)
+
+```{r spread2}
+d$data <- purrr::map(d$data, deframe)
+d
+```
+
+Then, convert the vectors to data.frames.
+
+```{r spread3}
+d$data <- purrr::map(d$data, ~ tibble::tibble(!!! .))
+d
+```
+
+
+Lastly, unnest the whole data.
+
+```{r spread4}
+tidyr::unnest(d)
+```
+
+Done.
+
+## What's next?
+
+I'm not sure... I roughly believe this can be extended to multi-gather and multi-spread (groups can have multiple vectors and data.frames), but I'm yet to see how different (or same) this is from the current tidyr's semantics. Again, any feedbacks are welcome!

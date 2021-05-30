@@ -1,0 +1,12 @@
+---
+title: "About this blog"
+description: |
+  This blog is where I struggle to learn about R.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Hi! I'm Hiroaki Yutani. You can call me either Yutani or Hiroaki. I guess Yutani is easier.
+This blog is where I struggle to learn about R (and improve my poor English).

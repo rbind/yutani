@@ -1,0 +1,20 @@
+{
+  "articles": [
+    {
+      "path": "about.html",
+      "title": "About this blog",
+      "description": "This blog is where I struggle to learn about R.",
+      "author": [],
+      "contents": "\nHi! I’m Hiroaki Yutani. You can call me either Yutani or Hiroaki. I guess Yutani is easier. This blog is where I struggle to learn about R (and improve my poor English).\n\n\n\n",
+      "last_modified": "2021-05-30T23:54:20+09:00"
+    },
+    {
+      "path": "index.html",
+      "title": "Wannabe Rstats-fu",
+      "author": [],
+      "contents": "\n\n\n\n",
+      "last_modified": "2021-05-30T23:54:21+09:00"
+    }
+  ],
+  "collections": ["posts/posts.json"]
+}
