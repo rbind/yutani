@@ -3,6 +3,7 @@ title: "Wannabe Rstats-fu"
 description: |
   Wannabe Rstats-fu
 output_dir: "_site"
+collection: "post"
 navbar:
   right:
     - text: "Home"
