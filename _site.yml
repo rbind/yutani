@@ -4,6 +4,9 @@ description: |
   Wannabe Rstats-fu
 output_dir: "_site"
 collection: "post"
+favicon: assets/favicon.ico
+twitter:
+  site: "@yutannihilat_en"
 navbar:
   right:
     - text: "About"
