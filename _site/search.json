@@ -6,14 +6,14 @@
       "description": "This blog is where I struggle to learn about R.",
       "author": [],
       "contents": "\nHi! I’m Hiroaki Yutani. You can call me either Yutani or Hiroaki. I guess Yutani is easier. This blog is where I struggle to learn about R (and improve my poor English).\n\n\n\n",
-      "last_modified": "2021-05-31T20:10:30+09:00"
+      "last_modified": "2021-05-31T00:59:32+09:00"
     },
     {
       "path": "index.html",
       "title": "Wannabe Rstats-fu",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-05-31T20:10:30+09:00"
+      "last_modified": "2021-05-31T00:59:32+09:00"
     }
   ],
   "collections": ["post/post.json"]
