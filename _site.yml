@@ -6,9 +6,11 @@ output_dir: "_site"
 collection: "post"
 navbar:
   right:
-    - text: "Home"
-      href: index.html
     - text: "About"
       href: about.html
+    - icon: fab fa-github
+      href: https://github.com/yutannihilation
+    - icon: fab fa-twitter
+      href: https://twitter.com/yutannihilat_en
 output: distill::distill_article
 theme: theme.css
