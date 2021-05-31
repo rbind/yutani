@@ -5,14 +5,14 @@
       "title": "About",
       "author": [],
       "contents": "\nHi! I’m Hiroaki Yutani. You can call me either Yutani or Hiroaki (I guess Yutani is easier). This blog is where I struggle to learn about R (and improve my poor English).\n\n\n\n\n",
-      "last_modified": "2021-05-31T21:41:17+09:00"
+      "last_modified": "2021-05-31T22:13:47+09:00"
     },
     {
       "path": "index.html",
       "title": "Wannabe Rstats-fu",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-05-31T21:41:18+09:00"
+      "last_modified": "2021-05-31T22:13:48+09:00"
     }
   ],
   "collections": ["post/post.json"]

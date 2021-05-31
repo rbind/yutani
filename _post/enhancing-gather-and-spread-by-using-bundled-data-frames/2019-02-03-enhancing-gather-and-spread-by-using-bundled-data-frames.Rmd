@@ -223,7 +223,7 @@ d %>%
   gather_bundles()
 ```
 
-![](/images/2019-02-03-multi-gather.jpg)
+![](./images/2019-02-03-multi-gather.jpg)
 
 ## `spread()` to the bundles
 
