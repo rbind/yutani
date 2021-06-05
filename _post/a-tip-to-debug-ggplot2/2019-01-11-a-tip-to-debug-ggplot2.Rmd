@@ -1,5 +1,6 @@
 ---
 title: A Tip to Debug ggplot2
+author: Hiroaki Yutani
 date: '2019-01-11'
 slug: a-tip-to-debug-ggplot2
 categories:

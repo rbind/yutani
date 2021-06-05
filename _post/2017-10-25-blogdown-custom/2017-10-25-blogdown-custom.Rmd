@@ -1,5 +1,6 @@
 ---
 title: "How Not To Knit All Rmd Files With Blogdown"
+author: Hiroaki Yutani
 date: "2017-10-25"
 categories: ["blogdown"]
 output:

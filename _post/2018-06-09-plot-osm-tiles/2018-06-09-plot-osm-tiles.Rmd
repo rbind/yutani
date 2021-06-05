@@ -1,5 +1,6 @@
 ---
 title: "Plot geom_sf() On OpenStreetMap Tiles"
+author: Hiroaki Yutani
 date: "2018-06-09"
 categories: ["ggplot2", "GIS"]
 output:

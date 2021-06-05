@@ -1,5 +1,6 @@
 ---
 title: "dplyr::select() Accepts Characters Since Version 0.7.0"
+author: Hiroaki Yutani
 date: "2017-10-25"
 categories: ["dplyr", "tidyeval"]
 output:

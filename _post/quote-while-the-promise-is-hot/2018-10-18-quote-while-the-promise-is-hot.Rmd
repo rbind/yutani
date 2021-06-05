@@ -1,6 +1,6 @@
 ---
 title: Quote While the Promise Is Hot!
-author: ''
+author: Hiroaki Yutani
 date: '2018-10-18'
 slug: quote-while-the-promise-is-hot
 categories:

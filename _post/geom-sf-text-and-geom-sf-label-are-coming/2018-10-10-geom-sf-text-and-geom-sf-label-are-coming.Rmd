@@ -1,6 +1,6 @@
 ---
 title: geom_sf_text() and geom_sf_label() Are Coming!
-author: ''
+author: Hiroaki Yutani
 date: '2018-10-10'
 slug: geom-sf-text-and-geom-sf-label-are-coming
 categories:

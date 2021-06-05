@@ -1,5 +1,6 @@
 ---
 title: "Anatomy of gghighlight"
+author: Hiroaki Yutani
 date: "2018-06-03"
 categories: ["gghighlight", "ggplot2"]
 output:

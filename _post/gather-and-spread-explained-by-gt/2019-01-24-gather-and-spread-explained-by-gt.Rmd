@@ -1,6 +1,6 @@
 ---
 title: gather() and spread() Explained By gt
-author: ''
+author: Hiroaki Yutani
 date: '2019-01-24'
 slug: gather-and-spread-explained-by-gt
 categories:

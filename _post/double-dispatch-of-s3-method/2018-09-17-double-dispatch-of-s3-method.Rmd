@@ -1,6 +1,6 @@
 ---
 title: Double dispatch of S3 method
-author: ''
+author: Hiroaki Yutani
 date: '2018-09-17'
 slug: double-dispatch-of-s3-method
 categories:

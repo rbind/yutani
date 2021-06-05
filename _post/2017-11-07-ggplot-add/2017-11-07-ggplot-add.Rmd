@@ -1,5 +1,6 @@
 ---
 title: "An Example Usage of ggplot_add()"
+author: Hiroaki Yutani
 date: "2017-11-07"
 categories: ["gghighlight", "ggplot2", "package"]
 output:

@@ -1,5 +1,6 @@
 ---
 title: "Introduction to gghighlight: Highlight ggplot's Lines and Points with Predicates"
+author: Hiroaki Yutani
 date: "2017-10-06"
 categories: ["gghighlight", "ggplot2", "package"]
 output:

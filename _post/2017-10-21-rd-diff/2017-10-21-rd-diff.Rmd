@@ -1,5 +1,6 @@
 ---
 title: "Confession: It's Me Who Committed the Change to Suppress .Rd Diffs On GitHub"
+author: Hiroaki Yutani
 date: "2017-10-21"
 categories: ["GitHub"]
 output:

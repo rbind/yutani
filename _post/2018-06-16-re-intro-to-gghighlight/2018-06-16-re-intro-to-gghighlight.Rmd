@@ -1,5 +1,6 @@
 ---
 title: "Re-introduction to gghighlight: Highlight ggplot2 with Predicates"
+author: Hiroaki Yutani
 date: "2018-06-16"
 categories: ["ggplot2", "gghighlight"]
 output:

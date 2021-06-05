@@ -1,5 +1,6 @@
 ---
 title: "Use CircleCI for R Projects"
+author: Hiroaki Yutani
 date: "2017-10-18"
 categories: ["testthat", "CircleCI"]
 output:

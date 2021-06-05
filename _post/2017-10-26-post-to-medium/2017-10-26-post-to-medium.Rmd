@@ -1,5 +1,6 @@
 ---
 title: "Publish R Markdown to Medium via An RStudio Addin"
+author: Hiroaki Yutani
 date: "2017-10-26"
 categories: ["Medium", "Web API"]
 output:

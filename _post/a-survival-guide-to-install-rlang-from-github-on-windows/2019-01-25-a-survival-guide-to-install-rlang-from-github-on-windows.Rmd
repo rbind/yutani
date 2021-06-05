@@ -1,6 +1,6 @@
 ---
 title: A Survival Guide To Install rlang From GitHub On Windows
-author: ''
+author: Hiroaki Yutani
 date: '2019-01-25'
 slug: a-survival-guide-to-install-rlang-from-github-on-windows
 categories:

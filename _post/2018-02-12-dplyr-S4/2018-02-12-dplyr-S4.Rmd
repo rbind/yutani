@@ -1,5 +1,6 @@
 ---
 title: "dplyr Doesn't Provide Full Support For S4 (For Now?)"
+author: Hiroaki Yutani
 date: "2018-02-12"
 categories: ["dplyr"]
 output:

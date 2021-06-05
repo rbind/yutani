@@ -1,6 +1,6 @@
 ---
 title: How To Convert A Human To Waves By Magick Package
-author: ''
+author: Hiroaki Yutani
 date: '2018-11-23'
 slug: how-to-convert-a-human-to-waves-by-magick-package
 categories:

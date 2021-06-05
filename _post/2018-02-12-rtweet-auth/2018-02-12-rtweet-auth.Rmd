@@ -1,5 +1,6 @@
 ---
 title: "ICYMI: Using rtweet Package Is Super Easy Now!"
+author: Hiroaki Yutani
 date: "2018-02-12"
 categories: ["rtweet"]
 output:
