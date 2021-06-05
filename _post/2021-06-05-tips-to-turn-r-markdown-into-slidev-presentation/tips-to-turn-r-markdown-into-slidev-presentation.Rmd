@@ -1,0 +1,243 @@
+---
+title: "Tips To Turn R Markdown Into Slidev Presentation"
+description: |
+  A short description of the post.
+author:
+  - name: Hiroaki Yutani
+categories:
+  - R Markdown
+  - Slidev
+date: "06-05-2021"
+output:
+  distill::distill_article:
+    self_contained: false
+creative_commons: CC BY
+---
+
+
+[Slidev](https://sli.dev) is a tool to create slides from Markdown . Recently,
+I used this with R Markdown and it was generally comfortable to use (the contents
+are all in Japanese, sorry. I'm preparing another blog post for this, so stay tuned!).
+
+[![slides](./images/slide.jpeg)](https://slidev-rmarkdown.vercel.app/)
+
+That said, there were some points I needed to google around to find solutions,
+so let me share these in this post.
+
+## Getting started
+
+First of all, we need to create a project that has Slidev installed.
+This is done by:
+
+``` sh
+npm init slidev
+```
+
+Then, you'll be asked several questions:
+
+``` console
+❯ npm init slidev
+npx: installed 22 in 3.269s
+
+  ●■▲
+  Slidev Creator  v0.19.6
+
+✔ Project name: … slidev-rmarkdown-test
+  Scaffolding project in slidev-rmarkdown-test ...
+  Done.
+
+✔ Install and start it now? … yes
+✔ Choose the agent › npm
+[ .................] / fetchMetadata: sill pacote version manifest for @nodelib/fs.scandir@2.1.5 fetched in 2883ms
+```
+
+`Project name` will be the directory name of the new project, so choose a name
+that doesn't exist yet.
+
+After finishing the installation, a web browser is launched and displays the template slides.
+These slides are created from `slides.md`, which is in the directory that was
+created right now.
+
+``` console
+❯ tree -L 1 .
+.
+|-- README.md
+|-- components
+|-- netlify.toml
+|-- node_modules
+|-- package-lock.json
+|-- package.json
+|-- slides.md
+`-- vercel.json
+
+2 directories, 6 files
+
+```
+
+So, what we should do next is obvious; let's place `slides.Rmd` in the same
+directory so that we can render it to `slides.md`. The prview server detects
+the change on `slides.md` and regenerate slides from it on the fly.
+
+We can stop the server with Ctrl+C on console.
+And, to launch again, execute this:
+
+``` sh
+npm run dev
+```
+
+## Escape YAML Front-matter
+
+Slidev also uses YAML Front-matter for defining metadata.
+So, it would be something like this, a combination of items from R Markdown and
+those from Slidev.
+
+For R Markdown, we should at least specify `md_document` with `preserve_yaml: true`,
+otherwise the metadata for Slidev will be lost. There might be soem name collision
+between R Markdown and Slidev, but I don't find it yet, fortunately.
+
+```yaml
+---
+# R Markdown metadata
+title: R Markdown to Slidev
+output:
+  md_document:
+    variant: "markdown_github"
+    preserve_yaml: true
+
+# Slidev metadata
+theme: seriph
+background: ./images/top.gif
+class: 'text-center'
+highlighter: shiki
+info: |
+  ## Use Slidev with R Markdown
+  
+  Source code can be found on <https://github.com/yutannihilation/slidev-rmarkdown>.
+---
+```
+
+
+## Per-slide YAML Front-matter
+
+One of the great things with Slidev is that it's very customizable.
+Per-slide YAML Front-matter is a good example of this; for example, we can
+specify `layout` (which can also be implemented by ourselves) per slide.
+For example, this 
+
+``` md
+---
+layout: image-right
+image: './images/image.png'
+---
+```
+
+will generate a slide like this:
+
+![slides](./images/slide1.png)
+
+But, the problem is, R Markdown (or probably underlying Pandoc?) seems to allow
+only one YAML front-matter. So, if we simply write
+
+``` md
+---
+layout: image-right
+image: './images/image.png'
+---
+```
+
+it will just disappear, alas... What can we do??
+
+Well, we can use [Pandoc's raw attribute](https://pandoc.org/MANUAL.html#generic-raw-attribute)
+to bypass the unnecessary conversion.
+
+```` md
+```{=html}
+---
+layout: image-right
+image: './images/image.png'
+---
+```
+````
+
+## Setting Base URL
+
+The `base.url` chunk option must be specified, otherwise the generated images
+will be broken. If the slides will be served on the root path (`/`), the setting
+should be like this:
+
+```` md
+```{r}
+knitr::opts_knit$set(base.url = "/")
+```
+````
+
+For another example, if the presentation is served under some path like
+`/slides/presentation1`, then the `base.url` should be like this:
+
+```` md
+```{r}
+knitr::opts_knit$set(base.url = "/slides/presentation1/")
+```
+````
+
+
+
+## Add blank lines between custom tags
+
+Slidev provides some custome tags. For example, `<v-click>` is a tag to apply
+annimations (c.f. <https://sli.dev/guide/animations.html>).
+But, for unknown reason, this won't work (I don't find the reason yet...):
+
+``` md
+<v-click>
+* item1
+</v-click>
+<v-click>
+* item2
+</v-click>
+```
+
+It seems we need to add blank lines between
+
+``` md
+<v-click>
+
+* item1
+
+</v-click>
+
+<v-click>
+
+* item2
+
+</v-click>
+```
+
+(This might be a bug (?) on Slidev's side, I'm not sure).
+
+## Line Highlighting
+
+Slidev provides line highlighing feature. For example, to highlight the line 2
+and 3, we can write like this:
+
+````
+```ts {2,3}
+function add(
+  a: Ref<number> | number,
+  b: Ref<number> | number
+) {
+  return computed(() => unref(a) + unref(b))
+}
+```
+````
+
+However, it seems this isn't allowed by Pandoc or R Markdown.
+At least I couldn't find any way to enable this syntax.
+
+
+## Limitations
+
+While Slidev has many cool features, I doubt it can be an R package like revealjs
+or xaringan, as Slidev requires Node.js to build, which is not very portable.
+So, I'm not sure if this post is useful to R users, but hope you enjoy!
+
