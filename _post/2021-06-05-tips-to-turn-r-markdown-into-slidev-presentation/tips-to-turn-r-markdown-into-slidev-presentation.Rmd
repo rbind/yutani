@@ -1,7 +1,8 @@
 ---
 title: "Tips To Turn R Markdown Into Slidev Presentation"
 description: |
-  A short description of the post.
+  Slidev is a tool to create slides from Markdown. This post is about some tips
+  to use it in combination with R Markdown.
 author:
   - name: Hiroaki Yutani
 categories:
@@ -11,18 +12,21 @@ date: "06-05-2021"
 output:
   distill::distill_article:
     self_contained: false
+preview: ./images/slide.jpeg
 creative_commons: CC BY
 ---
 
 
-[Slidev](https://sli.dev) is a tool to create slides from Markdown . Recently,
-I used this with R Markdown and it was generally comfortable to use (the contents
-are all in Japanese, sorry. I'm preparing another blog post for this, so stay tuned!).
+[Slidev](https://sli.dev) is a tool to create slides from Markdown. Recently,
+I used this with R Markdown and it was generally comfortable to use.
 
-[![slides](./images/slide.jpeg)](https://slidev-rmarkdown.vercel.app/)
+![Slides: <https://tokyor92-slides-rust-and-r.vercel.app/>](./images/slide.jpeg){ width=80% }
 
 That said, there were some points I needed to google around to find solutions,
 so let me share these in this post.
+
+(You might wonder what this presentation talks about R and Rust, but the contents
+are all in Japanese, sorry. I'm preparing another blog post for this, so stay tuned!)
 
 ## Getting started
 
@@ -55,12 +59,12 @@ npx: installed 22 in 3.269s
 that doesn't exist yet.
 
 After finishing the installation, a web browser is launched and displays the template slides.
-These slides are created from `slides.md`, which is in the directory that was
-created right now.
+These slides are generated from `slides.md` by a local Node.js server.
+`slides.md` is located in the top directory of the project created right now.
 
 ``` console
-❯ tree -L 1 .
-.
+❯ tree -L 1 slidev-rmarkdown-test
+slidev-rmarkdown-test
 |-- README.md
 |-- components
 |-- netlify.toml
@@ -75,25 +79,49 @@ created right now.
 ```
 
 So, what we should do next is obvious; let's place `slides.Rmd` in the same
-directory so that we can render it to `slides.md`. The prview server detects
-the change on `slides.md` and regenerate slides from it on the fly.
+directory so that we can render it to overwrite `slides.md`. The Node.js server
+detects the change on `slides.md` and regenerates slides from it on the fly.
 
 We can stop the server with Ctrl+C on console.
-And, to launch again, execute this:
+To launch again, execute this:
 
 ``` sh
 npm run dev
 ```
 
-## Escape YAML Front-matter
+## Choose `md_document`
 
-Slidev also uses YAML Front-matter for defining metadata.
-So, it would be something like this, a combination of items from R Markdown and
-those from Slidev.
+First of all, the target we want to generate is a Markdown file, so let's specify
+`md_document` as the `output`.
 
-For R Markdown, we should at least specify `md_document` with `preserve_yaml: true`,
-otherwise the metadata for Slidev will be lost. There might be soem name collision
-between R Markdown and Slidev, but I don't find it yet, fortunately.
+``` yaml
+---
+# R Markdown metadata
+title: R Markdown to Slidev
+output:
+  md_document:
+    variant: "markdown_github"
+---
+```
+
+## Preserve YAML front-matter
+
+What's a bit tricky here is that Slidev also uses YAML front-matter for defining
+metadata. So, we need to put both items for R Markdown and those for Slidev
+together, and preserve it after rendering. Let's specify `preserve_yaml: true`.
+
+``` yaml
+---
+...
+  md_document:
+    variant: "markdown_github"
+    preserve_yaml: true
+---
+```
+
+Then, put settings for Slidev.
+There might be some name collision between R Markdown and Slidev, but I don't find it yet, fortunately.
+The full YAML would be like this:
 
 ```yaml
 ---
@@ -116,13 +144,12 @@ info: |
 ---
 ```
 
-
 ## Per-slide YAML Front-matter
 
 One of the great things with Slidev is that it's very customizable.
 Per-slide YAML Front-matter is a good example of this; for example, we can
-specify `layout` (which can also be implemented by ourselves) per slide.
-For example, this 
+specify `layout` per slide like this
+(`image` is a specific parameter for `image-right` layout):
 
 ``` md
 ---
@@ -131,7 +158,7 @@ image: './images/image.png'
 ---
 ```
 
-will generate a slide like this:
+This will generate a slide like this:
 
 ![slides](./images/slide1.png)
 
@@ -186,7 +213,8 @@ knitr::opts_knit$set(base.url = "/slides/presentation1/")
 
 Slidev provides some custome tags. For example, `<v-click>` is a tag to apply
 annimations (c.f. <https://sli.dev/guide/animations.html>).
-But, for unknown reason, this won't work (I don't find the reason yet...):
+But, for unknown reason, this won't work (I don't find the reason yet, but I think
+something is happening in conversions by Pandoc):
 
 ``` md
 <v-click>
@@ -197,7 +225,7 @@ But, for unknown reason, this won't work (I don't find the reason yet...):
 </v-click>
 ```
 
-It seems we need to add blank lines between
+It seems we need to insert blank lines between the tags.
 
 ``` md
 <v-click>
@@ -213,31 +241,21 @@ It seems we need to add blank lines between
 </v-click>
 ```
 
-(This might be a bug (?) on Slidev's side, I'm not sure).
+## Deploy to GitHub Pages
 
-## Line Highlighting
+Slidev needs Node.js server to serve the slides, but it can also be exported as an
+standalone single-page application by the following command:
 
-Slidev provides line highlighing feature. For example, to highlight the line 2
-and 3, we can write like this:
-
-````
-```ts {2,3}
-function add(
-  a: Ref<number> | number,
-  b: Ref<number> | number
-) {
-  return computed(() => unref(a) + unref(b))
-}
+```sh
+npm run build
 ```
-````
 
-However, it seems this isn't allowed by Pandoc or R Markdown.
-At least I couldn't find any way to enable this syntax.
+The generated result goes to `dist/`, which can be deployed to GitHub Pages.
 
+Slidev also provides PDF export. For more details, please refer to [the official document](https://sli.dev/guide/exporting.html#single-page-application-spa).
 
 ## Limitations
 
 While Slidev has many cool features, I doubt it can be an R package like revealjs
-or xaringan, as Slidev requires Node.js to build, which is not very portable.
-So, I'm not sure if this post is useful to R users, but hope you enjoy!
-
+or xaringan, as Slidev requires Node.js to build or run, which is not very portable.
+So, I'm not sure how useful this post is to R users, but hope you enjoy!

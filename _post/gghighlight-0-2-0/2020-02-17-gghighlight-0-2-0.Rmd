@@ -1,5 +1,7 @@
 ---
 title: gghighlight 0.2.0
+description: |
+  gghighlight 0.2.0 is released!
 author: 'Hiroaki Yutani'
 date: '2020-02-17'
 slug: gghighlight-0-2-0
@@ -7,7 +9,6 @@ categories:
   - gghighlight
   - ggplot2
   - package
-description: ''
 output:
   distill::distill_article:
     self_contained: false

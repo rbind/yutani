@@ -88,7 +88,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_meta_tags-->
 <title>Wannabe Rstats-fu: Tips To Turn R Markdown Into Slidev Presentation</title>
 
-<meta property="description" itemprop="description" content="A short description of the post."/>
+<meta property="description" itemprop="description" content="Slidev is a tool to create slides from Markdown. This post is about some tips&#10;to use it in combination with R Markdown."/>
 
 <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
 <link rel="icon" type="image/vnd.microsoft.icon" href="../../assets/favicon.ico"/>
@@ -101,21 +101,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
 <meta property="og:title" content="Wannabe Rstats-fu: Tips To Turn R Markdown Into Slidev Presentation"/>
 <meta property="og:type" content="article"/>
-<meta property="og:description" content="A short description of the post."/>
+<meta property="og:description" content="Slidev is a tool to create slides from Markdown. This post is about some tips&#10;to use it in combination with R Markdown."/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:site_name" content="Wannabe Rstats-fu"/>
 
 <!--  https://dev.twitter.com/cards/types/summary -->
 <meta property="twitter:card" content="summary"/>
 <meta property="twitter:title" content="Wannabe Rstats-fu: Tips To Turn R Markdown Into Slidev Presentation"/>
-<meta property="twitter:description" content="A short description of the post."/>
+<meta property="twitter:description" content="Slidev is a tool to create slides from Markdown. This post is about some tips&#10;to use it in combination with R Markdown."/>
 <meta property="twitter:site" content="@yutannihilat_en"/>
 
 <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","categories","date","output","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Tips To Turn R Markdown Into Slidev Presentation"]},{"type":"character","attributes":{},"value":["A short description of the post."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Hiroaki Yutani"]}]}]},{"type":"character","attributes":{},"value":["R Markdown","Slidev"]},{"type":"character","attributes":{},"value":["06-05-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["CC BY"]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","categories","date","output","preview","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Tips To Turn R Markdown Into Slidev Presentation"]},{"type":"character","attributes":{},"value":["Slidev is a tool to create slides from Markdown. This post is about some tips\nto use it in combination with R Markdown."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Hiroaki Yutani"]}]}]},{"type":"character","attributes":{},"value":["R Markdown","Slidev"]},{"type":"character","attributes":{},"value":["06-05-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["./images/slide.jpeg"]},{"type":"character","attributes":{},"value":["CC BY"]}]}
 </script>
 <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -2392,7 +2392,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Tips To Turn R Markdown Into Slidev Presentation","description":"A short description of the post.","authors":[{"author":"Hiroaki Yutani","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-06-05T00:00:00.000+09:00","citationText":"Yutani, 2021"}
+{"title":"Tips To Turn R Markdown Into Slidev Presentation","description":"Slidev is a tool to create slides from Markdown. This post is about some tips\nto use it in combination with R Markdown.","authors":[{"author":"Hiroaki Yutani","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-06-05T00:00:00.000+09:00","citationText":"Yutani, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2427,7 +2427,7 @@ d-appendix d-footnote-list a.footnote-backlink {
   <a href="../../index.html#category:Slidev" class="dt-tag">Slidev</a>
 </div>
 <!--/radix_placeholder_categories-->
-<p><p>A short description of the post.</p></p>
+<p><p>Slidev is a tool to create slides from Markdown. This post is about some tips to use it in combination with R Markdown.</p></p>
 </div>
 
 <div class="d-byline">
@@ -2437,9 +2437,12 @@ d-appendix d-footnote-list a.footnote-backlink {
 </div>
 
 <div class="d-article">
-<p><a href="https://sli.dev">Slidev</a> is a tool to create slides from Markdown . Recently, I used this with R Markdown and it was generally comfortable to use (the contents are all in Japanese, sorry. I’m preparing another blog post for this, so stay tuned!).</p>
-<p><a href="https://slidev-rmarkdown.vercel.app/"><img src="images/slide.jpeg" alt="slides" /></a></p>
+<p><a href="https://sli.dev">Slidev</a> is a tool to create slides from Markdown. Recently, I used this with R Markdown and it was generally comfortable to use.</p>
+<figure>
+<img src="images/slide.jpeg" style="width:80.0%" alt="Slides: https://tokyor92-slides-rust-and-r.vercel.app/" /><figcaption aria-hidden="true">Slides: <a href="https://tokyor92-slides-rust-and-r.vercel.app/" class="uri">https://tokyor92-slides-rust-and-r.vercel.app/</a></figcaption>
+</figure>
 <p>That said, there were some points I needed to google around to find solutions, so let me share these in this post.</p>
+<p>(You might wonder what this presentation talks about R and Rust, but the contents are all in Japanese, sorry. I’m preparing another blog post for this, so stay tuned!)</p>
 <h2 id="getting-started">Getting started</h2>
 <p>First of all, we need to create a project that has Slidev installed. This is done by:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> init slidev</span></code></pre></div>
@@ -2458,9 +2461,9 @@ npx: installed 22 in 3.269s
 ✔ Choose the agent › npm
 [ .................] / fetchMetadata: sill pacote version manifest for @nodelib/fs.scandir@2.1.5 fetched in 2883ms</code></pre>
 <p><code>Project name</code> will be the directory name of the new project, so choose a name that doesn’t exist yet.</p>
-<p>After finishing the installation, a web browser is launched and displays the template slides. These slides are created from <code>slides.md</code>, which is in the directory that was created right now.</p>
-<pre class="console"><code>❯ tree -L 1 .
-.
+<p>After finishing the installation, a web browser is launched and displays the template slides. These slides are generated from <code>slides.md</code> by a local Node.js server. <code>slides.md</code> is located in the top directory of the project created right now.</p>
+<pre class="console"><code>❯ tree -L 1 slidev-rmarkdown-test
+slidev-rmarkdown-test
 |-- README.md
 |-- components
 |-- netlify.toml
@@ -2472,101 +2475,109 @@ npx: installed 22 in 3.269s
 
 2 directories, 6 files
 </code></pre>
-<p>So, what we should do next is obvious; let’s place <code>slides.Rmd</code> in the same directory so that we can render it to <code>slides.md</code>. The prview server detects the change on <code>slides.md</code> and regenerate slides from it on the fly.</p>
-<p>We can stop the server with Ctrl+C on console. And, to launch again, execute this:</p>
+<p>So, what we should do next is obvious; let’s place <code>slides.Rmd</code> in the same directory so that we can render it to overwrite <code>slides.md</code>. The Node.js server detects the change on <code>slides.md</code> and regenerates slides from it on the fly.</p>
+<p>We can stop the server with Ctrl+C on console. To launch again, execute this:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run dev</span></code></pre></div>
-<h2 id="escape-yaml-front-matter">Escape YAML Front-matter</h2>
-<p>Slidev also uses YAML Front-matter for defining metadata. So, it would be something like this, a combination of items from R Markdown and those from Slidev.</p>
-<p>For R Markdown, we should at least specify <code>md_document</code> with <code>preserve_yaml: true</code>, otherwise the metadata for Slidev will be lost. There might be soem name collision between R Markdown and Slidev, but I don’t find it yet, fortunately.</p>
+<h2 id="choose-md_document">Choose <code>md_document</code></h2>
+<p>First of all, the target we want to generate is a Markdown file, so let’s specify <code>md_document</code> as the <code>output</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># R Markdown metadata</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> R Markdown to Slidev</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">md_document</span><span class="kw">:</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">variant</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;markdown_github&quot;</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">preserve_yaml</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Slidev metadata</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span><span class="kw">:</span><span class="at"> seriph</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">background</span><span class="kw">:</span><span class="at"> ./images/top.gif</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;text-center&#39;</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">highlighter</span><span class="kw">:</span><span class="at"> shiki</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">info</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  ## Use Slidev with R Markdown</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  Source code can be found on &lt;https://github.com/yutannihilation/slidev-rmarkdown&gt;.</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
+<h2 id="preserve-yaml-front-matter">Preserve YAML front-matter</h2>
+<p>What’s a bit tricky here is that Slidev also uses YAML front-matter for defining metadata. So, we need to put both items for R Markdown and those for Slidev together, and preserve it after rendering. Let’s specify <code>preserve_yaml: true</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">  md_document:</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">    variant: &quot;markdown_github&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">    preserve_yaml: true</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
+<p>Then, put settings for Slidev. There might be some name collision between R Markdown and Slidev, but I don’t find it yet, fortunately. The full YAML would be like this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># R Markdown metadata</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> R Markdown to Slidev</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">md_document</span><span class="kw">:</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">variant</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;markdown_github&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">preserve_yaml</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Slidev metadata</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span><span class="kw">:</span><span class="at"> seriph</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">background</span><span class="kw">:</span><span class="at"> ./images/top.gif</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;text-center&#39;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">highlighter</span><span class="kw">:</span><span class="at"> shiki</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">info</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  ## Use Slidev with R Markdown</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  Source code can be found on &lt;https://github.com/yutannihilation/slidev-rmarkdown&gt;.</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div>
 <h2 id="per-slide-yaml-front-matter">Per-slide YAML Front-matter</h2>
-<p>One of the great things with Slidev is that it’s very customizable. Per-slide YAML Front-matter is a good example of this; for example, we can specify <code>layout</code> (which can also be implemented by ourselves) per slide. For example, this</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">layout:</span><span class="co"> image-right</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> &#39;./images/image.png&#39;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
-<p>will generate a slide like this:</p>
+<p>One of the great things with Slidev is that it’s very customizable. Per-slide YAML Front-matter is a good example of this; for example, we can specify <code>layout</code> per slide like this (<code>image</code> is a specific parameter for <code>image-right</code> layout):</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">layout:</span><span class="co"> image-right</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> &#39;./images/image.png&#39;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
+<p>This will generate a slide like this:</p>
 <figure>
 <img src="images/slide1.png" alt="slides" /><figcaption aria-hidden="true">slides</figcaption>
 </figure>
 <p>But, the problem is, R Markdown (or probably underlying Pandoc?) seems to allow only one YAML front-matter. So, if we simply write</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">layout:</span><span class="co"> image-right</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> &#39;./images/image.png&#39;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="an">layout:</span><span class="co"> image-right</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> &#39;./images/image.png&#39;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code></pre></div>
 <p>it will just disappear, alas… What can we do??</p>
 <p>Well, we can use <a href="https://pandoc.org/MANUAL.html#generic-raw-attribute">Pandoc’s raw attribute</a> to bypass the unnecessary conversion.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="in">---</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="in">layout: image-right</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="in">image: &#39;./images/image.png&#39;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="in">---</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="in">---</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="in">layout: image-right</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="in">image: &#39;./images/image.png&#39;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="in">---</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div>
 <h2 id="setting-base-url">Setting Base URL</h2>
 <p>The <code>base.url</code> chunk option must be specified, otherwise the generated images will be broken. If the slides will be served on the root path (<code>/</code>), the setting should be like this:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;layout-chunk&quot;</span><span class="ot"> data-layout=</span><span class="st">&quot;l-body&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;sourceCode&quot;</span><span class="kw">&gt;&lt;pre</span><span class="ot"> class=</span><span class="st">&quot;sourceCode r&quot;</span><span class="kw">&gt;&lt;code</span><span class="ot"> class=</span><span class="st">&quot;sourceCode r&quot;</span><span class="kw">&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>knitr<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>::<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;va&#39;</span><span class="kw">&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&#39;https://rdrr.io/pkg/knitr/man/opts_knit.html&#39;</span><span class="kw">&gt;</span>opts_knit<span class="kw">&lt;/a&gt;&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>$<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>set<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>(<span class="kw">&lt;/span&gt;</span>base.url <span class="kw">&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>=<span class="kw">&lt;/span&gt;</span> <span class="kw">&lt;span</span><span class="ot"> class=</span><span class="st">&#39;st&#39;</span><span class="kw">&gt;</span>&quot;/&quot;<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>)<span class="kw">&lt;/span&gt;</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;layout-chunk&quot;</span><span class="ot"> data-layout=</span><span class="st">&quot;l-body&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;sourceCode&quot;</span><span class="kw">&gt;&lt;pre</span><span class="ot"> class=</span><span class="st">&quot;sourceCode r&quot;</span><span class="kw">&gt;&lt;code</span><span class="ot"> class=</span><span class="st">&quot;sourceCode r&quot;</span><span class="kw">&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>knitr<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>::<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;va&#39;</span><span class="kw">&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&#39;https://rdrr.io/pkg/knitr/man/opts_knit.html&#39;</span><span class="kw">&gt;</span>opts_knit<span class="kw">&lt;/a&gt;&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>$<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>set<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>(<span class="kw">&lt;/span&gt;</span>base.url <span class="kw">&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>=<span class="kw">&lt;/span&gt;</span> <span class="kw">&lt;span</span><span class="ot"> class=</span><span class="st">&#39;st&#39;</span><span class="kw">&gt;</span>&quot;/&quot;<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>)<span class="kw">&lt;/span&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div>
 <p>For another example, if the presentation is served under some path like <code>/slides/presentation1</code>, then the <code>base.url</code> should be like this:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;layout-chunk&quot;</span><span class="ot"> data-layout=</span><span class="st">&quot;l-body&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;sourceCode&quot;</span><span class="kw">&gt;&lt;pre</span><span class="ot"> class=</span><span class="st">&quot;sourceCode r&quot;</span><span class="kw">&gt;&lt;code</span><span class="ot"> class=</span><span class="st">&quot;sourceCode r&quot;</span><span class="kw">&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>knitr<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>::<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;va&#39;</span><span class="kw">&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&#39;https://rdrr.io/pkg/knitr/man/opts_knit.html&#39;</span><span class="kw">&gt;</span>opts_knit<span class="kw">&lt;/a&gt;&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>$<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>set<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>(<span class="kw">&lt;/span&gt;</span>base.url <span class="kw">&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>=<span class="kw">&lt;/span&gt;</span> <span class="kw">&lt;span</span><span class="ot"> class=</span><span class="st">&#39;st&#39;</span><span class="kw">&gt;</span>&quot;/slides/presentation1/&quot;<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>)<span class="kw">&lt;/span&gt;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div>
-<h2 id="add-blank-lines-between-custom-tags">Add blank lines between custom tags</h2>
-<p>Slidev provides some custome tags. For example, <code>&lt;v-click&gt;</code> is a tag to apply annimations (c.f. <a href="https://sli.dev/guide/animations.html" class="uri">https://sli.dev/guide/animations.html</a>). But, for unknown reason, this won’t work (I don’t find the reason yet…):</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;v-click&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>item1</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/v-click&gt;</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;v-click&gt;</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>item2</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/v-click&gt;</span></span></code></pre></div>
-<p>It seems we need to add blank lines between</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;v-click&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>item1</span>
+<div class="sourceCode" id="cb12"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;layout-chunk&quot;</span><span class="ot"> data-layout=</span><span class="st">&quot;l-body&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span><span class="ot"> class=</span><span class="st">&quot;sourceCode&quot;</span><span class="kw">&gt;&lt;pre</span><span class="ot"> class=</span><span class="st">&quot;sourceCode r&quot;</span><span class="kw">&gt;&lt;code</span><span class="ot"> class=</span><span class="st">&quot;sourceCode r&quot;</span><span class="kw">&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>knitr<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>::<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;va&#39;</span><span class="kw">&gt;&lt;a</span><span class="ot"> href=</span><span class="st">&#39;https://rdrr.io/pkg/knitr/man/opts_knit.html&#39;</span><span class="kw">&gt;</span>opts_knit<span class="kw">&lt;/a&gt;&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>$<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;fu&#39;</span><span class="kw">&gt;</span>set<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>(<span class="kw">&lt;/span&gt;</span>base.url <span class="kw">&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>=<span class="kw">&lt;/span&gt;</span> <span class="kw">&lt;span</span><span class="ot"> class=</span><span class="st">&#39;st&#39;</span><span class="kw">&gt;</span>&quot;/slides/presentation1/&quot;<span class="kw">&lt;/span&gt;&lt;span</span><span class="ot"> class=</span><span class="st">&#39;op&#39;</span><span class="kw">&gt;</span>)<span class="kw">&lt;/span&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/v-click&gt;</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;v-click&gt;</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>item2</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/v-click&gt;</span></span></code></pre></div>
-<p>(This might be a bug (?) on Slidev’s side, I’m not sure).</p>
-<h2 id="line-highlighting">Line Highlighting</h2>
-<p>Slidev provides line highlighing feature. For example, to highlight the line 2 and 3, we can write like this:</p>
-<pre><code>```ts {2,3}
-function add(
-  a: Ref&lt;number&gt; | number,
-  b: Ref&lt;number&gt; | number
-) {
-  return computed(() =&gt; unref(a) + unref(b))
-}
-```</code></pre>
-<p>However, it seems this isn’t allowed by Pandoc or R Markdown. At least I couldn’t find any way to enable this syntax.</p>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span></code></pre></div>
+<h2 id="add-blank-lines-between-custom-tags">Add blank lines between custom tags</h2>
+<p>Slidev provides some custome tags. For example, <code>&lt;v-click&gt;</code> is a tag to apply annimations (c.f. <a href="https://sli.dev/guide/animations.html" class="uri">https://sli.dev/guide/animations.html</a>). But, for unknown reason, this won’t work (I don’t find the reason yet, but I think something is happening in conversions by Pandoc):</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;v-click&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>item1</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/v-click&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;v-click&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>item2</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/v-click&gt;</span></span></code></pre></div>
+<p>It seems we need to insert blank lines between the tags.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;v-click&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>item1</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/v-click&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;v-click&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>item2</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/v-click&gt;</span></span></code></pre></div>
+<h2 id="deploy-to-github-pages">Deploy to GitHub Pages</h2>
+<p>Slidev needs Node.js server to serve the slides, but it can also be exported as an standalone single-page application by the following command:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run build</span></code></pre></div>
+<p>The generated result goes to <code>dist/</code>, which can be deployed to GitHub Pages.</p>
+<p>Slidev also provides PDF export. For more details, please refer to <a href="https://sli.dev/guide/exporting.html#single-page-application-spa">the official document</a>.</p>
 <h2 id="limitations">Limitations</h2>
-<p>While Slidev has many cool features, I doubt it can be an R package like revealjs or xaringan, as Slidev requires Node.js to build, which is not very portable. So, I’m not sure if this post is useful to R users, but hope you enjoy!</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>While Slidev has many cool features, I doubt it can be an R package like revealjs or xaringan, as Slidev requires Node.js to build or run, which is not very portable. So, I’m not sure how useful this post is to R users, but hope you enjoy!</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
