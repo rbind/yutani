@@ -1,5 +1,25 @@
 [
   {
+    "path": "post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/",
+    "title": "Unofficial Introduction To extendr (1): Your First R Package With Rust",
+    "description": "Integrate R and Rust with extendr.",
+    "author": [
+      {
+        "name": "Hiroaki Yutani",
+        "url": {}
+      }
+    ],
+    "date": "2021-06-06",
+    "categories": [
+      "Rust",
+      "extendr"
+    ],
+    "contents": "\nextendr is a project that provides an interface between R and Rust. While I’m also a member of this project, my contributions were small and I’m still a newbie to Rust, so let me add “Unofficial” to the title at the moment :P\nFor the full introduction, including the motivation to use Rust, please watch this great presentation by Claus Wilke:\n\n\nThe talk covers almost everything (history of the project, getting started with Rust, and how to compile a Rust function into an R function), so, instead of providing an overview, this post will focus on the one missing topic, how to write an R package using (r)extendr.\nRust crates and R packages under extendr\nThat said, to avoid confusion, probably I need to write a minimal introduction about the crates and packages we’ll look into… Let’s take a look briefly.\nlibR-sys (Rust crate)\nlibR-sys is low-level bindings to R’s C API, and powers extendr. This is not what the ordinal users use directly, so we can forget this name for now.\nextendr (Rust crate)\nextendr is a user-friendly Rust interface to R. To be precise, “extendr” itself is not a crate’s name; it’s extendr-api that we’ll actually use. There are some more crates that might be needed in some use cases, but let’s forget them for now.\nrextendr (R package)\nrextendr is an R package. This provides two types of functions:\nFunctions for compiling and running Rust code on the fly (e.g. rust_function())\nFunctions for developing R package using extendr\nWhat we’ll use in this post is the latter is type 2.\nSetup\nFirst of all, you need R and Rust installed.\nR\nI think you already have R installed.\nRust\nIf you are using macOS or Linux, you can follow the official guide. That’s all.\nIf you are using Windows, extendr requires you to install the latest Rtools, and use the following toolchains:\nrustup default stable-msvc\nrustup target add x86_64-pc-windows-gnu  # 64-bit\nrustup target add i686-pc-windows-gnu    # 32-bit\nFor the details, please refer to the installation instructions on libR-sys’s repo.\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-06-06T13:03:09+09:00",
+    "input_file": "unofficial-introduction-to-extendr-1-your-first-r-package-with-rust.knit.md"
+  },
+  {
     "path": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/",
     "title": "Tips To Turn R Markdown Into Slidev Presentation",
     "description": "Slidev is a tool to create slides from Markdown. This post is about some tips\nto use it in combination with R Markdown.",

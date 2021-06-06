@@ -1,0 +1,85 @@
+---
+title: "Unofficial Introduction To extendr (1): Your First R Package With Rust"
+description: |
+  Integrate R and Rust with extendr.
+author:
+  - name: Hiroaki Yutani
+    url: {}
+categories:
+  - Rust
+  - extendr
+date: 06-06-2021
+output:
+  distill::distill_article:
+    self_contained: false
+creative_commons: CC BY
+---
+
+
+[extendr](https://github.com/extendr/extendr) is a project that provides an
+interface between R and Rust. While I'm also a member of this project,
+my contributions were small and I'm still a newbie to Rust, so let me add
+"Unofficial" to the title at the moment :P
+
+For the full introduction, including the motivation to use Rust, please watch
+this great presentation by Claus Wilke:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EX7YG2pmcC8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+The talk covers almost everything (history of the project, getting started with Rust,
+and how to compile a Rust function into an R function), so, instead of providing
+an overview, this post will focus on the one missing topic, how to write an R
+package using (r)extendr.
+
+## Rust crates and R packages under extendr
+
+That said, to avoid confusion, probably I need to write a minimal introduction
+about the crates and packages we'll look into...
+Let's take a look briefly.
+
+### libR-sys (Rust crate)
+
+[libR-sys](https://github.com/extendr/libR-sys) is low-level bindings to R's C
+API, and powers extendr. This is not what the ordinal users use directly,
+so we can forget this name for now.
+
+### extendr (Rust crate)
+
+[extendr](https://github.com/extendr/extendr) is a user-friendly Rust interface
+to R. To be precise, "extendr" itself is not a crate's name; it's `extendr-api`
+that we'll actually use. There are some more crates that might be needed in some
+use cases, but let's forget them for now.
+
+### rextendr (R package)
+
+[**r**extendr](https://github.com/extendr/rextendr) is an R package. This provides
+two types of functions:
+
+1. Functions for compiling and running Rust code on the fly (e.g. [`rust_function()`](https://extendr.github.io/rextendr/reference/rust_source.html))
+2. Functions for developing R package using extendr
+
+What we'll use in this post is the latter is type 2.
+
+## Setup
+
+First of all, you need R and Rust installed.
+
+### R
+
+I think you already have R installed.
+
+### Rust
+
+If you are using macOS or Linux, you can follow the [official guide](https://www.rust-lang.org/tools/install). That's all.
+
+If you are using Windows, extendr requires you to install the latest Rtools, and
+use the following toolchains:
+
+``` sh
+rustup default stable-msvc
+rustup target add x86_64-pc-windows-gnu  # 64-bit
+rustup target add i686-pc-windows-gnu    # 32-bit
+```
+
+For the details, please refer to the installation instructions on [libR-sys's repo](https://github.com/extendr/libR-sys/#installation).
+
