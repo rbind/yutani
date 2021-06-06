@@ -11,6 +11,8 @@ categories:
 date: 06-06-2021
 output:
   distill::distill_article:
+    toc: true
+    toc_depth: 2
     self_contained: false
 creative_commons: CC BY
 ---
@@ -58,17 +60,13 @@ two types of functions:
 1. Functions for compiling and running Rust code on the fly (e.g. [`rust_function()`](https://extendr.github.io/rextendr/reference/rust_source.html))
 2. Functions for developing R package using extendr
 
-What we'll use in this post is the latter is type 2.
+What we'll use in this post is type 2.
 
 ## Setup
 
-First of all, you need R and Rust installed.
-
-### R
-
-I think you already have R installed.
-
 ### Rust
+
+First of all, you need Rust.
 
 If you are using macOS or Linux, you can follow the [official guide](https://www.rust-lang.org/tools/install). That's all.
 
@@ -83,3 +81,245 @@ rustup target add i686-pc-windows-gnu    # 32-bit
 
 For the details, please refer to the installation instructions on [libR-sys's repo](https://github.com/extendr/libR-sys/#installation).
 
+### rextendr
+
+rextendr is not on CRAN at the time of writing this blog post, so please install it from GitHub.
+
+```{r install-rextendr, eval=FALSE}
+remotes::install_github("extendr/rextendr")
+```
+
+## Create a template package
+
+Creating an R package with extendr is very easy with usethis and rextendr.
+
+First, create an R package by using `usethis::create_package()` as usual.
+
+```{r create-package, eval=FALSE}
+usethis::create_package("path/to/my1stextendrpkg")
+```
+
+Then, create the scaffolding to use extendr. This can be done with `rextendr::use_extendr()`.
+
+```{r use-rextendr, eval=FALSE}
+rextendr::use_extendr()
+```
+
+```
+✓ Creating src/rust/src.
+✓ Setting active project to 'path/to/my1stextendrpkg'
+✓ Writing 'src/entrypoint.c'
+✓ Writing 'src/Makevars'
+✓ Writing 'src/Makevars.win'
+✓ Writing 'src/.gitignore'
+✓ Writing src/rust/Cargo.toml.
+✓ Writing 'src/rust/src/lib.rs'
+✓ Writing 'R/extendr-wrappers.R'
+✓ Finished configuring extendr for package my1stextendrpkg.
+• Please update the system requirement in DESCRIPTION file.
+• Please run `rextendr::document()` for changes to take effect.
+```
+
+Done! Now we are just one step away (as the message says, we need to run `rextendr::document()`) from calling Rust fucntions from R.
+But, before moving forward, let's look at the files added.
+
+## Package structure
+
+The below files are the ones `rextendr::use_extendr()` added.
+
+```
+.
+├── R
+│   └── extendr-wrappers.R
+...
+└── src
+    ├── Makevars
+    ├── Makevars.win
+    ├── entrypoint.c
+    └── rust
+        ├── Cargo.toml
+        └── src
+            └── lib.rs
+```
+
+* **`R/extendr-wrappers.R`**: This file contains auto-generated R functions from Rust code. We don't modify this by hand.
+* **`src/Makevars`**, **`src/Makevars.win`**: This hooks `cargo build` at the installation of the R package. In most of the cases, we don't edit these.
+* **`src/entrypoint.c`**: This is needed to avoid the linker removing the static library. In 99.9% of the cases, we don't edit this (except for changing the crate name).
+* **`src/rust/`**: Rust code of a crate using extendr-api. This is where we mainly write code.
+
+So, in short, what we should really look at is only these two files:
+
+### `src/rust/Cargo.toml`
+
+
+``` toml
+[package]
+name = 'my1stextendrpkg'
+version = '0.1.0'
+edition = '2018'
+
+[lib]
+crate-type = [ 'staticlib' ]
+
+[dependencies]
+extendr-api = '*'
+```
+
+The create name is the same name as the R package's name by default. You can change this,
+but it might be a bit tired to tweak other files accordingly, so I recommend leaving this.
+
+To try the dev version of the extendr, you can modify the last line to
+
+```toml
+extendr-api = { git = 'https://github.com/extendr/extendr' }
+```
+
+### `src/rust/src/lib.rs`
+
+``` rs
+use extendr_api::prelude::*;
+
+/// Return string `"Hello world!"` to R.
+/// @export
+#[extendr]
+fn hello_world() -> &'static str {
+    "Hello world!"
+}
+
+// Macro to generate exports.
+// This ensures exported functions are registered with R.
+// See corresponding C code in `entrypoint.c`.
+extendr_module! {
+    mod my1stextendrpkg;
+    fn hello_world;
+}
+```
+
+Let's explain this part by part.
+
+The first line `use extendr_api::prelude::*;` loads functions used frequently.
+
+Next, your eyes might notice the `/` are repeated 3 times, while the usual
+Rust comment requires only twice (i.e. `//`). These are treated as roxygen comments
+and copied to the auto-generated R code. This is analogous to Rcpp/cpp11's `//'`.
+
+``` rs
+/// Return string `"Hello world!"` to R.
+/// @export
+```
+
+The next line is the core of `extendr`'s mechanism. If the function is marked with this
+macro, the corresponding R function will be generated automatically (I'll explain
+the detail later). This is analogous to Rcpp's `[[Rcpp::export]]` and cpp11's `[[cpp11::register]]`.
+
+``` rs
+#[extendr]
+```
+
+The last 3 lines are the macro for generating exports, as the comment explains.
+If we implement another function than `hello_world`, it needs to be listed here
+as well as marking it with `#[extendr]` macro.
+
+``` rs
+extendr_module! {
+    mod my1stextendrpkg;
+    fn hello_world;
+}
+```
+
+## Compile and use the package
+
+### Compile
+
+Compiling Rust code into R functions is as easy as this one command:
+
+```{r build-and-use, eval=FALSE}
+rextendr::document()
+```
+
+```
+✓ Saving changes in the open files.
+ℹ Generating extendr wrapper functions for package: my1stextendrpkg.
+! No library found at src/my1stextendrpkg.so, recompilation is required.
+Re-compiling my1stextendrpkg
+─  installing *source* package ‘my1stextendrpkg’ ... (347ms)
+   ** using staged installation
+   ** libs
+   rm -Rf my1stextendrpkg.so ./rust/target/release/libmy1stextendrpkg.a entrypoint.o
+   gcc -std=gnu99 -I"/usr/share/R/include" -DNDEBUG      -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-tbZjLv/r-base-4.1.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -UNDEBUG -Wall -pedantic -g -O0 -fdiagnostics-color=always -c entrypoint.c -o entrypoint.o
+   cargo build --lib --release --manifest-path=./rust/Cargo.toml
+       Updating crates.io index
+      Compiling proc-macro2 v1.0.27
+      Compiling unicode-xid v0.2.2
+      Compiling libR-sys v0.2.1
+      Compiling syn v1.0.72
+      Compiling extendr-engine v0.2.0
+      Compiling lazy_static v1.4.0
+      Compiling quote v1.0.9
+      Compiling extendr-macros v0.2.0
+      Compiling extendr-api v0.2.0
+      Compiling my1stextendrpkg v0.1.0 (path/to/my1stextendrpkg/src/rust)
+       Finished release [optimized] target(s) in 19.05s
+   gcc -std=gnu99 -shared -L/usr/lib/R/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -o my1stextendrpkg.so entrypoint.o -L./rust/target/release -lmy1stextendrpkg -L/usr/lib/R/lib -lR
+   installing to /tmp/RtmpfMcL08/devtools_install_e2d6351b843c/00LOCK-my1stextendrpkg/00new/my1stextendrpkg/libs
+   ** checking absolute paths in shared objects and dynamic libraries
+─  DONE (my1stextendrpkg)
+✓ Writing 'R/extendr-wrappers.R'.
+ℹ Updating my1stextendrpkg documentation
+ℹ Loading my1stextendrpkg
+Writing NAMESPACE
+Writing NAMESPACE
+Writing hello_world.Rd
+```
+
+You might wonder why compilation is triggered while the function name is just `document()`.
+Well, this is because the compilation is actually needed to generate document
+from Rust code. This is consistent with `devtools::document()`'s behavior for C/C++ codes[^hook].
+
+Anyway, by doing above, the following files are updated or generated:
+
+```
+.
+...
+├── NAMESPACE                       ----------(4)
+├── R
+│   └── extendr-wrappers.R          ----------(3)
+├── man
+│   └── hello_world.Rd              ----------(4)
+└── src
+    ├── my1stextendrpkg.so          ----------(2)
+    └── rust
+        └── target
+            └── release
+                ├── libmy1stextendrpkg.a   ---(1)
+                ...
+```
+
+1. **`src/rust/target/release/libmy1stextendrpkg.a`** (the extension depends on the OS): 
+This is the static library built from Rust code. This will be then used for compiling
+shared library `my1stextendrpkg.so`.
+2. **`src/my1stextendrpkg.so`** (the extension depends on the OS): This is the
+shared object that is actually called from R.
+3. **`R/extendr-wrappers.R`**: The auto-generated R functions, including roxygen
+comments, goes to this file. The roxygen comments are accordingly converted into
+Rd files and `NAMESPACE`.
+4. **`man/`**, **`NAMESPACE`**: These are generated from roxygen comments.
+
+### Load and use
+
+As all things are done by `rexetndr::document()` already, we can just load it 
+(or install it if you want) and use the function.
+
+```{r load1, eval=FALSE}
+devtools::load_all(".")
+hello_world()
+```
+
+```{r load2, echo=FALSE}
+devtools::load_all("~/repo/my1stextendrpkg/")
+hello_world()
+```
+
+
+[^hook]: The current mechanism under `devtools::document()` doesn't have extensible mechanism
+for other languages than C/C++ (c.f. [r-lib/pkgbuild#115](https://github.com/r-lib/pkgbuild/issues/115)), so we needed to have our own one.

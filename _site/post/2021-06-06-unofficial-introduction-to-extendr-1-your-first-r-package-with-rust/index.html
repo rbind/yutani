@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","categories","date","output","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Unofficial Introduction To extendr (1): Your First R Package With Rust"]},{"type":"character","attributes":{},"value":["Integrate R and Rust with extendr."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Hiroaki Yutani"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":[]}},"value":[]}]}]},{"type":"character","attributes":{},"value":["Rust","extendr"]},{"type":"character","attributes":{},"value":["06-06-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["CC BY"]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","categories","date","output","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Unofficial Introduction To extendr (1): Your First R Package With Rust"]},{"type":"character","attributes":{},"value":["Integrate R and Rust with extendr."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Hiroaki Yutani"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":[]}},"value":[]}]}]},{"type":"character","attributes":{},"value":["Rust","extendr"]},{"type":"character","attributes":{},"value":["06-06-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]},{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["CC BY"]}]}
 </script>
 <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -2437,6 +2437,18 @@ d-appendix d-footnote-list a.footnote-backlink {
 </div>
 
 <div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#rust-crates-and-r-packages-under-extendr">Rust crates and R packages under extendr</a></li>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#create-a-template-package">Create a template package</a></li>
+<li><a href="#package-structure">Package structure</a></li>
+<li><a href="#compile-and-use-the-package">Compile and use the package</a></li>
+</ul>
+</nav>
+</div>
 <p><a href="https://github.com/extendr/extendr">extendr</a> is a project that provides an interface between R and Rust. While I’m also a member of this project, my contributions were small and I’m still a newbie to Rust, so let me add “Unofficial” to the title at the moment :P</p>
 <p>For the full introduction, including the motivation to use Rust, please watch this great presentation by Claus Wilke:</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/EX7YG2pmcC8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
@@ -2454,19 +2466,200 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li>Functions for compiling and running Rust code on the fly (e.g. <a href="https://extendr.github.io/rextendr/reference/rust_source.html"><code>rust_function()</code></a>)</li>
 <li>Functions for developing R package using extendr</li>
 </ol>
-<p>What we’ll use in this post is the latter is type 2.</p>
+<p>What we’ll use in this post is type 2.</p>
 <h2 id="setup">Setup</h2>
-<p>First of all, you need R and Rust installed.</p>
-<h3 id="r">R</h3>
-<p>I think you already have R installed.</p>
 <h3 id="rust">Rust</h3>
+<p>First of all, you need Rust.</p>
 <p>If you are using macOS or Linux, you can follow the <a href="https://www.rust-lang.org/tools/install">official guide</a>. That’s all.</p>
 <p>If you are using Windows, extendr requires you to install the latest Rtools, and use the following toolchains:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rustup</span> default stable-msvc</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">rustup</span> target add x86_64-pc-windows-gnu  <span class="co"># 64-bit</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">rustup</span> target add i686-pc-windows-gnu    <span class="co"># 32-bit</span></span></code></pre></div>
 <p>For the details, please refer to the installation instructions on <a href="https://github.com/extendr/libR-sys/#installation">libR-sys’s repo</a>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h3 id="rextendr">rextendr</h3>
+<p>rextendr is not on CRAN at the time of writing this blog post, so please install it from GitHub.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>remotes</span><span class='fu'>::</span><span class='fu'><a href='https://remotes.r-lib.org/reference/install_github.html'>install_github</a></span><span class='op'>(</span><span class='st'>"extendr/rextendr"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="create-a-template-package">Create a template package</h2>
+<p>Creating an R package with extendr is very easy with usethis and rextendr.</p>
+<p>First, create an R package by using <code>usethis::create_package()</code> as usual.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>usethis</span><span class='fu'>::</span><span class='fu'><a href='https://usethis.r-lib.org/reference/create_package.html'>create_package</a></span><span class='op'>(</span><span class='st'>"path/to/my1stextendrpkg"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Then, create the scaffolding to use extendr. This can be done with <code>rextendr::use_extendr()</code>.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>rextendr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rextendr/man/use_extendr.html'>use_extendr</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<pre><code>✓ Creating src/rust/src.
+✓ Setting active project to &#39;path/to/my1stextendrpkg&#39;
+✓ Writing &#39;src/entrypoint.c&#39;
+✓ Writing &#39;src/Makevars&#39;
+✓ Writing &#39;src/Makevars.win&#39;
+✓ Writing &#39;src/.gitignore&#39;
+✓ Writing src/rust/Cargo.toml.
+✓ Writing &#39;src/rust/src/lib.rs&#39;
+✓ Writing &#39;R/extendr-wrappers.R&#39;
+✓ Finished configuring extendr for package my1stextendrpkg.
+• Please update the system requirement in DESCRIPTION file.
+• Please run `rextendr::document()` for changes to take effect.</code></pre>
+<p>Done! Now we are just one step away (as the message says, we need to run <code>rextendr::document()</code>) from calling Rust fucntions from R. But, before moving forward, let’s look at the files added.</p>
+<h2 id="package-structure">Package structure</h2>
+<p>The below files are the ones <code>rextendr::use_extendr()</code> added.</p>
+<pre><code>.
+├── R
+│   └── extendr-wrappers.R
+...
+└── src
+    ├── Makevars
+    ├── Makevars.win
+    ├── entrypoint.c
+    └── rust
+        ├── Cargo.toml
+        └── src
+            └── lib.rs</code></pre>
+<ul>
+<li><strong><code>R/extendr-wrappers.R</code></strong>: This file contains auto-generated R functions from Rust code. We don’t modify this by hand.</li>
+<li><strong><code>src/Makevars</code></strong>, <strong><code>src/Makevars.win</code></strong>: This hooks <code>cargo build</code> at the installation of the R package. In most of the cases, we don’t edit these.</li>
+<li><strong><code>src/entrypoint.c</code></strong>: This is needed to avoid the linker removing the static library. In 99.9% of the cases, we don’t edit this (except for changing the crate name).</li>
+<li><strong><code>src/rust/</code></strong>: Rust code of a crate using extendr-api. This is where we mainly write code.</li>
+</ul>
+<p>So, in short, what we should really look at is only these two files:</p>
+<h3 id="srcrustcargo.toml"><code>src/rust/Cargo.toml</code></h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">package</span><span class="kw">]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">name</span> <span class="op">=</span> <span class="st">&#39;</span><span class="vs">my1stextendrpkg</span><span class="st">&#39;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="dt">version</span> <span class="op">=</span> <span class="st">&#39;</span><span class="vs">0.1.0</span><span class="st">&#39;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">edition</span> <span class="op">=</span> <span class="st">&#39;</span><span class="vs">2018</span><span class="st">&#39;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">lib</span><span class="kw">]</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="dt">crate-type</span> <span class="op">=</span> <span class="op">[</span> <span class="st">&#39;</span><span class="vs">staticlib</span><span class="st">&#39;</span> <span class="op">]</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">[</span><span class="dt">dependencies</span><span class="kw">]</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="dt">extendr-api</span> <span class="op">=</span> <span class="st">&#39;</span><span class="vs">*</span><span class="st">&#39;</span></span></code></pre></div>
+<p>The create name is the same name as the R package’s name by default. You can change this, but it might be a bit tired to tweak other files accordingly, so I recommend leaving this.</p>
+<p>To try the dev version of the extendr, you can modify the last line to</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">extendr-api</span> <span class="op">=</span> <span class="op">{ </span><span class="dt">git</span><span class="op"> =</span> <span class="st">&#39;</span><span class="vs">https://github.com/extendr/extendr</span><span class="st">&#39;</span> <span class="op">}</span></span></code></pre></div>
+<h3 id="srcrustsrclib.rs"><code>src/rust/src/lib.rs</code></h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">extendr_api::prelude::</span><span class="op">*;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">/// Return string `&quot;Hello world!&quot;` to R.</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">/// @export</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> hello_world() <span class="op">-&gt;</span> <span class="op">&amp;</span><span class="ot">&#39;static</span> <span class="dt">str</span> <span class="op">{</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Hello world!&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Macro to generate exports.</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">// This ensures exported functions are registered with R.</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">// See corresponding C code in `entrypoint.c`.</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="pp">extendr_module!</span> <span class="op">{</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">mod</span> my1stextendrpkg<span class="op">;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> hello_world;</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Let’s explain this part by part.</p>
+<p>The first line <code>use extendr_api::prelude::*;</code> loads functions used frequently.</p>
+<p>Next, your eyes might notice the <code>/</code> are repeated 3 times, while the usual Rust comment requires only twice (i.e. <code>//</code>). These are treated as roxygen comments and copied to the auto-generated R code. This is analogous to Rcpp/cpp11’s <code>//'</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">/// Return string `&quot;Hello world!&quot;` to R.</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">/// @export</span></span></code></pre></div>
+<p>The next line is the core of <code>extendr</code>’s mechanism. If the function is marked with this macro, the corresponding R function will be generated automatically (I’ll explain the detail later). This is analogous to Rcpp’s <code>[[Rcpp::export]]</code> and cpp11’s <code>[[cpp11::register]]</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span></code></pre></div>
+<p>The last 3 lines are the macro for generating exports, as the comment explains. If we implement another function than <code>hello_world</code>, it needs to be listed here as well as marking it with <code>#[extendr]</code> macro.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">extendr_module!</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">mod</span> my1stextendrpkg<span class="op">;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> hello_world;</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h2 id="compile-and-use-the-package">Compile and use the package</h2>
+<h3 id="compile">Compile</h3>
+<p>Compiling Rust code into R functions is as easy as this one command:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>rextendr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rextendr/man/document.html'>document</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<pre><code>✓ Saving changes in the open files.
+ℹ Generating extendr wrapper functions for package: my1stextendrpkg.
+! No library found at src/my1stextendrpkg.so, recompilation is required.
+Re-compiling my1stextendrpkg
+─  installing *source* package ‘my1stextendrpkg’ ... (347ms)
+   ** using staged installation
+   ** libs
+   rm -Rf my1stextendrpkg.so ./rust/target/release/libmy1stextendrpkg.a entrypoint.o
+   gcc -std=gnu99 -I&quot;/usr/share/R/include&quot; -DNDEBUG      -fpic  -g -O2 -fdebug-prefix-map=/build/r-base-tbZjLv/r-base-4.1.0=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -UNDEBUG -Wall -pedantic -g -O0 -fdiagnostics-color=always -c entrypoint.c -o entrypoint.o
+   cargo build --lib --release --manifest-path=./rust/Cargo.toml
+       Updating crates.io index
+      Compiling proc-macro2 v1.0.27
+      Compiling unicode-xid v0.2.2
+      Compiling libR-sys v0.2.1
+      Compiling syn v1.0.72
+      Compiling extendr-engine v0.2.0
+      Compiling lazy_static v1.4.0
+      Compiling quote v1.0.9
+      Compiling extendr-macros v0.2.0
+      Compiling extendr-api v0.2.0
+      Compiling my1stextendrpkg v0.1.0 (path/to/my1stextendrpkg/src/rust)
+       Finished release [optimized] target(s) in 19.05s
+   gcc -std=gnu99 -shared -L/usr/lib/R/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -o my1stextendrpkg.so entrypoint.o -L./rust/target/release -lmy1stextendrpkg -L/usr/lib/R/lib -lR
+   installing to /tmp/RtmpfMcL08/devtools_install_e2d6351b843c/00LOCK-my1stextendrpkg/00new/my1stextendrpkg/libs
+   ** checking absolute paths in shared objects and dynamic libraries
+─  DONE (my1stextendrpkg)
+✓ Writing &#39;R/extendr-wrappers.R&#39;.
+ℹ Updating my1stextendrpkg documentation
+ℹ Loading my1stextendrpkg
+Writing NAMESPACE
+Writing NAMESPACE
+Writing hello_world.Rd</code></pre>
+<p>You might wonder why compilation is triggered while the function name is just <code>document()</code>. Well, this is because the compilation is actually needed to generate document from Rust code. This is consistent with <code>devtools::document()</code>’s behavior for C/C++ codes<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>Anyway, by doing above, the following files are updated or generated:</p>
+<pre><code>.
+...
+├── NAMESPACE                       ----------(4)
+├── R
+│   └── extendr-wrappers.R          ----------(3)
+├── man
+│   └── hello_world.Rd              ----------(4)
+└── src
+    ├── my1stextendrpkg.so          ----------(2)
+    └── rust
+        └── target
+            └── release
+                ├── libmy1stextendrpkg.a   ---(1)
+                ...</code></pre>
+<ol type="1">
+<li><strong><code>src/rust/target/release/libmy1stextendrpkg.a</code></strong> (the extension depends on the OS): This is the static library built from Rust code. This will be then used for compiling shared library <code>my1stextendrpkg.so</code>.</li>
+<li><strong><code>src/my1stextendrpkg.so</code></strong> (the extension depends on the OS): This is the shared object that is actually called from R.</li>
+<li><strong><code>R/extendr-wrappers.R</code></strong>: The auto-generated R functions, including roxygen comments, goes to this file. The roxygen comments are accordingly converted into Rd files and <code>NAMESPACE</code>.</li>
+<li><strong><code>man/</code></strong>, <strong><code>NAMESPACE</code></strong>: These are generated from roxygen comments.</li>
+</ol>
+<h3 id="load-and-use">Load and use</h3>
+<p>As all things are done by <code>rexetndr::document()</code> already, we can just load it (or install it if you want) and use the function.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>devtools</span><span class='fu'>::</span><span class='fu'><a href='https://devtools.r-lib.org//reference/load_all.html'>load_all</a></span><span class='op'>(</span><span class='st'>"."</span><span class='op'>)</span>
+<span class='fu'>hello_world</span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>[1] &quot;Hello world!&quot;</code></pre>
+</div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>The current mechanism under <code>devtools::document()</code> doesn’t have extensible mechanism for other languages than C/C++ (c.f. <a href="https://github.com/r-lib/pkgbuild/issues/115">r-lib/pkgbuild#115</a>), so we needed to have our own one.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
