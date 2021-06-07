@@ -42,7 +42,7 @@ Let's take a look briefly.
 ### libR-sys (Rust crate)
 
 [libR-sys](https://github.com/extendr/libR-sys) is low-level bindings to R's C
-API, and powers extendr. This is not what the ordinal users use directly,
+API, and powers extendr. This is not what the ordinary users use directly,
 so we can forget this name for now.
 
 ### extendr (Rust crate)
@@ -317,6 +317,7 @@ hello_world()
 ```
 
 ```{r load2, echo=FALSE}
+# TODO: this isn't very reproducible. I assume there's already my1stextendrpkg exists
 devtools::load_all("~/repo/my1stextendrpkg/")
 
 hello_world()
