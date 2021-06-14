@@ -86,41 +86,41 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-<title>Wannabe Rstats-fu: Some more notes about using Rust code in R packages</title>
+<title>Wannabe Rstats-fu: Unofficial Introduction To extendr (2): Type Conversion Between R and Rust</title>
 
-<meta property="description" itemprop="description" content=""/>
+<meta property="description" itemprop="description" content="Integrate R and Rust with extendr"/>
 
 <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
 <link rel="icon" type="image/vnd.microsoft.icon" href="../../assets/favicon.ico"/>
 
 <!--  https://schema.org/Article -->
-<meta property="article:published" itemprop="datePublished" content="2020-09-15"/>
-<meta property="article:created" itemprop="dateCreated" content="2020-09-15"/>
+<meta property="article:published" itemprop="datePublished" content="2021-06-14"/>
+<meta property="article:created" itemprop="dateCreated" content="2021-06-14"/>
 <meta name="article:author" content="Hiroaki Yutani"/>
 
 <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-<meta property="og:title" content="Wannabe Rstats-fu: Some more notes about using Rust code in R packages"/>
+<meta property="og:title" content="Wannabe Rstats-fu: Unofficial Introduction To extendr (2): Type Conversion Between R and Rust"/>
 <meta property="og:type" content="article"/>
-<meta property="og:description" content=""/>
+<meta property="og:description" content="Integrate R and Rust with extendr"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:site_name" content="Wannabe Rstats-fu"/>
 
 <!--  https://dev.twitter.com/cards/types/summary -->
 <meta property="twitter:card" content="summary"/>
-<meta property="twitter:title" content="Wannabe Rstats-fu: Some more notes about using Rust code in R packages"/>
-<meta property="twitter:description" content=""/>
+<meta property="twitter:title" content="Wannabe Rstats-fu: Unofficial Introduction To extendr (2): Type Conversion Between R and Rust"/>
+<meta property="twitter:description" content="Integrate R and Rust with extendr"/>
 <meta property="twitter:site" content="@yutannihilat_en"/>
 
 <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","author","date","slug","categories","description","output","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Some more notes about using Rust code in R packages"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Hiroaki Yutani"]}]}]},{"type":"character","attributes":{},"value":["2020-09-15"]},{"type":"character","attributes":{},"value":["some-more-notes-about-using-rust-code-in-r-packages"]},{"type":"character","attributes":{},"value":["Rust"]},{"type":"character","attributes":{},"value":[""]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]},{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["CC BY"]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","categories","output","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Unofficial Introduction To extendr (2): Type Conversion Between R and Rust"]},{"type":"character","attributes":{},"value":["Integrate R and Rust with extendr"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Hiroaki Yutani"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":[]}},"value":[]}]}]},{"type":"character","attributes":{},"value":["06-14-2021"]},{"type":"character","attributes":{},"value":["Rust","extendr"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]},{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["CC BY"]}]}
 </script>
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/anchor-4.2.2/anchor.min.js","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/bowser-1.9.3/bowser.min.js","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/distill-2.2.21/template.v2.js","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/header-attrs-2.8/header-attrs.js","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/jquery-1.11.3/jquery.min.js","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/popper-2.6.0/popper.min.js","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/tippy-6.2.7/tippy-bundle.umd.min.js","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/tippy-6.2.7/tippy-light-border.css","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/tippy-6.2.7/tippy.css","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/tippy-6.2.7/tippy.umd.min.js","2020-09-15-some-more-notes-about-using-rust-code-in-r-packages_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/anchor-4.2.2/anchor.min.js","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/bowser-1.9.3/bowser.min.js","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/distill-2.2.21/template.v2.js","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/header-attrs-2.8/header-attrs.js","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/jquery-1.11.3/jquery.min.js","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/popper-2.6.0/popper.min.js","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/tippy-6.2.7/tippy-bundle.umd.min.js","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/tippy-6.2.7/tippy-light-border.css","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/tippy-6.2.7/tippy.css","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/tippy-6.2.7/tippy.umd.min.js","unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2392,7 +2392,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Some more notes about using Rust code in R packages","description":"","authors":[{"author":"Hiroaki Yutani","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2020-09-15T00:00:00.000+09:00","citationText":"Yutani, 2020"}
+{"title":"Unofficial Introduction To extendr (2): Type Conversion Between R and Rust","description":"Integrate R and Rust with extendr","authors":[{"author":"Hiroaki Yutani","authorURL":{},"affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-06-14T00:00:00.000+09:00","citationText":"Yutani, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2420,20 +2420,20 @@ d-appendix d-footnote-list a.footnote-backlink {
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>Some more notes about using Rust code in R packages</h1>
+<h1>Unofficial Introduction To extendr (2): Type Conversion Between R and Rust</h1>
 <!--radix_placeholder_categories-->
 <div class="dt-tags">
   <a href="../../index.html#category:Rust" class="dt-tag">Rust</a>
+  <a href="../../index.html#category:extendr" class="dt-tag">extendr</a>
 </div>
 <!--/radix_placeholder_categories-->
-
+<p><p>Integrate R and Rust with extendr</p></p>
 </div>
 
 <div class="d-byline">
+  Hiroaki Yutani true 
   
-  Hiroaki Yutani
-  
-<br/>2020-09-15
+<br/>06-14-2021
 </div>
 
 <div class="d-article">
@@ -2441,250 +2441,46 @@ d-appendix d-footnote-list a.footnote-backlink {
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#passing-a-string-from-r-to-rust">Passing a string from R to Rust</a></li>
-<li><a href="#passing-a-vector-from-rust-to-r-or-vice-versa">Passing a vector from Rust to R, or vice versa</a></li>
-<li><a href="#update-free-the-rust-allocated-memory">Update: free the Rust-allocated memory</a></li>
-<li><a href="#precompiled-binary-for-windows">Precompiled binary for Windows</a></li>
-<li><a href="#why-rust">Why Rust?</a></li>
+<li><a href="#vector">Vector</a></li>
 </ul>
 </nav>
 </div>
-<p><a href="https://github.com/yutannihilation/RRustFib">When I first tried to use Rust code within R package five years ago</a>, it was like crawling in the dark and I wasted several days just to find I didn’t understand anything. But, now we have <a href="https://jeroen.github.io/erum2018/">Using Rust code in R packages</a>, a great presentation by Jeroen Ooms. It taught me almost everything! But still, I needed to learn myself some more things for my purpose. Let me leave some notes about those.</p>
-<h2 id="passing-a-string-from-r-to-rust">Passing a string from R to Rust</h2>
-<p><a href="https://github.com/r-rust/hellorust">hellorust</a> covers how to pass a string from Rust to R, but not the vice versa. I learned this from <a href="https://github.com/clauswilke/sinab/blob/master/src/render_markdown.c">the code on clauswilke/sinab</a>.</p>
-<p>For example, let’s consider an improved version of <code>hellorust::hello()</code> that takes an argument <code>name</code> to say hello to.</p>
-<h3 id="r-code">R code</h3>
-<p>Let’s name it <code>hello2</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>hello2 <span class="ot">&lt;-</span> <span class="cf">function</span>(name) {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.Call</span>(hello_wrapper2, name)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<h3 id="c-code">C code</h3>
-<p><code>hello_wrapper2</code> would be like the code below. <code>STRING_ELT(x, i)</code> takes <code>i</code>-th element of a character vector <code>x</code>, and <code>Rf_translateCharUTF8()</code> converts it to a pointer to the string encoded in UTF-8.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>SEXP hello_wrapper2(SEXP name){</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">char</span>* res = string_from_rust2(Rf_translateCharUTF8(STRING_ELT(name, <span class="dv">0</span>)));</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> Rf_ScalarString(Rf_mkCharCE(res, CE_UTF8));</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<h3 id="api.h"><code>api.h</code></h3>
-<p>The string is passed as <code>const char *</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">char</span> * string_from_rust2(<span class="dt">const</span> <span class="dt">char</span> *);</span></code></pre></div>
-<h3 id="rust-code">Rust code</h3>
-<p>The function takes the string as <code>*const c_char</code>. If we process the string in Rust code, we need to create a <code>String</code>. This is done by <a href="https://doc.rust-lang.org/std/ffi/struct.CStr.html#method.from_ptr"><code>std::ffi::CStr::from_ptr()</code></a>. <code>CStr</code> is a representation of a borrowed C string, and can be converted to <code>String</code> by <code>to_string()</code> or <code>to_string_lossy()</code>. Since this is an unsafe operation, it needs to be wrapped with <code>unsafe</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> std<span class="op">;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::ffi::</span><span class="op">{</span>CStr<span class="op">,</span> CString<span class="op">};</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::os::raw::</span><span class="dt">c_char</span><span class="op">;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Utility function to convert c_char to string</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> c_char_to_string(c<span class="op">:</span> <span class="op">*</span><span class="kw">const</span> <span class="dt">c_char</span>) <span class="op">-&gt;</span> <span class="dt">String</span> <span class="op">{</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">unsafe</span> <span class="op">{</span> <span class="pp">CStr::</span>from_ptr(c)<span class="op">.</span>to_string_lossy()<span class="op">.</span>into_owned() <span class="op">}</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>no_mangle<span class="at">]</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">extern</span> <span class="kw">fn</span> string_from_rust2(c_name<span class="op">:</span> <span class="op">*</span><span class="kw">const</span> <span class="dt">c_char</span>) <span class="op">-&gt;</span> <span class="op">*</span><span class="kw">const</span> <span class="dt">c_char</span> <span class="op">{</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> name <span class="op">=</span> c_char_to_string(c_name)<span class="op">;</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> s <span class="op">=</span> <span class="pp">CString::</span>new(<span class="pp">format!</span>(<span class="st">&quot;Hello {} !&quot;</span><span class="op">,</span> name))<span class="op">.</span>unwrap()<span class="op">;</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> p <span class="op">=</span> s<span class="op">.</span>as_ptr()<span class="op">;</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="pp">std::mem::</span>forget(s)<span class="op">;</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    p</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h3 id="result">Result</h3>
-<p>You can view the diff here:</p>
-<p><a href="https://github.com/r-rust/hellorust/commit/a42346c728a408fb1b2e6e7522082e19ec5b8a04" class="uri">https://github.com/r-rust/hellorust/commit/a42346c728a408fb1b2e6e7522082e19ec5b8a04</a></p>
-<h2 id="passing-a-vector-from-rust-to-r-or-vice-versa">Passing a vector from Rust to R, or vice versa</h2>
-<p>(Update: this code is incomplete, please read the next section as well)</p>
-<p>It took me some time to figure out how to handle arrays. I’m still not confident if I understand this correctly, but let me try to explain…</p>
-<p>We cannot simply pass a variable length of vector to FFI because the length is not known. So, what we need to do is obvious; pass the data with the length at the same time. To do this, we need to define the same <code>struct</code> both in C and in Rust.</p>
-<p>Suppose we want to implement a function that takes one double vector and reverse it.</p>
-<p>In <code>api.h</code>, let’s define a struct named <code>Slice</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> *data;  <span class="co">// since we want to process `REALSXP` here, the data type is `double`</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uint32_t</span> len;</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>} Slice;</span></code></pre></div>
-<p>and in Rust code define the same one. <code>#[repr(C)]</code> means “do what C does.” This is needed to match the alignment of the field with C.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::os::raw::</span><span class="op">{</span><span class="dt">c_double</span><span class="op">,</span> <span class="dt">c_uint</span><span class="op">};</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>repr<span class="at">(</span>C<span class="at">)]</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> Slice <span class="op">{</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    data<span class="op">:</span> <span class="op">*</span><span class="kw">mut</span> <span class="dt">c_double</span><span class="op">,</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    len<span class="op">:</span> <span class="dt">c_uint</span><span class="op">,</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h3 id="r-code-1">R code</h3>
-<p>The R code is pretty simple.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rev <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">as.double</span>(x)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.Call</span>(rev_wrapper, x)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<h3 id="c-code-1">C code</h3>
-<p>We need to allocate a <code>REALSXP</code> vector and copy the result into it.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>SEXP rev_wrapper(SEXP x){</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  Slice s = {REAL(x), Rf_length(x)};</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  Slice s_rev = rev_slice(s);</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  SEXP out = PROTECT(Rf_allocVector(REALSXP, s_rev.len));</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; s_rev.len; i++) {</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    SET_REAL_ELT(out, i, s_rev.data[i]);</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  UNPROTECT(<span class="dv">1</span>);</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out;</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<h3 id="rust-code-1">Rust code</h3>
-<p>To convert the <code>Slice</code> into Rust’s slice, we can use <a href="https://doc.rust-lang.org/beta/std/slice/fn.from_raw_parts_mut.html"><code>std::slice::from_raw_parts_mut</code></a>. This is unsafe operation, so it needs to be wrapped with <code>unsafe</code>.</p>
-<p><code>slice</code> and <code>vector</code> can be converted into an unsafe pointer by <a href="https://doc.rust-lang.org/std/vec/struct.Vec.html#method.as_mut_ptr"><code>as_mut_ptr()</code></a>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>no_mangle<span class="at">]</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">extern</span> <span class="kw">fn</span> rev_slice(s<span class="op">:</span> Slice) <span class="op">-&gt;</span> Slice <span class="op">{</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// convert from Slice to Rust slice</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> s <span class="op">=</span> <span class="kw">unsafe</span> <span class="op">{</span> <span class="pp">std::slice::</span>from_raw_parts_mut(s<span class="op">.</span>data<span class="op">,</span> s<span class="op">.</span>len <span class="kw">as</span> _) <span class="op">};</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">mut</span> v <span class="op">=</span> s<span class="op">.</span>to_vec()<span class="op">;</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    v<span class="op">.</span>reverse()<span class="op">;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> len <span class="op">=</span> v<span class="op">.</span>len()<span class="op">;</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> v_ptr <span class="op">=</span> v<span class="op">.</span>as_mut_ptr()<span class="op">;</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="pp">std::mem::</span>forget(v)<span class="op">;</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    Slice <span class="op">{</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        data<span class="op">:</span> v_ptr<span class="op">,</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        len<span class="op">:</span> len <span class="kw">as</span> _<span class="op">,</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h3 id="result-1">Result</h3>
-<p>You can view the diff here:</p>
-<p><a href="https://github.com/r-rust/hellorust/commit/e278d1541301ae18446bf1149a15d7aed868bd51" class="uri">https://github.com/r-rust/hellorust/commit/e278d1541301ae18446bf1149a15d7aed868bd51</a></p>
-<h2 id="update-free-the-rust-allocated-memory">Update: free the Rust-allocated memory</h2>
-<p>The code above works, but I noticed the memory is never freed. Yes, that’s because I forgot to free it. This was my nice lesson to learn that Rust is not always automatically saving me from doing silly things :P</p>
-<p>Of course we can free it, but it’s a bit tricky. Since <code>Slice</code> is allocated by Rust, it needs to be freed by Rust (c.f. <a href="https://users.rust-lang.org/t/how-to-return-byte-array-from-rust-function-to-ffi-c/18136/4">How to return byte array from Rust function to FFI C? - help - The Rust Programming Language Forum</a>). (IIUC, if the length is known in advance, it might be good idea to allocate on C’s side and pass it to the Rust, as the answer on the forum above suggests. <code>rev()</code> is the case, but let me explain the different one for now…)</p>
-<h3 id="rust-code-2">Rust code</h3>
-<p>Let’s define a Rust function to free the memory. <a href="https://doc.rust-lang.org/std/boxed/struct.Box.html#method.from_raw"><code>Box::from_raw()</code></a> constructs a <code>Box</code>, a pointer for heap allocation, from the raw pointer. After that, the raw pointer is owned by the box, which means it’s now Rust’s role to destruct it and free the memory.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>no_mangle<span class="at">]</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">extern</span> <span class="st">&quot;C&quot;</span> <span class="kw">fn</span> free_slice(s<span class="op">:</span> Slice) <span class="op">{</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// convert to Rust slice</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> s <span class="op">=</span> <span class="kw">unsafe</span> <span class="op">{</span> <span class="pp">std::slice::</span>from_raw_parts_mut(s<span class="op">.</span>data<span class="op">,</span> s<span class="op">.</span>len <span class="kw">as</span> _) <span class="op">};</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> s <span class="op">=</span> s<span class="op">.</span>as_mut_ptr()<span class="op">;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">unsafe</span> <span class="op">{</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Box</span><span class="pp">::</span>from_raw(s)<span class="op">;</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>I still don’t understand how to use <code>Box</code> properly, but it seems <code>Sized</code> structs can be handled simpler using <code>Box</code> in the argument: <a href="https://doc.rust-lang.org/std/boxed/index.html#memory-layout" class="uri">https://doc.rust-lang.org/std/boxed/index.html#memory-layout</a></p>
-<h3 id="c-code-2">C code</h3>
-<p>Call the function above from C to free the memory as soon as it’s no longer in use.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Need to include to use memcpy()</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;string.h&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">// ...snip...</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>SEXP rev_wrapper(SEXP x){</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  Slice s = {REAL(x), Rf_length(x)};</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  Slice s_rev = rev_slice(s);</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  SEXP out = PROTECT(Rf_allocVector(REALSXP, s_rev.len));</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  memcpy(REAL(out), s_rev.data, s.len * <span class="kw">sizeof</span>(<span class="dt">double</span>));</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  free_slice(s_rev); <span class="co">// free!!!</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  UNPROTECT(<span class="dv">1</span>);</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out;</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<h3 id="result-2">Result</h3>
-<p>The full diff is here:</p>
-<p><a href="https://github.com/r-rust/hellorust/commit/97b3628b4a66eae9e25898a79ebf20fa59741063" class="uri">https://github.com/r-rust/hellorust/commit/97b3628b4a66eae9e25898a79ebf20fa59741063</a></p>
-<h3 id="can-i-do-zero-copy">Can I do zero-copy?</h3>
-<p>Copying memory to memory is not very cool, but it just works. I don’t know any nicer way yet. <a href="https://arrow.apache.org/">Apache Arrow</a> seems a overkill for this simple usage, but will I need it in future…? Or <a href="https://google.github.io/flatbuffers/">flatbuffer</a>? This seems a battle for another day, so I’ll stop here for now.</p>
-<h2 id="precompiled-binary-for-windows">Precompiled binary for Windows</h2>
-<p>As you might already notice, <a href="https://github.com/r-rust/hellorust#windows">hellorust’s installation instruction for Windows</a> is a bit long. But, do I really need to require the users to install cargo, just to compile my useless package? Now that we have GitHub Actions CI, maybe preparing a precompiled binary is a choice.</p>
-<p>Here’s the YAML I’m using to compile on windows runners and attach the binary on the releases (This creates a two separate releases for <code>x86_64</code> and <code>i686</code>, which might be improved…).</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">push</span><span class="kw">:</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">tags</span><span class="kw">:</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&#39;windows*&#39;</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> Build Windows</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">build</span><span class="kw">:</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">strategy</span><span class="kw">:</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">matrix</span><span class="kw">:</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">target</span><span class="kw">:</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> x86_64</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> i686</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> build-${{ matrix.target }}-pc-windows-gnu</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> windows-latest</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Checkout sources</span></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v2</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Install stable toolchain</span></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions-rs/toolchain@v1</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">toolchain</span><span class="kw">:</span><span class="at"> stable</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">target</span><span class="kw">:</span><span class="at"> ${{ matrix.target }}-pc-windows-gnu</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">profile</span><span class="kw">:</span><span class="at"> minimal</span></span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">default</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Run cargo build</span></span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions-rs/cargo@v1</span></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">command</span><span class="kw">:</span><span class="at"> build</span></span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">args</span><span class="kw">:</span><span class="at"> --release --target=${{ matrix.target }}-pc-windows-gnu --manifest-path=src/string2path/Cargo.toml</span></span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> List files</span></span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">run</span><span class="kw">:</span><span class="at"> ls ./src/string2path/target/${{ matrix.target }}-pc-windows-gnu/release/</span></span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">shell</span><span class="kw">:</span><span class="at"> bash</span></span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Create Release</span></span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">id</span><span class="kw">:</span><span class="at"> create_release</span></span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/create-release@v1</span></span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">env</span><span class="kw">:</span></span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">GITHUB_TOKEN</span><span class="kw">:</span><span class="at"> ${{ secrets.GITHUB_TOKEN }}</span></span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
-<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">tag_name</span><span class="kw">:</span><span class="at"> ${{ github.ref }}-${{ matrix.target }}</span></span>
-<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">release_name</span><span class="kw">:</span><span class="at"> Release ${{ github.ref }}-${{ matrix.target }}</span></span>
-<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">draft</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">prerelease</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Upload Release Asset</span></span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">id</span><span class="kw">:</span><span class="at"> upload-release-asset</span></span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/upload-release-asset@v1</span></span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">env</span><span class="kw">:</span></span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">GITHUB_TOKEN</span><span class="kw">:</span><span class="at"> ${{ secrets.GITHUB_TOKEN }}</span></span>
-<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
-<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">upload_url</span><span class="kw">:</span><span class="at"> ${{ steps.create_release.outputs.upload_url }}</span></span>
-<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">asset_path</span><span class="kw">:</span><span class="at"> ./src/string2path/target/${{ matrix.target }}-pc-windows-gnu/release/libstring2path.a</span></span>
-<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">asset_name</span><span class="kw">:</span><span class="at"> libstring2path.a</span></span>
-<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">asset_content_type</span><span class="kw">:</span><span class="at"> application/octet-stream</span></span></code></pre></div>
-<p>If there’s a precompiled binary, we can skip the compilation by tweaking <code>Makevars.win</code> like this:</p>
-<pre class="make"><code>CRATE = string2path
-
-# Change this when created a new tag
-BASE_TAG = windows7
-
-TARGET = $(subst 64,x86_64,$(subst 32,i686,$(WIN)))
-LIBDIR = windows/$(TARGET)
-STATLIB = $(LIBDIR)/lib$(CRATE).a
-PKG_LIBS = -L$(LIBDIR) -l$(CRATE) -lws2_32 -ladvapi32 -luserenv
-
-all: clean
-
-$(SHLIB): $(STATLIB)
-
-$(STATLIB):
-    mkdir -p $(LIBDIR)
-    # Not sure, but $@ doesn&#39;t seem to work here...
-    curl -L -o $(STATLIB) https://github.com/yutannihilation/$(CRATE)/releases/download/$(BASE_TAG)-$(TARGET)/lib$(CRATE).a
-
-clean:
-    rm -Rf $(SHLIB) $(STATLIB) $(OBJECTS)</code></pre>
-<p>By the way, at the time when hellorust was created, the extension of staticlib was <code>.lib</code> on Windows (MinGW), but <a href="https://github.com/rust-lang/rust/pull/70937">recently (as of v1.44) this is changed to <code>.a</code></a>. Be careful.</p>
-<h2 id="why-rust">Why Rust?</h2>
-<p>Lastly, let me answer to what some of you might wonder. I know you want me to say something like “memory safe” or “fast,” but…, it was just I was more familiar with Rust than C/C++.</p>
-<p>I just happened to learn Rust. I was searching for some alternative of <a href="https://processing.org/">Processing</a>, a great creative coding framework, and I found <a href="https://github.com/nannou-org/nannou">nannou</a>. At first, I didn’t expect I needed to learn Rust seriously, as the framework wraps the things very nicely. But, since nannou is still maturing, I found I needed to dive a bit deeper into the world of Rust to make things work on my environment. I’m now learning <a href="https://github.com/gfx-rs/wgpu-rs/">wgpu</a>, a Rust implementation of <a href="https://gpuweb.github.io/gpuweb/">WebGPU</a>. If you are interested in, here’s some resources:</p>
-<ul>
-<li><a href="https://sotrh.github.io/learn-wgpu/">Learn WGPU</a></li>
-<li><a href="https://hacks.mozilla.org/2020/04/experimental-webgpu-in-firefox/">A Taste of WebGPU in Firefox - Mozilla Hacks - the Web developer blog</a></li>
-</ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p><a href="https://github.com/extendr/extendr">extendr</a> is a project that provides an interface between R and Rust. In <a href="../2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/">the last post</a>, I explained about how to create an R package with extendr briefly. This time, we’ll walk though how to handle various R types.</p>
+<h2 id="vector">Vector</h2>
+<p>Let’s start with the last example in the last post.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add(x<span class="op">:</span> <span class="dt">i32</span><span class="op">,</span> y<span class="op">:</span> <span class="dt">i32</span>) <span class="op">-&gt;</span> <span class="dt">i32</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">+</span> y</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<p>While this works perfectly fine with a single value, this fails when the length is more than one.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>add</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Error in add(1:2, 2:3): Input must be of length 1. Vector of length &gt;1 given.</code></pre>
+</div>
+<p>This is very easy to fix. In Rust, we can use <a href="https://doc.rust-lang.org/std/vec/struct.Vec.html"><code>Vec&lt;T&gt;</code></a> to represent a vector of values of type <code>T</code>.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode" id="cb3"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// I don&#39;t explain much about the Rust code this time, but please don&#39;t worry if</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">// you can&#39;t understand what it does at the moment. Probably it&#39;s not very important</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">// to understand this post. Move forward.</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add2(x<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;,</span> y<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    x<span class="op">.</span>iter()<span class="op">.</span>enumerate()<span class="op">.</span>map(<span class="op">|</span>(i<span class="op">,</span> x)<span class="op">|</span> x <span class="op">+</span> y[i])<span class="op">.</span>collect()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>add2</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 3 5</code></pre>
+</div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
