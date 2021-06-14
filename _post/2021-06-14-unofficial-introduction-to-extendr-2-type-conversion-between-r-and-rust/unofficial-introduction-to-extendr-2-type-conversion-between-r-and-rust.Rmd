@@ -82,7 +82,8 @@ from R to Rust.
 Yeah, it's true it was too difficult because I was struggling to do it
 *via FFI*! There's no metadata available about the length or the
 structure of the data by default. But, with extendr, we can seamlessly
-access these metadata *via R's C API*. So, there's no difficulties.
+access these metadata *via R's C API*. So, in short, extendr was the
+game changer.
 
 ## `NA`
 
@@ -97,9 +98,9 @@ In Rust, we can use
 [`Option<T>`](https://doc.rust-lang.org/std/option/enum.Option.html) to
 represent an optional, or possibly missing, value.
 
-```{// pattern match is one of the most powerful things in Rust, btw!}
+```{extendrsrc add3}
+// pattern match is one of the most powerful things in Rust, btw!
 
-{extendrsrc add3}
 #[extendr]
 fn add3(x: Option<i32>, y: Option<i32>) -> Option<i32> {
     match (x, y) {
@@ -125,43 +126,139 @@ so it depends.
 
 ## Primitive types
 
-Okay, let's talk about the primitive types at last. Here's the
-corresponding table of R types and Rust types.
+Okay, let's learn about the primitive types at last. Here's the
+corresponding table of R types and Rust types. We don't have the direct
+equivalent of `factor` and `complex` here, but let's talk about it
+later.
 
 +-----------+--------+
 | R         | Rust   |
 +===========+========+
-| integer   | i32    |
+| `integer` | `i32`  |
 +-----------+--------+
-| numeric   | f64    |
+| `numeric` | `f64`  |
 +-----------+--------+
-| logical   | bool   |
+| `logical` | `bool` |
 +-----------+--------+
-| character | String |
+| `c        | `S     |
+| haracter` | tring` |
 |           |        |
-|           | &str   |
+|           | `&str` |
 +-----------+--------+
-| factor    | \-     |
+| `factor`  | \-     |
 +-----------+--------+
-| complex   | \-     |
+| `complex` | \-     |
 +-----------+--------+
 
-: The corresponding types
+### `integer` and `numeric`
 
-### Integer and numeric
+`integer` and `numeric` can mainly be converted into `i32` and `f64`
+respectively. I used "mainly" because it's not that strict. They both
+can be converted into either of:
 
-Integer and numeric can mainly be converted into `i32` and `f64`
-respectively. I used "mainly" because they both can be converted into
-either of:
+-   `u8`
+-   `u16`
+-   `u32`
+-   `u64`
+-   `i8`
+-   `i16`
+-   `i32`
+-   `i64`
+-   `f32`
+-   `f64`
 
-- `u8`
-- `u16`
-- `u32`
-- `u64`
-- `i8`
-- `i16`
-- `i32`
-- `i64`
-- `f32`
-- `f64`
+So, in other words, if you don't want to prevent from numeric values are
+coerced into integers, you'll need to check the types by yourself.
 
+### `logical`
+
+`logical` is translated from/into `bool`. That's all.
+
+### `character`
+
+`character` is a bit tricky in that you can convert it to either of
+`String` and `&str`. You'll probably have to scratch your head to
+understand the concept of "lifetime" to choose the proper one
+(confession: I still don't understand it). But, in short,
+
+-   `String` : choose this when you modify the content strings
+
+-   `&str`: choose this (probably with `'static` lifetime) when you only
+    reference the strings
+
+If you are not familiar with Rust yet, I recommend you to start with
+`String`. `String` is copied around so you might have unnecessary
+overhead, but it's generally easier to handle because we need to think
+about the lifetimes less frequently.
+
+### `factor`
+
+To put things simpler, until this point, I deliberately chose the cases
+when we have the corresponding types in Rust's side. But, `factor` isn't
+the case. It cannot be directly converted into a simple Rust type (at
+least at the moment). Instead, it can be cast into
+[`StrItr`](https://extendr.github.io/extendr/extendr_api/iter/struct.StrIter.html).
+`StrItr` is a "proxy" to the underlying data on R's side.
+
+I'll try explaining this in another post, but keep in mind that extendr
+provides that "proxy"-type of interface as well as the simple conversion
+to Rust's primitive types.
+
+## `list`
+
+A `list` can be converted into
+[`HashMap<String, Robj>`](https://doc.rust-lang.org/std/collections/struct.HashMap.html).
+[`Robj`](https://extendr.github.io/extendr/extendr_api/robj/enum.Robj.html)
+is also a "proxy," which contains arbitrary R data.
+
+```{extendrsrc print_a_fun}
+#[extendr]
+fn print_a(x: HashMap<String, Robj>) {
+    println!("{:?}", x.get("a"));
+}
+```
+
+```{r print_a}
+print_a(list(a = 1, b = 2))
+print_a(list(b = 2))
+```
+
+[`r!`](https://extendr.github.io/extendr/extendr_api/macro.r.html) is a
+macro to create an R object from a Rust expression, by the way.
+
+## `Robj`?
+
+As a sneak peak of the next post, let's take a look at the usage of
+`Robj`.
+
+So far, I created only functions that accepts just one type. What if we
+want to create a function that accepts multiple types of arguments? In
+this case, we can create a function that takes `Robj` as its argument
+and convert it by ourselves. `Robj` has many methods `as_XXX()` to
+convert to (or, more precisely, extract and copy the value of R object,
+and turn it into) a type. Here, let's use `as_integer()` to generate
+`Option<i32>` .
+
+```{extendrsrc robj}
+#[extendr]
+fn int(x: Robj) -> Option<i32> {
+    x.as_integer()
+}
+```
+
+```{r as_int}
+# integer
+int(1L)
+
+# not integer-ish
+int("foo")
+```
+
+## What's next?
+
+In this post, I focused mainly the Rust's side of the type ecosystem.
+Next, I probably need to write about more R-ish things like
+[`Function`](https://extendr.github.io/extendr/extendr_api/wrapper/function/struct.Function.html)
+or
+[`Symbol`](https://extendr.github.io/extendr/extendr_api/wrapper/symbol/struct.Symbol.html)
+, which I need some time to understand correctly. Stay tuned...
