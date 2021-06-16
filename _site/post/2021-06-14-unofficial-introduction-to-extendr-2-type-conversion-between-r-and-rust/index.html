@@ -2492,7 +2492,27 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>We cannot simply pass a variable length of vector</p>
 </blockquote>
 <p>from R to Rust.</p>
-<p>Yeah, it’s true it was too difficult because I was struggling to do it <em>via FFI</em>! There’s no metadata available about the length or the structure of the data by default. But, with extendr, we can seamlessly access these metadata <em>via R’s C API</em>. So, in short, extendr was the game changer.</p>
+<p>Yeah, it’s true it was too difficult because I was struggling to do it <em>via FFI</em>! There’s no metadata available about the length or the structure of the data by default. But, with extendr, we can seamlessly access these metadata <em>via R’s C API</em>. So, in short, extendr is the game changer.</p>
+<h3 id="t"><code>&amp;[T]</code></h3>
+<p>If you are already familiar with Rust, you might feel using <code>Vec&lt;T&gt;</code> as arguments looks a bit weird. In fact, the document of <code>Vec&lt;T&gt;</code> says:</p>
+<blockquote>
+<p>In Rust, it’s more common to pass slices as arguments rather than vectors when you just want to provide read access. The same goes for <code>String</code> and <code>&amp;str</code>.<br />
+(<a href="https://doc.rust-lang.org/std/vec/struct.Vec.html#slicing" class="uri">https://doc.rust-lang.org/std/vec/struct.Vec.html#slicing</a>)</p>
+</blockquote>
+<p>Yes, you can use <code>&amp;[T]</code> instead of <code>Vec&lt;T&gt;</code>, and this seems to matter on the performance slightly.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode" id="cb5"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add2_slice(x<span class="op">:</span> <span class="op">&amp;</span>[<span class="dt">i32</span>]<span class="op">,</span> y<span class="op">:</span> <span class="op">&amp;</span>[<span class="dt">i32</span>]) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">.</span>iter()<span class="op">.</span>enumerate()<span class="op">.</span>map(<span class="op">|</span>(i<span class="op">,</span> x)<span class="op">|</span> x <span class="op">+</span> y[i])<span class="op">.</span>collect()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>add2_slice</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 3 5</code></pre>
+</div>
 <h2 id="na"><code>NA</code></h2>
 <p>One more caveat about <code>add()</code> is that this cannot handle a missing value, <code>NA</code>.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2504,15 +2524,15 @@ d-appendix d-footnote-list a.footnote-backlink {
 </div>
 <p>In Rust, we can use <a href="https://doc.rust-lang.org/std/option/enum.Option.html"><code>Option&lt;T&gt;</code></a> to represent an optional, or possibly missing, value.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb6"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// pattern match is one of the most powerful things in Rust, btw!</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add3(x<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;,</span> y<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span> <span class="op">{</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> (x<span class="op">,</span> y) <span class="op">{</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        (<span class="cn">Some</span>(x)<span class="op">,</span> <span class="cn">Some</span>(y)) <span class="op">=&gt;</span> <span class="cn">Some</span>(x <span class="op">+</span> y)<span class="op">,</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        _ <span class="op">=&gt;</span> NA_INTEGER</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// pattern match is one of the most powerful things in Rust, btw!</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add3(x<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;,</span> y<span class="op">:</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> (x<span class="op">,</span> y) <span class="op">{</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        (<span class="cn">Some</span>(x)<span class="op">,</span> <span class="cn">Some</span>(y)) <span class="op">=&gt;</span> <span class="cn">Some</span>(x <span class="op">+</span> y)<span class="op">,</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        _ <span class="op">=&gt;</span> NA_INTEGER</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <p>This function can handle <code>NA</code>.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2555,9 +2575,8 @@ d-appendix d-footnote-list a.footnote-backlink {
 <td><code>bool</code></td>
 </tr>
 <tr class="even">
-<td><code>c haracter</code></td>
-<td><p><code>S tring</code></p>
-<p><code>&amp;str</code></p></td>
+<td><code>character</code></td>
+<td>|<code>String</code> |｀ <code>&amp;str</code></td>
 </tr>
 <tr class="odd">
 <td><code>factor</code></td>
@@ -2599,10 +2618,10 @@ d-appendix d-footnote-list a.footnote-backlink {
 <h2 id="list"><code>list</code></h2>
 <p>A <code>list</code> can be converted into <a href="https://doc.rust-lang.org/std/collections/struct.HashMap.html"><code>HashMap&lt;String, Robj&gt;</code></a>. <a href="https://extendr.github.io/extendr/extendr_api/robj/enum.Robj.html"><code>Robj</code></a> is also a “proxy,” which contains arbitrary R data.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb9"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_a(x<span class="op">:</span> HashMap<span class="op">&lt;</span><span class="dt">String</span><span class="op">,</span> Robj<span class="op">&gt;</span>) <span class="op">{</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span><span class="op">,</span> x<span class="op">.</span>get(<span class="st">&quot;a&quot;</span>))<span class="op">;</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> print_a(x<span class="op">:</span> HashMap<span class="op">&lt;</span><span class="dt">String</span><span class="op">,</span> Robj<span class="op">&gt;</span>) <span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span><span class="op">,</span> x<span class="op">.</span>get(<span class="st">&quot;a&quot;</span>))<span class="op">;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2616,10 +2635,10 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>As a sneak peak of the next post, let’s take a look at the usage of <code>Robj</code>.</p>
 <p>So far, I created only functions that accepts just one type. What if we want to create a function that accepts multiple types of arguments? In this case, we can create a function that takes <code>Robj</code> as its argument and convert it by ourselves. <code>Robj</code> has many methods <code>as_XXX()</code> to convert to (or, more precisely, extract and copy the value of R object, and turn it into) a type. Here, let’s use <code>as_integer()</code> to generate <code>Option&lt;i32&gt;</code> .</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb10"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> int(x<span class="op">:</span> Robj) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span> <span class="op">{</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">.</span>as_integer()</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> int(x<span class="op">:</span> Robj) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">.</span>as_integer()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2637,7 +2656,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 </div>
 <h2 id="whats-next">What’s next?</h2>
 <p>In this post, I focused mainly the Rust’s side of the type ecosystem. Next, I probably need to write about more R-ish things like <a href="https://extendr.github.io/extendr/extendr_api/wrapper/function/struct.Function.html"><code>Function</code></a> or <a href="https://extendr.github.io/extendr/extendr_api/wrapper/symbol/struct.Symbol.html"><code>Symbol</code></a> , which I need some time to understand correctly. Stay tuned…</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
