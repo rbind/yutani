@@ -2499,7 +2499,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>In Rust, it’s more common to pass slices as arguments rather than vectors when you just want to provide read access. The same goes for <code>String</code> and <code>&amp;str</code>.<br />
 (<a href="https://doc.rust-lang.org/std/vec/struct.Vec.html#slicing" class="uri">https://doc.rust-lang.org/std/vec/struct.Vec.html#slicing</a>)</p>
 </blockquote>
-<p>Yes, you can use <code>&amp;[T]</code> instead of <code>Vec&lt;T&gt;</code>, and this seems to matter on the performance slightly.</p>
+<p>Yes, you can use <code>&amp;[T]</code> instead of <code>Vec&lt;T&gt;</code>, and this seems to matter on the performance slightly. If you are familiar with Rust to the extent that you know the difference between <code>&amp;[T]</code> and <code>Vec&lt;T&gt;</code> (confession: I’m not!), you can should use <code>&amp;[T]</code> instead. Otherwise, <code>Vec&lt;T&gt;</code> just works.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb5"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>extendr<span class="at">]</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> add2_slice(x<span class="op">:</span> <span class="op">&amp;</span>[<span class="dt">i32</span>]<span class="op">,</span> y<span class="op">:</span> <span class="op">&amp;</span>[<span class="dt">i32</span>]) <span class="op">-&gt;</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">i32</span><span class="op">&gt;</span> <span class="op">{</span></span>
@@ -2513,6 +2513,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 </div>
 <pre><code>[1] 3 5</code></pre>
 </div>
+<p>Please note that this isn’t the reference to the original R object, just that to the copied values. If you really want no copying, you should use the “proxy” types, which I’ll cover in the next post.</p>
 <h2 id="na"><code>NA</code></h2>
 <p>One more caveat about <code>add()</code> is that this cannot handle a missing value, <code>NA</code>.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2575,8 +2576,8 @@ d-appendix d-footnote-list a.footnote-backlink {
 <td><code>bool</code></td>
 </tr>
 <tr class="even">
-<td><code>character</code></td>
-<td>|<code>String</code> |｀ <code>&amp;str</code></td>
+<td><code>c haracter</code></td>
+<td><code>S tring</code> <code>&amp;str</code></td>
 </tr>
 <tr class="odd">
 <td><code>factor</code></td>

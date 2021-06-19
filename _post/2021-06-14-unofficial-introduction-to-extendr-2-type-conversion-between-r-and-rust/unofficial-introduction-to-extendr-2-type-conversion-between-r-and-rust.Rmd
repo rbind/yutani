@@ -82,19 +82,24 @@ from R to Rust.
 Yeah, it's true it was too difficult because I was struggling to do it
 *via FFI*! There's no metadata available about the length or the
 structure of the data by default. But, with extendr, we can seamlessly
-access these metadata *via R's C API*. So, in short, extendr is the
-game changer.
+access these metadata *via R's C API*. So, in short, extendr is the game
+changer.
 
 ### `&[T]`
 
-If you are already familiar with Rust, you might feel using `Vec<T>` as arguments
-looks a bit weird. In fact, the document of `Vec<T>` says:
+If you are already familiar with Rust, you might feel using `Vec<T>` as
+arguments looks a bit weird. In fact, the document of `Vec<T>` says:
 
-> In Rust, it’s more common to pass slices as arguments rather than vectors when you just want to provide read access. The same goes for `String` and `&str`.  
+> In Rust, it's more common to pass slices as arguments rather than
+> vectors when you just want to provide read access. The same goes for
+> `String` and `&str`.\
 > (<https://doc.rust-lang.org/std/vec/struct.Vec.html#slicing>)
 
-Yes, you can use `&[T]` instead of `Vec<T>`, and this seems to matter on the
-performance slightly.
+Yes, you can use `&[T]` instead of `Vec<T>`, and this seems to matter on
+the performance slightly. If you are familiar with Rust to the extent
+that you know the difference between `&[T]` and `Vec<T>` (confession:
+I'm not!), you can should use `&[T]` instead. Otherwise, `Vec<T>` just
+works.
 
 ```{extendrsrc add2_slice}
 #[extendr]
@@ -102,9 +107,14 @@ fn add2_slice(x: &[i32], y: &[i32]) -> Vec<i32> {
     x.iter().enumerate().map(|(i, x)| x + y[i]).collect()
 }
 ```
+
 ```{r add2_slice_success}
 add2_slice(1:2, 2:3)
 ```
+
+Please note that this isn't the reference to the original R object, just
+that to the copied values. If you really want no copying, you should use
+the "proxy" types, which I'll cover in the next post.
 
 ## `NA`
 
@@ -161,8 +171,8 @@ later.
 +-----------+--------+
 | `logical` | `bool` |
 +-----------+--------+
-| `character` |`String` |
-|           |        |｀
+| `c        | `S     |
+| haracter` | tring` |
 |           | `&str` |
 +-----------+--------+
 | `factor`  | \-     |
@@ -282,4 +292,3 @@ Next, I probably need to write about more R-ish things like
 or
 [`Symbol`](https://extendr.github.io/extendr/extendr_api/wrapper/symbol/struct.Symbol.html)
 , which I need some time to understand correctly. Stay tuned...
-
