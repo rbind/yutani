@@ -162,23 +162,22 @@ corresponding table of R types and Rust types. We don't have the direct
 equivalent of `factor` and `complex` here, but let's talk about it
 later.
 
-+-----------+--------+
-| R         | Rust   |
-+===========+========+
-| `integer` | `i32`  |
-+-----------+--------+
-| `numeric` | `f64`  |
-+-----------+--------+
-| `logical` | `bool` |
-+-----------+--------+
-| `c        | `S     |
-| haracter` | tring` |
-|           | `&str` |
-+-----------+--------+
-| `factor`  | \-     |
-+-----------+--------+
-| `complex` | \-     |
-+-----------+--------+
++-------------+---------+
+| R           | Rust    |
++=============+=========+
+| `integer`   | `i32`   |
++-------------+---------+
+| `numeric`   | `f64`   |
++-------------+---------+
+| `logical`   | `bool`  |
++-------------+---------+
+| `character` | `String`|
+|             | `&str`  |
++-------------+---------+
+| `factor`    | \-      |
++-------------+---------+
+| `complex`   | \-      |
++-------------+---------+
 
 ### `integer` and `numeric`
 

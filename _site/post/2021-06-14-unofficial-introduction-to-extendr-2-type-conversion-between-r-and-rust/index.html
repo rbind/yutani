@@ -2551,10 +2551,10 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>It might be safe to always use <code>Option</code> since there’s always possibility that R value can be <code>NA</code> by nature. But, we might want to choose non-<code>Option</code> version to avoid the overhead (c.f. <a href="https://users.rust-lang.org/t/how-much-overhead-is-there-with-options-and-results/37327">How much overhead is there with Options and Results? - The Rust Programming Language Forum</a>), so it depends.</p>
 <h2 id="primitive-types">Primitive types</h2>
 <p>Okay, let’s learn about the primitive types at last. Here’s the corresponding table of R types and Rust types. We don’t have the direct equivalent of <code>factor</code> and <code>complex</code> here, but let’s talk about it later.</p>
-<table style="width:29%;">
+<table style="width:33%;">
 <colgroup>
-<col style="width: 16%" />
-<col style="width: 12%" />
+<col style="width: 19%" />
+<col style="width: 13%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -2576,8 +2576,8 @@ d-appendix d-footnote-list a.footnote-backlink {
 <td><code>bool</code></td>
 </tr>
 <tr class="even">
-<td><code>c haracter</code></td>
-<td><code>S tring</code> <code>&amp;str</code></td>
+<td><code>character</code></td>
+<td><code>String</code> <code>&amp;str</code></td>
 </tr>
 <tr class="odd">
 <td><code>factor</code></td>
