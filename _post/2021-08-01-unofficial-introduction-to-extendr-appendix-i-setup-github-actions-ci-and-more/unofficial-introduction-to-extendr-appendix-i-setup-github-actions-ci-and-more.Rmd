@@ -18,6 +18,7 @@ creative_commons: CC BY
 editor_options: 
   markdown: 
     wrap: 72
+preview: https://yutani.rbind.io/post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/images/screenshot_github_release.png
 ---
 
 [extendr](https://github.com/extendr/extendr) is a project that provides
