@@ -52,7 +52,7 @@ but these steps ensure the intended toolchain is used.
     rustup target add x86_64-pc-windows-gnu
 ```
 
-If you want to run tests also on nightly toolchains, you can include the version
+If you want to run tests also on the nightly toolchain, you can include the channel
 in the build matrix like this[^windows-msvc]:
 
 [^windows-msvc]: On Windows, you need to use `'stalble-msvc'`, not `'stable-gnu'`, 
@@ -66,7 +66,7 @@ but msvc should be the default so you can just specify `'stable'`
 - {os: ubuntu-20.04,   r: 'release', rust: 'nightly', rspm: "..."}
 ```
 
-and specify the versions in the `actions-rs/toolchain@v1` step:
+and specify the channel in the `actions-rs/toolchain@v1` step:
 
 ``` yaml
 - name: Set up Rust
@@ -81,16 +81,19 @@ that's all you need to do.
 
 ## Provide precompiled binaries for Windows
 
-As you might already notice, [the setup instruction](https://github.com/extendr/libR-sys/#installation)
+As you might have already noticed, [the setup instruction](https://github.com/extendr/libR-sys/#installation)
 for Windows is a bit complex compared to other OSes (i.e., Linux and macOS).
-So, it might be worth considering providing precompiled static libraries, just
-like [rwinlib](https://github.com/rwinlib) does for many C++ libraries.
+So, it might be worth considering providing the precompiled static libraries,
+just like [rwinlib](https://github.com/rwinlib) does for many C++ libraries.
 
-Other motivation is that CRAN machine doesn't have Rust toolchain. If the package
-author wants to submit their package to CRAN, such a mechanism is needed.
+Other motivation is that some of CRAN machines don't have Rust toolchain. If the
+package author wants to submit their package to CRAN, such a mechanism is needed.
 
-There probably isn't a single standard way to do this, but let me share what I
-did for my package, [string2path](https://github.com/yutannihilation/string2path)
+(edit: it seems [macOS is also the case](https://github.com/yutannihilation/string2path/issues/8),
+but I don't find what's the best way to solve this. I'll probably write another post for this.)
+
+There probably isn't a single standard way to achieve this, but let me share what
+I did for my package, [string2path](https://github.com/yutannihilation/string2path)
 here. YMMV, of course.
 
 I used [`softprops/action-gh-release` action](https://github.com/softprops/action-gh-release)
@@ -118,7 +121,7 @@ to publish the binaries as a GitHub release. The setting would be like this:
 ```
 
 With this setup, you can publish the binaries by pushing tags. For example,
-let's create `windows_20210801-3` tag.
+let's create `windows_20210801-3` tag and push it.
 
 ``` sh
 git tag windows_20210801-3
@@ -129,16 +132,19 @@ Then, the GHA will publish the corresponding release like this:
 
 ![](./images/screenshot_github_release.png)
 
-Tweak `src/Makefile.win` like this to allow users to download the binaries when
-`cargo` is not available. There might be more nicer code to choose the latest
-release automatically, but I think it's safe to specify a fixed tag name,
-though it's a bit tiresome to update this manually every time you update Rust code.
+Next, tweak `src/Makefile.win` as follows to allow users to download the binaries
+when `cargo` is not available. There might be more nicer code to choose the latest
+release automatically, but I think it's safe to specify a fixed tag name, though
+it's a bit tiresome to update this manually every time you update Rust code.
 
 ``` makefile
 CRATE = foo   # your crate name
 BASE_TAG = windows_20210801-3  # the tag you want to use
 
 # c.f. https://stackoverflow.com/a/34756868
+# Note that this assignment (`:=`) is not available on Solaris, so you need to
+# add "GNU make" to SystemRequirements field on DESCRIPTION, even though this
+# can never compile on Solaris anyway...
 CARGO_EXISTS := $(shell cargo --version 2> /dev/null)
 
 # ..snip...
@@ -152,10 +158,9 @@ else
 endif
 ```
 
-Note that this won't work when `cargo` is installed but with GNU toolchain
-(extendr requires MSVC toolchain on Windows). But, in most cases this should
-work. I guess friendlier check can be done in `configure`, but this post won't
-look into the details.
+One caveats is that this won't work when `cargo` is installed but with GNU
+toolchain (extendr requires MSVC toolchain on Windows). I guess friendlier check
+can be done in `configure.win`, but this post won't look into the details.
 
 ## Other topics I couldn't cover
 
