@@ -158,9 +158,10 @@ else
 endif
 ```
 
-One caveats is that this won't work when `cargo` is installed but with GNU
-toolchain (extendr requires MSVC toolchain on Windows). I guess friendlier check
-can be done in `configure.win`, but this post won't look into the details.
+One caveat is that this won't work when `cargo` is installed but with the GNU
+toolchain (extendr requires the MSVC toolchain on Windows). I guess some
+friendlier check can be done in `configure.win`, but this post won't look into
+the details.
 
 ## Other topics I couldn't cover
 
