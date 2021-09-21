@@ -422,11 +422,11 @@ Oh, sorry, I forgot to enumerate the most important option!
 0. Give up
 
 Because 32-bit Solaris is not a supported platform by Rust, there's no option
-other than giving up. I wrote this on cran-comment and it seems accepted:
+other than giving up. I wrote this on cran-comment and it seems this was accepted:
 
 > I would like to request to exclude Solaris from the build targets because Solaris is not a supported platform by Rust. This should be in line with the treatments of other CRAN packages that use Rust; gifski, baseflow, and salso are not built on Solaris. I'm sorry that I didn't write this in the first submission.
 
-Be sure to add these comments when you submit an R package with Rust to CRAN!
+Be sure to add some comment like this when you submit an R package with Rust to CRAN!
 
 ## Example
 
