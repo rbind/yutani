@@ -137,6 +137,10 @@ when `cargo` is not available. There might be more nicer code to choose the late
 release automatically, but I think it's safe to specify a fixed tag name, though
 it's a bit tiresome to update this manually every time you update Rust code.
 
+(edit: I found this violates the CRAN policy. A package is not allowed to write
+"anywhere else on the file system apart from the R session's temporary directory.
+You need to set `CARGO_HOME` envvar to some temporary directory to avoid this.)
+
 ``` makefile
 CRATE = foo   # your crate name
 BASE_TAG = windows_20210801-3  # the tag you want to use

@@ -2371,7 +2371,7 @@ d-appendix d-footnote-list a.footnote-backlink {
   color: var(--hover-color, white);
 }</style>
 <!--/radix_placeholder_distill-->
-  <script src="../../site_libs/header-attrs-2.9/header-attrs.js"></script>
+  <script src="../../site_libs/header-attrs-2.10/header-attrs.js"></script>
   <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
   <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
@@ -2507,6 +2507,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>Then, the GHA will publish the corresponding release like this:</p>
 <p><img src="images/screenshot_github_release.png" /></p>
 <p>Next, tweak <code>src/Makefile.win</code> as follows to allow users to download the binaries when <code>cargo</code> is not available. There might be more nicer code to choose the latest release automatically, but I think it’s safe to specify a fixed tag name, though it’s a bit tiresome to update this manually every time you update Rust code.</p>
+<p>(edit: I found this violates the CRAN policy. A package is not allowed to write "anywhere else on the file system apart from the R session’s temporary directory. You need to set <code>CARGO_HOME</code> envvar to some temporary directory to avoid this.)</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode makefile"><code class="sourceCode makefile"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">CRATE </span><span class="ch">=</span><span class="st"> foo   # your crate name</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">BASE_TAG </span><span class="ch">=</span><span class="st"> windows_20210801-3  # the tag you want to use</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
