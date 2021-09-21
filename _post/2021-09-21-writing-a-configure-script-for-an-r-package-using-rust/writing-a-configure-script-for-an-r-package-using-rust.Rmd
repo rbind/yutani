@@ -430,4 +430,4 @@ Be sure to add these comments when you submit an R package with Rust to CRAN!
 
 ## Example
 
-For a real example, please refer to string2path, though your mileage may vary.
+For a real example, please refer to [string2path](https://github.com/yutannihilation/string2path), though your mileage may vary.
