@@ -1,0 +1,20 @@
+project:
+  type: website
+
+website:
+  title: "Wannabe Rstats-fu"
+  navbar:
+    right:
+      - about.qmd
+      - icon: twitter
+        href: https://twitter.com/yutannihilat_en
+      - icon: github
+        href: https://github.com/yutannihilation
+
+format:
+  html:
+    theme: lumen
+    css: styles.css
+
+editor: visual
+

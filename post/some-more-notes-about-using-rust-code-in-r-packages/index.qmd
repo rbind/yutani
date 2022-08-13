@@ -1,0 +1,338 @@
+---
+title: Some more notes about using Rust code in R packages
+author: Hiroaki Yutani
+date: '2020-09-15'
+categories:
+  - Rust
+format:
+  html:
+    toc: true
+    toc-title: "Contents"
+    toc-location: left
+---
+
+[When I first tried to use Rust code within R package five years ago](https://github.com/yutannihilation/RRustFib), it was like crawling in the dark and I wasted several days just to find I didn't understand anything. But, now we have [Using Rust code in R packages](https://jeroen.github.io/erum2018/), a great presentation by Jeroen Ooms. It taught me almost everything! But still, I needed to learn myself some more things for my purpose. Let me leave some notes about those.
+
+## Passing a string from R to Rust
+
+[hellorust](https://github.com/r-rust/hellorust) covers how to pass a string from Rust to R, but not the vice versa. I learned this from [the code on clauswilke/sinab](https://github.com/clauswilke/sinab/blob/master/src/render_markdown.c).
+
+For example, let's consider an improved version of `hellorust::hello()` that takes an argument `name` to say hello to.
+
+### R code
+
+Let's name it `hello2`.
+
+``` r
+hello2 <- function(name) {
+  .Call(hello_wrapper2, name)
+}
+```
+
+### C code
+
+`hello_wrapper2` would be like the code below. `STRING_ELT(x, i)` takes `i`-th element of a character vector `x`, and `Rf_translateCharUTF8()` converts it to a pointer to the string encoded in UTF-8.
+
+``` c
+SEXP hello_wrapper2(SEXP name){
+  char* res = string_from_rust2(Rf_translateCharUTF8(STRING_ELT(name, 0)));
+  return Rf_ScalarString(Rf_mkCharCE(res, CE_UTF8));
+}
+```
+
+### `api.h`
+
+The string is passed as `const char *`.
+
+``` c
+char * string_from_rust2(const char *);
+```
+
+### Rust code
+
+The function takes the string as `*const c_char`. If we process the string in Rust code, we need to create a `String`. This is done by [`std::ffi::CStr::from_ptr()`](https://doc.rust-lang.org/std/ffi/struct.CStr.html#method.from_ptr). `CStr` is a representation of a borrowed C string, and can be converted to `String` by `to_string()` or `to_string_lossy()`. Since this is an unsafe operation, it needs to be wrapped with `unsafe`.
+
+``` rust
+use std;
+use std::ffi::{CStr, CString};
+use std::os::raw::c_char;
+
+// Utility function to convert c_char to string
+fn c_char_to_string(c: *const c_char) -> String {
+    unsafe { CStr::from_ptr(c).to_string_lossy().into_owned() }
+}
+
+#[no_mangle]
+pub extern fn string_from_rust2(c_name: *const c_char) -> *const c_char {
+    let name = c_char_to_string(c_name);
+
+    let s = CString::new(format!("Hello {} !", name)).unwrap();
+    let p = s.as_ptr();
+    std::mem::forget(s);
+    p
+}
+```
+
+### Result
+
+You can view the diff here:
+
+<https://github.com/r-rust/hellorust/commit/a42346c728a408fb1b2e6e7522082e19ec5b8a04>
+
+## Passing a vector from Rust to R, or vice versa
+
+(Update: this code is incomplete, please read the next section as well)
+
+It took me some time to figure out how to handle arrays. I'm still not confident if I understand this correctly, but let me try to explain...
+
+We cannot simply pass a variable length of vector to FFI because the length is not known. So, what we need to do is obvious; pass the data with the length at the same time. To do this, we need to define the same `struct` both in C and in Rust.
+
+Suppose we want to implement a function that takes one double vector and reverse it.
+
+In `api.h`, let's define a struct named `Slice`:
+
+``` c
+typedef struct
+{
+  double *data;  // since we want to process `REALSXP` here, the data type is `double`
+  uint32_t len;
+} Slice;
+```
+
+and in Rust code define the same one. `#[repr(C)]` means "do what C does." This is needed to match the alignment of the field with C.
+
+``` rust
+use std::os::raw::{c_double, c_uint};
+
+#[repr(C)]
+pub struct Slice {
+    data: *mut c_double,
+    len: c_uint,
+}
+```
+
+### R code
+
+The R code is pretty simple.
+
+``` r
+rev <- function(x) {
+  x <- as.double(x)
+  .Call(rev_wrapper, x)
+}
+```
+
+### C code
+
+We need to allocate a `REALSXP` vector and copy the result into it.
+
+``` c
+SEXP rev_wrapper(SEXP x){
+  Slice s = {REAL(x), Rf_length(x)};
+  Slice s_rev = rev_slice(s);
+
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, s_rev.len));
+  for (int i = 0; i < s_rev.len; i++) {
+    SET_REAL_ELT(out, i, s_rev.data[i]);
+  }
+  UNPROTECT(1);
+
+  return out;
+}
+```
+
+### Rust code
+
+To convert the `Slice` into Rust's slice, we can use [`std::slice::from_raw_parts_mut`](https://doc.rust-lang.org/beta/std/slice/fn.from_raw_parts_mut.html). This is unsafe operation, so it needs to be wrapped with `unsafe`.
+
+`slice` and `vector` can be converted into an unsafe pointer by [`as_mut_ptr()`](https://doc.rust-lang.org/std/vec/struct.Vec.html#method.as_mut_ptr).
+
+``` rust
+#[no_mangle]
+pub extern fn rev_slice(s: Slice) -> Slice {
+    // convert from Slice to Rust slice
+    let s = unsafe { std::slice::from_raw_parts_mut(s.data, s.len as _) };
+
+    let mut v = s.to_vec();
+    v.reverse();
+    let len = v.len();
+
+    let v_ptr = v.as_mut_ptr();
+    std::mem::forget(v);
+
+    Slice {
+        data: v_ptr,
+        len: len as _,
+    }
+}
+```
+
+### Result
+
+You can view the diff here:
+
+<https://github.com/r-rust/hellorust/commit/e278d1541301ae18446bf1149a15d7aed868bd51>
+
+## Update: free the Rust-allocated memory
+
+The code above works, but I noticed the memory is never freed. Yes, that's because I forgot to free it. This was my nice lesson to learn that Rust is not always automatically saving me from doing silly things :P
+
+Of course we can free it, but it's a bit tricky. Since `Slice` is allocated by Rust, it needs to be freed by Rust (c.f. [How to return byte array from Rust function to FFI C? - help - The Rust Programming Language Forum](https://users.rust-lang.org/t/how-to-return-byte-array-from-rust-function-to-ffi-c/18136/4)). (IIUC, if the length is known in advance, it might be good idea to allocate on C's side and pass it to the Rust, as the answer on the forum above suggests. `rev()` is the case, but let me explain the different one for now...)
+
+### Rust code
+
+Let's define a Rust function to free the memory. [`Box::from_raw()`](https://doc.rust-lang.org/std/boxed/struct.Box.html#method.from_raw) constructs a `Box`, a pointer for heap allocation, from the raw pointer. After that, the raw pointer is owned by the box, which means it's now Rust's role to destruct it and free the memory.
+
+``` rust
+#[no_mangle]
+pub extern "C" fn free_slice(s: Slice) {
+    // convert to Rust slice
+    let s = unsafe { std::slice::from_raw_parts_mut(s.data, s.len as _) };
+    let s = s.as_mut_ptr();
+    unsafe {
+        Box::from_raw(s);
+    }
+}
+```
+
+I still don't understand how to use `Box` properly, but it seems `Sized` structs can be handled simpler using `Box` in the argument: <https://doc.rust-lang.org/std/boxed/index.html#memory-layout>
+
+### C code
+
+Call the function above from C to free the memory as soon as it's no longer in use.
+
+``` c
+// Need to include to use memcpy()
+#include <string.h>
+
+// ...snip...
+
+SEXP rev_wrapper(SEXP x){
+  Slice s = {REAL(x), Rf_length(x)};
+  Slice s_rev = rev_slice(s);
+
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, s_rev.len));
+  memcpy(REAL(out), s_rev.data, s.len * sizeof(double));
+  free_slice(s_rev); // free!!!
+  UNPROTECT(1);
+
+  return out;
+}
+```
+
+### Result
+
+The full diff is here:
+
+<https://github.com/r-rust/hellorust/commit/97b3628b4a66eae9e25898a79ebf20fa59741063>
+
+### Can I do zero-copy?
+
+Copying memory to memory is not very cool, but it just works. I don't know any nicer way yet. [Apache Arrow](https://arrow.apache.org/) seems a overkill for this simple usage, but will I need it in future...? Or [flatbuffer](https://google.github.io/flatbuffers/)? This seems a battle for another day, so I'll stop here for now.
+
+## Precompiled binary for Windows
+
+As you might already notice, [hellorust's installation instruction for Windows](https://github.com/r-rust/hellorust#windows) is a bit long. But, do I really need to require the users to install cargo, just to compile my useless package? Now that we have GitHub Actions CI, maybe preparing a precompiled binary is a choice.
+
+Here's the YAML I'm using to compile on windows runners and attach the binary on the releases (This creates a two separate releases for `x86_64` and `i686`, which might be improved...).
+
+``` yaml
+on:
+  push:
+    tags:
+      - 'windows*'
+
+name: Build Windows
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        target:
+          - x86_64
+          - i686
+
+    name: build-${{ matrix.target }}-pc-windows-gnu
+
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}-pc-windows-gnu
+          profile: minimal
+          default: true
+
+      - name: Run cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --target=${{ matrix.target }}-pc-windows-gnu --manifest-path=src/string2path/Cargo.toml
+
+      - name: List files
+        run: ls ./src/string2path/target/${{ matrix.target }}-pc-windows-gnu/release/
+        shell: bash
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}-${{ matrix.target }}
+          release_name: Release ${{ github.ref }}-${{ matrix.target }}
+          draft: false
+          prerelease: true
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./src/string2path/target/${{ matrix.target }}-pc-windows-gnu/release/libstring2path.a
+          asset_name: libstring2path.a
+          asset_content_type: application/octet-stream
+```
+
+If there's a precompiled binary, we can skip the compilation by tweaking `Makevars.win` like this:
+
+``` {.makefile .make}
+CRATE = string2path
+
+# Change this when created a new tag
+BASE_TAG = windows7
+
+TARGET = $(subst 64,x86_64,$(subst 32,i686,$(WIN)))
+LIBDIR = windows/$(TARGET)
+STATLIB = $(LIBDIR)/lib$(CRATE).a
+PKG_LIBS = -L$(LIBDIR) -l$(CRATE) -lws2_32 -ladvapi32 -luserenv
+
+all: clean
+
+$(SHLIB): $(STATLIB)
+
+$(STATLIB):
+    mkdir -p $(LIBDIR)
+    # Not sure, but $@ doesn't seem to work here...
+    curl -L -o $(STATLIB) https://github.com/yutannihilation/$(CRATE)/releases/download/$(BASE_TAG)-$(TARGET)/lib$(CRATE).a
+
+clean:
+    rm -Rf $(SHLIB) $(STATLIB) $(OBJECTS)
+```
+
+By the way, at the time when hellorust was created, the extension of staticlib was `.lib` on Windows (MinGW), but [recently (as of v1.44) this is changed to `.a`](https://github.com/rust-lang/rust/pull/70937). Be careful.
+
+## Why Rust?
+
+Lastly, let me answer to what some of you might wonder. I know you want me to say something like "memory safe" or "fast," but..., it was just I was more familiar with Rust than C/C++.
+
+I just happened to learn Rust. I was searching for some alternative of [Processing](https://processing.org/), a great creative coding framework, and I found [nannou](https://github.com/nannou-org/nannou). At first, I didn't expect I needed to learn Rust seriously, as the framework wraps the things very nicely. But, since nannou is still maturing, I found I needed to dive a bit deeper into the world of Rust to make things work on my environment. I'm now learning [wgpu](https://github.com/gfx-rs/wgpu-rs/), a Rust implementation of [WebGPU](https://gpuweb.github.io/gpuweb/). If you are interested in, here's some resources:
+
+-   [Learn WGPU](https://sotrh.github.io/learn-wgpu/)
+-   [A Taste of WebGPU in Firefox - Mozilla Hacks - the Web developer blog](https://hacks.mozilla.org/2020/04/experimental-webgpu-in-firefox/)

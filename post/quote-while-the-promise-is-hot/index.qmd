@@ -1,0 +1,101 @@
+---
+title: Quote While the Promise Is Hot!
+author: Hiroaki Yutani
+date: '2018-10-18'
+categories:
+  - tidyeval
+  - tidyverse
+format:
+  html:
+    toc: true
+    toc-title: "Contents"
+    toc-location: left
+---
+
+Suppose we want to quote `x` when `x` is not `NULL`. The naive implementation would be like below. Here, `y` is for comparison. Do you understand why `x` and `y` are quoted differently?
+
+``` r
+quote_x_and_y <- function(x, y) {
+  if (is.null(x)) {
+    stop("x is NULL!", call. = FALSE)
+  }
+  
+  x <- rlang::enquo(x)
+  y <- rlang::enquo(y)
+  
+  list(x, y)
+}
+
+x <- y <- 1
+
+quote_x_and_y(x, y)
+#> [[1]]
+#> <quosure>
+#>   expr: ^1
+#>   env:  empty
+#> 
+#> [[2]]
+#> <quosure>
+#>   expr: ^y
+#>   env:  global
+```
+
+This is because `x` is evaluated when `is.null()` is called before quoting, whereas `y` is intact. Lionel Henry, the tidyeval super hero, [answered my qustion on RStudio Community](https://community.rstudio.com/t/a-difference-between-tidyeval-and-substitute-when-the-promise-is-already-evaluated/15480/4?u=yutannihilation):
+
+> A forced promise can no longer be captured correctly because it no longer carries an environment.
+
+This means we must not touch arguments before quoting. Instead, quote first and check the expression inside quosure by `rlang::quo_is_*()`.
+
+``` r
+quote_x_and_y2 <- function(x, y) {
+  x <- rlang::enquo(x)
+  y <- rlang::enquo(y)
+  
+  if (rlang::quo_is_null(x)) {
+    stop("x is NULL!", call. = FALSE)
+  }
+  
+  list(x, y)
+}
+
+quote_x_and_y2(x, y)
+#> [[1]]
+#> <quosure>
+#>   expr: ^x
+#>   env:  global
+#> 
+#> [[2]]
+#> <quosure>
+#>   expr: ^y
+#>   env:  global
+```
+
+For more complex checking, we may need to extract the expression from the quosure by `rlang::quo_get_expr()`.
+
+``` r
+quote_x_and_y_wont_stop <- function(x, y) {
+  x <- rlang::enquo(x)
+  y <- rlang::enquo(y)
+
+  x_expr <- rlang::quo_get_expr(x)  
+  if (rlang::call_name(x) %in% "stop") {
+    message("Nothing can stop me!\n")
+  }
+  
+  list(x, y)
+}
+
+quote_x_and_y_wont_stop(stop("foo"), "bar")
+#> Nothing can stop me!
+#> [[1]]
+#> <quosure>
+#>   expr: ^stop("foo")
+#>   env:  global
+#> 
+#> [[2]]
+#> <quosure>
+#>   expr: ^"bar"
+#>   env:  empty
+```
+
+Anyway, keep in mind to use `enquo()` (or `ensym()`) at the very beginning of the function. Quote while the promise is hot.

@@ -11,3 +11,6 @@
 
 # data
 /data/osm-tiles
+/.quarto/
+
+index_cache/

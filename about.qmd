@@ -1,0 +1,17 @@
+---
+title: "About"
+image: profile.png
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/yutannihilat_en
+    - icon: github
+      text: Github
+      href: https://github.com/yutannihilation
+---
+
+Hi! I'm Hiroaki Yutani. You can call me either Yutani or Hiroaki (I guess Yutani is easier).
+
+This blog is where I struggle to learn about R (and improve my poor English).

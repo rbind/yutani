@@ -1,5 +1,0 @@
----
-title: "Wannabe Rstats-fu"
-site: distill::distill_website
-listing: post
----
