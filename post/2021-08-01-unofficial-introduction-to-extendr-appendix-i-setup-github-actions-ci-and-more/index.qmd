@@ -5,11 +5,6 @@ description: |
 author: Hiroaki Yutani
 date: "2021-08-01"
 categories: [Rust, extendr]
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 image: "screenshot_github_release.png"
 ---
 

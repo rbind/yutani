@@ -6,11 +6,6 @@ categories:
   - tidyr
   - tidy data
   - gt
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 ```{=html}

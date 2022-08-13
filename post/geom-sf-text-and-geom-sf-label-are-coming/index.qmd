@@ -5,11 +5,6 @@ date: '2018-10-10'
 categories:
   - tidyverse
   - ggplot2
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 ggplot2 v3.1.0 will be released soon (hopefully), so let me do a spoiler about a small feature I implemented, `geom_sf_label()` and `geom_sf_text()`.

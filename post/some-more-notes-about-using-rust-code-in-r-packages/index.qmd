@@ -4,11 +4,6 @@ author: Hiroaki Yutani
 date: '2020-09-15'
 categories:
   - Rust
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 [When I first tried to use Rust code within R package five years ago](https://github.com/yutannihilation/RRustFib), it was like crawling in the dark and I wasted several days just to find I didn't understand anything. But, now we have [Using Rust code in R packages](https://jeroen.github.io/erum2018/), a great presentation by Jeroen Ooms. It taught me almost everything! But still, I needed to learn myself some more things for my purpose. Let me leave some notes about those.

@@ -6,11 +6,6 @@ slug: enhancing-gather-and-spread-by-using-bundled-data-frames
 categories:
   - tidyr
   - tidy data
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 ```{=html}

@@ -2,12 +2,7 @@
 title: "An Example Usage of ggplot_add()"
 author: Hiroaki Yutani
 date: "2017-11-07"
-categories: ["gghighlight", "ggplot2", "package"]
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
+categories: ["gghighlight", "ggplot2", "R package"]
 ---
 
 A generic function `ggplot_add()` was added to ggplot2 by this PR:

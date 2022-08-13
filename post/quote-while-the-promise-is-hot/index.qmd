@@ -5,11 +5,6 @@ date: '2018-10-18'
 categories:
   - tidyeval
   - tidyverse
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 Suppose we want to quote `x` when `x` is not `NULL`. The naive implementation would be like below. Here, `y` is for comparison. Do you understand why `x` and `y` are quoted differently?

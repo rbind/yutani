@@ -3,6 +3,11 @@ project:
 
 website:
   title: "Wannabe Rstats-fu"
+  
+  twitter-card: true
+  
+  favicon: assets/favicon.ico
+  
   navbar:
     right:
       - about.qmd
@@ -13,8 +18,15 @@ website:
 
 format:
   html:
-    theme: lumen
-    css: styles.css
+    # Theme
+    theme:
+      - lumen
+      - custom.scss
+      
+    # Table of contents
+    toc: true
+    toc-title: "Contents"
+    toc-location: left
 
 editor: visual
 

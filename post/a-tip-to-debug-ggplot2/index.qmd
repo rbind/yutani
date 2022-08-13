@@ -4,11 +4,6 @@ author: Hiroaki Yutani
 date: '2019-01-11'
 categories:
   - package development
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 Since [the tidyverse developer day](https://www.tidyverse.org/articles/2018/11/tidyverse-developer-day-2019/) is near, I share my very very secret technique to debug ggplot2. Though this is a very small thing, hope this helps someone a bit.

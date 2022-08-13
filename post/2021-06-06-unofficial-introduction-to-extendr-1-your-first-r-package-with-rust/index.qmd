@@ -7,11 +7,6 @@ date: "2021-06-06"
 categories:
   - Rust
   - extendr
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 Now the official version of the introduction is available!

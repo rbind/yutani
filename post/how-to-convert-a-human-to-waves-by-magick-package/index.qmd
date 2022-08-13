@@ -5,11 +5,6 @@ date: '2018-11-23'
 categories:
   - ggplot2
   - magick
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 image: ./images/preview.png
 ---
 

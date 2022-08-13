@@ -5,11 +5,6 @@ date: "2021-09-21"
 description: |
   `configure.win` and `configure`
 categories: [Rust, extendr]
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 I've been struggling with `configure.win` for several days. I think I've done, but it seems I've come too far from [the last post](https://yutani.rbind.io/post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/#provide-precompiled-binaries-for-windows). So, let me try to explain what a `configure.win` (or `configure`) would look like.

@@ -5,11 +5,6 @@ date: '2019-01-25'
 categories:
   - rlang
   - Windows
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 ---
 
 I don't have any strong feelings about OSs. They are just tools. I had been a Mac user for 10+ years since I was 10, and now I'm using Windows for no reason. All OSs have their pros and cons. For example, I like Mac, but, in the late 90s, I was very disappointed at Mac because it didn't have fonts to display [Shift_JIS art](https://en.wikipedia.org/wiki/Shift_JIS_art) nicely.

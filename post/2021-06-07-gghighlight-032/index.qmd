@@ -3,11 +3,6 @@ title: "gghighlight 0.3.2"
 author: Hiroaki Yutani
 date: 2021-06-07
 categories: [gghighlight, ggplot2, R package]
-format:
-  html:
-    toc: true
-    toc-title: "Contents"
-    toc-location: left
 image: "thumbnail.png"
 ---
 
