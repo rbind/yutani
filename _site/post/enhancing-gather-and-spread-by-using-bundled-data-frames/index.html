@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.38">
+<meta name="generator" content="quarto-1.1.63">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,10 +13,15 @@
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: 1;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -55,7 +60,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -68,7 +73,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -194,7 +199,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
-    <nav id="TOC" role="doc-toc">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Contents</h2>
    
   <ul>
@@ -284,7 +289,7 @@ they will be dropped</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#cloaiwxgcg .gt_table {
+:where(#cloaiwxgcg) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -309,7 +314,7 @@ they will be dropped</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_heading {
+:where(#cloaiwxgcg) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -321,7 +326,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_title {
+:where(#cloaiwxgcg) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -333,7 +338,7 @@ they will be dropped</code></pre>
   border-bottom-width: 0;
 }
 
-#cloaiwxgcg .gt_subtitle {
+:where(#cloaiwxgcg) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -345,13 +350,13 @@ they will be dropped</code></pre>
   border-top-width: 0;
 }
 
-#cloaiwxgcg .gt_bottom_border {
+:where(#cloaiwxgcg) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_col_headings {
+:where(#cloaiwxgcg) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -366,7 +371,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_col_heading {
+:where(#cloaiwxgcg) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -386,7 +391,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#cloaiwxgcg .gt_column_spanner_outer {
+:where(#cloaiwxgcg) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -398,15 +403,15 @@ they will be dropped</code></pre>
   padding-right: 4px;
 }
 
-#cloaiwxgcg .gt_column_spanner_outer:first-child {
+:where(#cloaiwxgcg) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#cloaiwxgcg .gt_column_spanner_outer:last-child {
+:where(#cloaiwxgcg) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#cloaiwxgcg .gt_column_spanner {
+:where(#cloaiwxgcg) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -418,7 +423,7 @@ they will be dropped</code></pre>
   width: 100%;
 }
 
-#cloaiwxgcg .gt_group_heading {
+:where(#cloaiwxgcg) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -443,7 +448,7 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#cloaiwxgcg .gt_empty_group_heading {
+:where(#cloaiwxgcg) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -458,15 +463,15 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#cloaiwxgcg .gt_from_md > :first-child {
+:where(#cloaiwxgcg) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#cloaiwxgcg .gt_from_md > :last-child {
+:where(#cloaiwxgcg) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#cloaiwxgcg .gt_row {
+:where(#cloaiwxgcg) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -485,7 +490,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#cloaiwxgcg .gt_stub {
+:where(#cloaiwxgcg) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -498,7 +503,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#cloaiwxgcg .gt_stub_row_group {
+:where(#cloaiwxgcg) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -512,11 +517,11 @@ they will be dropped</code></pre>
   vertical-align: top;
 }
 
-#cloaiwxgcg .gt_row_group_first td {
+:where(#cloaiwxgcg) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#cloaiwxgcg .gt_summary_row {
+:where(#cloaiwxgcg) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -526,16 +531,16 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#cloaiwxgcg .gt_first_summary_row {
+:where(#cloaiwxgcg) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_first_summary_row.thick {
+:where(#cloaiwxgcg) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#cloaiwxgcg .gt_last_summary_row {
+:where(#cloaiwxgcg) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -545,7 +550,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_grand_summary_row {
+:where(#cloaiwxgcg) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -555,7 +560,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#cloaiwxgcg .gt_first_grand_summary_row {
+:where(#cloaiwxgcg) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -565,11 +570,11 @@ they will be dropped</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_striped {
+:where(#cloaiwxgcg) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#cloaiwxgcg .gt_table_body {
+:where(#cloaiwxgcg) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -578,7 +583,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_footnotes {
+:where(#cloaiwxgcg) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -592,7 +597,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_footnote {
+:where(#cloaiwxgcg) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -601,7 +606,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#cloaiwxgcg .gt_sourcenotes {
+:where(#cloaiwxgcg) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -615,7 +620,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#cloaiwxgcg .gt_sourcenote {
+:where(#cloaiwxgcg) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -623,36 +628,36 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#cloaiwxgcg .gt_left {
+:where(#cloaiwxgcg) .gt_left {
   text-align: left;
 }
 
-#cloaiwxgcg .gt_center {
+:where(#cloaiwxgcg) .gt_center {
   text-align: center;
 }
 
-#cloaiwxgcg .gt_right {
+:where(#cloaiwxgcg) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#cloaiwxgcg .gt_font_normal {
+:where(#cloaiwxgcg) .gt_font_normal {
   font-weight: normal;
 }
 
-#cloaiwxgcg .gt_font_bold {
+:where(#cloaiwxgcg) .gt_font_bold {
   font-weight: bold;
 }
 
-#cloaiwxgcg .gt_font_italic {
+:where(#cloaiwxgcg) .gt_font_italic {
   font-style: italic;
 }
 
-#cloaiwxgcg .gt_super {
+:where(#cloaiwxgcg) .gt_super {
   font-size: 65%;
 }
 
-#cloaiwxgcg .gt_two_val_uncert {
+:where(#cloaiwxgcg) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -661,31 +666,31 @@ they will be dropped</code></pre>
   margin-left: 0.1em;
 }
 
-#cloaiwxgcg .gt_footnote_marks {
+:where(#cloaiwxgcg) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#cloaiwxgcg .gt_asterisk {
+:where(#cloaiwxgcg) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#cloaiwxgcg .gt_slash_mark {
+:where(#cloaiwxgcg) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#cloaiwxgcg .gt_fraction_numerator {
+:where(#cloaiwxgcg) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#cloaiwxgcg .gt_fraction_denominator {
+:where(#cloaiwxgcg) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -730,7 +735,7 @@ they will be dropped</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ysabnjvkbj .gt_table {
+:where(#ysabnjvkbj) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -755,7 +760,7 @@ they will be dropped</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_heading {
+:where(#ysabnjvkbj) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -767,7 +772,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_title {
+:where(#ysabnjvkbj) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -779,7 +784,7 @@ they will be dropped</code></pre>
   border-bottom-width: 0;
 }
 
-#ysabnjvkbj .gt_subtitle {
+:where(#ysabnjvkbj) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -791,13 +796,13 @@ they will be dropped</code></pre>
   border-top-width: 0;
 }
 
-#ysabnjvkbj .gt_bottom_border {
+:where(#ysabnjvkbj) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_col_headings {
+:where(#ysabnjvkbj) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -812,7 +817,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_col_heading {
+:where(#ysabnjvkbj) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -832,7 +837,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#ysabnjvkbj .gt_column_spanner_outer {
+:where(#ysabnjvkbj) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -844,15 +849,15 @@ they will be dropped</code></pre>
   padding-right: 4px;
 }
 
-#ysabnjvkbj .gt_column_spanner_outer:first-child {
+:where(#ysabnjvkbj) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ysabnjvkbj .gt_column_spanner_outer:last-child {
+:where(#ysabnjvkbj) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ysabnjvkbj .gt_column_spanner {
+:where(#ysabnjvkbj) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -864,7 +869,7 @@ they will be dropped</code></pre>
   width: 100%;
 }
 
-#ysabnjvkbj .gt_group_heading {
+:where(#ysabnjvkbj) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -889,7 +894,7 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#ysabnjvkbj .gt_empty_group_heading {
+:where(#ysabnjvkbj) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -904,15 +909,15 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#ysabnjvkbj .gt_from_md > :first-child {
+:where(#ysabnjvkbj) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ysabnjvkbj .gt_from_md > :last-child {
+:where(#ysabnjvkbj) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ysabnjvkbj .gt_row {
+:where(#ysabnjvkbj) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -931,7 +936,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#ysabnjvkbj .gt_stub {
+:where(#ysabnjvkbj) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -944,7 +949,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ysabnjvkbj .gt_stub_row_group {
+:where(#ysabnjvkbj) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -958,11 +963,11 @@ they will be dropped</code></pre>
   vertical-align: top;
 }
 
-#ysabnjvkbj .gt_row_group_first td {
+:where(#ysabnjvkbj) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ysabnjvkbj .gt_summary_row {
+:where(#ysabnjvkbj) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -972,16 +977,16 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ysabnjvkbj .gt_first_summary_row {
+:where(#ysabnjvkbj) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_first_summary_row.thick {
+:where(#ysabnjvkbj) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ysabnjvkbj .gt_last_summary_row {
+:where(#ysabnjvkbj) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -991,7 +996,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_grand_summary_row {
+:where(#ysabnjvkbj) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1001,7 +1006,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ysabnjvkbj .gt_first_grand_summary_row {
+:where(#ysabnjvkbj) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1011,11 +1016,11 @@ they will be dropped</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_striped {
+:where(#ysabnjvkbj) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ysabnjvkbj .gt_table_body {
+:where(#ysabnjvkbj) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1024,7 +1029,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_footnotes {
+:where(#ysabnjvkbj) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1038,7 +1043,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_footnote {
+:where(#ysabnjvkbj) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1047,7 +1052,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ysabnjvkbj .gt_sourcenotes {
+:where(#ysabnjvkbj) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1061,7 +1066,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ysabnjvkbj .gt_sourcenote {
+:where(#ysabnjvkbj) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1069,36 +1074,36 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ysabnjvkbj .gt_left {
+:where(#ysabnjvkbj) .gt_left {
   text-align: left;
 }
 
-#ysabnjvkbj .gt_center {
+:where(#ysabnjvkbj) .gt_center {
   text-align: center;
 }
 
-#ysabnjvkbj .gt_right {
+:where(#ysabnjvkbj) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ysabnjvkbj .gt_font_normal {
+:where(#ysabnjvkbj) .gt_font_normal {
   font-weight: normal;
 }
 
-#ysabnjvkbj .gt_font_bold {
+:where(#ysabnjvkbj) .gt_font_bold {
   font-weight: bold;
 }
 
-#ysabnjvkbj .gt_font_italic {
+:where(#ysabnjvkbj) .gt_font_italic {
   font-style: italic;
 }
 
-#ysabnjvkbj .gt_super {
+:where(#ysabnjvkbj) .gt_super {
   font-size: 65%;
 }
 
-#ysabnjvkbj .gt_two_val_uncert {
+:where(#ysabnjvkbj) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -1107,31 +1112,31 @@ they will be dropped</code></pre>
   margin-left: 0.1em;
 }
 
-#ysabnjvkbj .gt_footnote_marks {
+:where(#ysabnjvkbj) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#ysabnjvkbj .gt_asterisk {
+:where(#ysabnjvkbj) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ysabnjvkbj .gt_slash_mark {
+:where(#ysabnjvkbj) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#ysabnjvkbj .gt_fraction_numerator {
+:where(#ysabnjvkbj) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#ysabnjvkbj .gt_fraction_denominator {
+:where(#ysabnjvkbj) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1266,7 +1271,7 @@ they will be dropped</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ywaqifzdal .gt_table {
+:where(#ywaqifzdal) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1291,7 +1296,7 @@ they will be dropped</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_heading {
+:where(#ywaqifzdal) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1303,7 +1308,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_title {
+:where(#ywaqifzdal) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1315,7 +1320,7 @@ they will be dropped</code></pre>
   border-bottom-width: 0;
 }
 
-#ywaqifzdal .gt_subtitle {
+:where(#ywaqifzdal) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1327,13 +1332,13 @@ they will be dropped</code></pre>
   border-top-width: 0;
 }
 
-#ywaqifzdal .gt_bottom_border {
+:where(#ywaqifzdal) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_col_headings {
+:where(#ywaqifzdal) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1348,7 +1353,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_col_heading {
+:where(#ywaqifzdal) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1368,7 +1373,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#ywaqifzdal .gt_column_spanner_outer {
+:where(#ywaqifzdal) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1380,15 +1385,15 @@ they will be dropped</code></pre>
   padding-right: 4px;
 }
 
-#ywaqifzdal .gt_column_spanner_outer:first-child {
+:where(#ywaqifzdal) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ywaqifzdal .gt_column_spanner_outer:last-child {
+:where(#ywaqifzdal) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ywaqifzdal .gt_column_spanner {
+:where(#ywaqifzdal) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1400,7 +1405,7 @@ they will be dropped</code></pre>
   width: 100%;
 }
 
-#ywaqifzdal .gt_group_heading {
+:where(#ywaqifzdal) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1425,7 +1430,7 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#ywaqifzdal .gt_empty_group_heading {
+:where(#ywaqifzdal) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1440,15 +1445,15 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#ywaqifzdal .gt_from_md > :first-child {
+:where(#ywaqifzdal) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ywaqifzdal .gt_from_md > :last-child {
+:where(#ywaqifzdal) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ywaqifzdal .gt_row {
+:where(#ywaqifzdal) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1467,7 +1472,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#ywaqifzdal .gt_stub {
+:where(#ywaqifzdal) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1480,7 +1485,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ywaqifzdal .gt_stub_row_group {
+:where(#ywaqifzdal) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1494,11 +1499,11 @@ they will be dropped</code></pre>
   vertical-align: top;
 }
 
-#ywaqifzdal .gt_row_group_first td {
+:where(#ywaqifzdal) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ywaqifzdal .gt_summary_row {
+:where(#ywaqifzdal) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1508,16 +1513,16 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ywaqifzdal .gt_first_summary_row {
+:where(#ywaqifzdal) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_first_summary_row.thick {
+:where(#ywaqifzdal) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ywaqifzdal .gt_last_summary_row {
+:where(#ywaqifzdal) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1527,7 +1532,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_grand_summary_row {
+:where(#ywaqifzdal) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1537,7 +1542,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ywaqifzdal .gt_first_grand_summary_row {
+:where(#ywaqifzdal) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1547,11 +1552,11 @@ they will be dropped</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_striped {
+:where(#ywaqifzdal) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ywaqifzdal .gt_table_body {
+:where(#ywaqifzdal) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1560,7 +1565,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_footnotes {
+:where(#ywaqifzdal) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1574,7 +1579,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_footnote {
+:where(#ywaqifzdal) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1583,7 +1588,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ywaqifzdal .gt_sourcenotes {
+:where(#ywaqifzdal) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1597,7 +1602,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ywaqifzdal .gt_sourcenote {
+:where(#ywaqifzdal) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1605,36 +1610,36 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#ywaqifzdal .gt_left {
+:where(#ywaqifzdal) .gt_left {
   text-align: left;
 }
 
-#ywaqifzdal .gt_center {
+:where(#ywaqifzdal) .gt_center {
   text-align: center;
 }
 
-#ywaqifzdal .gt_right {
+:where(#ywaqifzdal) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ywaqifzdal .gt_font_normal {
+:where(#ywaqifzdal) .gt_font_normal {
   font-weight: normal;
 }
 
-#ywaqifzdal .gt_font_bold {
+:where(#ywaqifzdal) .gt_font_bold {
   font-weight: bold;
 }
 
-#ywaqifzdal .gt_font_italic {
+:where(#ywaqifzdal) .gt_font_italic {
   font-style: italic;
 }
 
-#ywaqifzdal .gt_super {
+:where(#ywaqifzdal) .gt_super {
   font-size: 65%;
 }
 
-#ywaqifzdal .gt_two_val_uncert {
+:where(#ywaqifzdal) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -1643,31 +1648,31 @@ they will be dropped</code></pre>
   margin-left: 0.1em;
 }
 
-#ywaqifzdal .gt_footnote_marks {
+:where(#ywaqifzdal) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#ywaqifzdal .gt_asterisk {
+:where(#ywaqifzdal) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ywaqifzdal .gt_slash_mark {
+:where(#ywaqifzdal) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#ywaqifzdal .gt_fraction_numerator {
+:where(#ywaqifzdal) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#ywaqifzdal .gt_fraction_denominator {
+:where(#ywaqifzdal) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1724,7 +1729,7 @@ they will be dropped</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#kulzuxidxn .gt_table {
+:where(#kulzuxidxn) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1749,7 +1754,7 @@ they will be dropped</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_heading {
+:where(#kulzuxidxn) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1761,7 +1766,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_title {
+:where(#kulzuxidxn) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1773,7 +1778,7 @@ they will be dropped</code></pre>
   border-bottom-width: 0;
 }
 
-#kulzuxidxn .gt_subtitle {
+:where(#kulzuxidxn) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1785,13 +1790,13 @@ they will be dropped</code></pre>
   border-top-width: 0;
 }
 
-#kulzuxidxn .gt_bottom_border {
+:where(#kulzuxidxn) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_col_headings {
+:where(#kulzuxidxn) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1806,7 +1811,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_col_heading {
+:where(#kulzuxidxn) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1826,7 +1831,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#kulzuxidxn .gt_column_spanner_outer {
+:where(#kulzuxidxn) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1838,15 +1843,15 @@ they will be dropped</code></pre>
   padding-right: 4px;
 }
 
-#kulzuxidxn .gt_column_spanner_outer:first-child {
+:where(#kulzuxidxn) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kulzuxidxn .gt_column_spanner_outer:last-child {
+:where(#kulzuxidxn) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kulzuxidxn .gt_column_spanner {
+:where(#kulzuxidxn) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1858,7 +1863,7 @@ they will be dropped</code></pre>
   width: 100%;
 }
 
-#kulzuxidxn .gt_group_heading {
+:where(#kulzuxidxn) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1883,7 +1888,7 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#kulzuxidxn .gt_empty_group_heading {
+:where(#kulzuxidxn) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1898,15 +1903,15 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#kulzuxidxn .gt_from_md > :first-child {
+:where(#kulzuxidxn) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kulzuxidxn .gt_from_md > :last-child {
+:where(#kulzuxidxn) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kulzuxidxn .gt_row {
+:where(#kulzuxidxn) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1925,7 +1930,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#kulzuxidxn .gt_stub {
+:where(#kulzuxidxn) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1938,7 +1943,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#kulzuxidxn .gt_stub_row_group {
+:where(#kulzuxidxn) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1952,11 +1957,11 @@ they will be dropped</code></pre>
   vertical-align: top;
 }
 
-#kulzuxidxn .gt_row_group_first td {
+:where(#kulzuxidxn) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#kulzuxidxn .gt_summary_row {
+:where(#kulzuxidxn) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1966,16 +1971,16 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#kulzuxidxn .gt_first_summary_row {
+:where(#kulzuxidxn) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_first_summary_row.thick {
+:where(#kulzuxidxn) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#kulzuxidxn .gt_last_summary_row {
+:where(#kulzuxidxn) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1985,7 +1990,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_grand_summary_row {
+:where(#kulzuxidxn) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1995,7 +2000,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#kulzuxidxn .gt_first_grand_summary_row {
+:where(#kulzuxidxn) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2005,11 +2010,11 @@ they will be dropped</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_striped {
+:where(#kulzuxidxn) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#kulzuxidxn .gt_table_body {
+:where(#kulzuxidxn) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2018,7 +2023,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_footnotes {
+:where(#kulzuxidxn) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2032,7 +2037,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_footnote {
+:where(#kulzuxidxn) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -2041,7 +2046,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#kulzuxidxn .gt_sourcenotes {
+:where(#kulzuxidxn) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2055,7 +2060,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#kulzuxidxn .gt_sourcenote {
+:where(#kulzuxidxn) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2063,36 +2068,36 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#kulzuxidxn .gt_left {
+:where(#kulzuxidxn) .gt_left {
   text-align: left;
 }
 
-#kulzuxidxn .gt_center {
+:where(#kulzuxidxn) .gt_center {
   text-align: center;
 }
 
-#kulzuxidxn .gt_right {
+:where(#kulzuxidxn) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kulzuxidxn .gt_font_normal {
+:where(#kulzuxidxn) .gt_font_normal {
   font-weight: normal;
 }
 
-#kulzuxidxn .gt_font_bold {
+:where(#kulzuxidxn) .gt_font_bold {
   font-weight: bold;
 }
 
-#kulzuxidxn .gt_font_italic {
+:where(#kulzuxidxn) .gt_font_italic {
   font-style: italic;
 }
 
-#kulzuxidxn .gt_super {
+:where(#kulzuxidxn) .gt_super {
   font-size: 65%;
 }
 
-#kulzuxidxn .gt_two_val_uncert {
+:where(#kulzuxidxn) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -2101,31 +2106,31 @@ they will be dropped</code></pre>
   margin-left: 0.1em;
 }
 
-#kulzuxidxn .gt_footnote_marks {
+:where(#kulzuxidxn) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#kulzuxidxn .gt_asterisk {
+:where(#kulzuxidxn) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#kulzuxidxn .gt_slash_mark {
+:where(#kulzuxidxn) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#kulzuxidxn .gt_fraction_numerator {
+:where(#kulzuxidxn) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#kulzuxidxn .gt_fraction_denominator {
+:where(#kulzuxidxn) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -2229,7 +2234,7 @@ they will be dropped</code></pre>
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#qwvjctsfos .gt_table {
+:where(#qwvjctsfos) .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -2254,7 +2259,7 @@ they will be dropped</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_heading {
+:where(#qwvjctsfos) .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2266,7 +2271,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_title {
+:where(#qwvjctsfos) .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2278,7 +2283,7 @@ they will be dropped</code></pre>
   border-bottom-width: 0;
 }
 
-#qwvjctsfos .gt_subtitle {
+:where(#qwvjctsfos) .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2290,13 +2295,13 @@ they will be dropped</code></pre>
   border-top-width: 0;
 }
 
-#qwvjctsfos .gt_bottom_border {
+:where(#qwvjctsfos) .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_col_headings {
+:where(#qwvjctsfos) .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2311,7 +2316,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_col_heading {
+:where(#qwvjctsfos) .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2331,7 +2336,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#qwvjctsfos .gt_column_spanner_outer {
+:where(#qwvjctsfos) .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2343,15 +2348,15 @@ they will be dropped</code></pre>
   padding-right: 4px;
 }
 
-#qwvjctsfos .gt_column_spanner_outer:first-child {
+:where(#qwvjctsfos) .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#qwvjctsfos .gt_column_spanner_outer:last-child {
+:where(#qwvjctsfos) .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#qwvjctsfos .gt_column_spanner {
+:where(#qwvjctsfos) .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2363,7 +2368,7 @@ they will be dropped</code></pre>
   width: 100%;
 }
 
-#qwvjctsfos .gt_group_heading {
+:where(#qwvjctsfos) .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2388,7 +2393,7 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#qwvjctsfos .gt_empty_group_heading {
+:where(#qwvjctsfos) .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2403,15 +2408,15 @@ they will be dropped</code></pre>
   vertical-align: middle;
 }
 
-#qwvjctsfos .gt_from_md > :first-child {
+:where(#qwvjctsfos) .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#qwvjctsfos .gt_from_md > :last-child {
+:where(#qwvjctsfos) .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#qwvjctsfos .gt_row {
+:where(#qwvjctsfos) .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2430,7 +2435,7 @@ they will be dropped</code></pre>
   overflow-x: hidden;
 }
 
-#qwvjctsfos .gt_stub {
+:where(#qwvjctsfos) .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2443,7 +2448,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#qwvjctsfos .gt_stub_row_group {
+:where(#qwvjctsfos) .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2457,11 +2462,11 @@ they will be dropped</code></pre>
   vertical-align: top;
 }
 
-#qwvjctsfos .gt_row_group_first td {
+:where(#qwvjctsfos) .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#qwvjctsfos .gt_summary_row {
+:where(#qwvjctsfos) .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2471,16 +2476,16 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#qwvjctsfos .gt_first_summary_row {
+:where(#qwvjctsfos) .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_first_summary_row.thick {
+:where(#qwvjctsfos) .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#qwvjctsfos .gt_last_summary_row {
+:where(#qwvjctsfos) .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2490,7 +2495,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_grand_summary_row {
+:where(#qwvjctsfos) .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2500,7 +2505,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#qwvjctsfos .gt_first_grand_summary_row {
+:where(#qwvjctsfos) .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2510,11 +2515,11 @@ they will be dropped</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_striped {
+:where(#qwvjctsfos) .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#qwvjctsfos .gt_table_body {
+:where(#qwvjctsfos) .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2523,7 +2528,7 @@ they will be dropped</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_footnotes {
+:where(#qwvjctsfos) .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2537,7 +2542,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_footnote {
+:where(#qwvjctsfos) .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -2546,7 +2551,7 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#qwvjctsfos .gt_sourcenotes {
+:where(#qwvjctsfos) .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2560,7 +2565,7 @@ they will be dropped</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#qwvjctsfos .gt_sourcenote {
+:where(#qwvjctsfos) .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2568,36 +2573,36 @@ they will be dropped</code></pre>
   padding-right: 5px;
 }
 
-#qwvjctsfos .gt_left {
+:where(#qwvjctsfos) .gt_left {
   text-align: left;
 }
 
-#qwvjctsfos .gt_center {
+:where(#qwvjctsfos) .gt_center {
   text-align: center;
 }
 
-#qwvjctsfos .gt_right {
+:where(#qwvjctsfos) .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#qwvjctsfos .gt_font_normal {
+:where(#qwvjctsfos) .gt_font_normal {
   font-weight: normal;
 }
 
-#qwvjctsfos .gt_font_bold {
+:where(#qwvjctsfos) .gt_font_bold {
   font-weight: bold;
 }
 
-#qwvjctsfos .gt_font_italic {
+:where(#qwvjctsfos) .gt_font_italic {
   font-style: italic;
 }
 
-#qwvjctsfos .gt_super {
+:where(#qwvjctsfos) .gt_super {
   font-size: 65%;
 }
 
-#qwvjctsfos .gt_two_val_uncert {
+:where(#qwvjctsfos) .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -2606,31 +2611,31 @@ they will be dropped</code></pre>
   margin-left: 0.1em;
 }
 
-#qwvjctsfos .gt_footnote_marks {
+:where(#qwvjctsfos) .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#qwvjctsfos .gt_asterisk {
+:where(#qwvjctsfos) .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#qwvjctsfos .gt_slash_mark {
+:where(#qwvjctsfos) .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#qwvjctsfos .gt_fraction_numerator {
+:where(#qwvjctsfos) .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#qwvjctsfos .gt_fraction_denominator {
+:where(#qwvjctsfos) .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -2851,7 +2856,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);

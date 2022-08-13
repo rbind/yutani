@@ -22,7 +22,7 @@ format:
     theme:
       - lumen
       - custom.scss
-      
+    
     # Table of contents
     toc: true
     toc-title: "Contents"
