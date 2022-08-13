@@ -1,11 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 /*-- scss:defaults --*/
 
-$font-size-base:  1.4rem;
+$font-family-sans-serif:  "Roboto Slab", Helvetica, Arial, sans-serif !default;
 
 /*-- scss:rules --*/
 
-div.sourceCode code {
+div.sourceCode code, div.cell-output code {
   font-family: 'Fira Code', monospace;
 }
+
+div.cell-output {
+  border: 2px solid rgb(245, 245, 245);
+  border-radius: .25rem;
+}
+
+
+section.level2 {
+  margin-top: 100px;
+}
+
+section.level3 {
+  margin-top: 55px;
+}
+
