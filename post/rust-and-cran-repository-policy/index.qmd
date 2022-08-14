@@ -1,0 +1,128 @@
+---
+title: "Rust and the CRAN Repository Policy"
+author: "Hiroaki Yutani"
+date: "2022-08-14"
+categories: ["Rust", "extendr"]
+editor: visual
+---
+
+One year ago, I succeeded to release an R package using Rust ([string2path](https://cran.r-project.org/package=string2path)) on CRAN. After that, I wrote [a blog post about how to use Rust in an R package](https://yutani.rbind.io/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/), and I said
+
+> I\'ve come too far
+
+but it turned out it was not far enough. Enough for what? For satisfying [the CRAN Repository Policy](https://cran.r-project.org/web/packages/policies.html).
+
+Last month, I got an email titled "CRAN packages downloading rust files" from the CRAN maintainer. What it basically says was that my package violates the policy and will be removed from CRAN if I don't correct it until 2022-08-10.
+
+## What went wrong?
+
+In summary, there were three problems that I had to address (there was one more problem, but let's ignore for now for simplicity).
+
+1.  My package downloads the Rust sources
+2.  My package doesn't describe the authorship and copyright of the Rust sources in the DESCRIPTION file
+3.  My package downloads the pre-compiled binary without the agreement of the CRAN team
+
+Let's look at the details one by one.
+
+### 1. downloads the Rust sources
+
+The CRAN Policy says:
+
+> Where a package wishes to make use of a library not written solely for the package, the package installation should first look to see if it is already installed and if so is of a suitable version. In case not, it is desirable to include the library sources in the package and compile them as part of package installation. If the sources are too large, it is acceptable to download them as part of installation, but do ensure that the download is of a fixed version rather than the latest. Only as a last resort and with the agreement of the CRAN team should a package download pre-compiled software.
+
+If you are familiar with Rust, you probably notice this doesn't quite fit the Rust cases. The dependency Rust crates are not "installed" on the machine, but are resolved and downloaded automatically by Cargo, the Rust package manager. Usually, we can just include `Cargo.lock`, and then Cargo always downloads the fixed versions and verifies the checksums. But, that's the rule. We should prevent Cargo from downloading any sources.
+
+The solution is simple. We can use `cargo vendor` to include the sources of the dependencies. At first, I thought it was not realistic because my dependency was over 100MB. But, David B. Dahl, an author of another R package using Rust, kindly suggested we can compress them to a tarball.
+
+Converting them into a tarball is necessary also because otherwise we would get this warning:
+
+    storing paths of more than 100 bytes is not portable.
+
+More details can be found in the following files:
+
+-   [`src/Makevars.in`](https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/Makevars.in#L13-L19)
+
+-   [`src/cargo_vendor_config.toml`](https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/cargo_vendor_config.toml) : this will be moved to `.cargo/config.toml` to use the vendored sources on compiling.
+
+-   [`src/rust/vendor.sh`](https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/rust/vendor.sh) : this updates the tarball
+
+### 2. doesn't describe the authorship and copyright
+
+This was simply my oversight. The CRAN Policy says:
+
+> The ownership of copyright and intellectual property rights of all components of the package must be clear and unambiguous (including from the authors specification in the DESCRIPTION file). Where code
+> is copied (or derived) from the work of others (including from R itself), care must be taken that any copyright/license statements are preserved and authorship is not misrepresented.
+>
+> ...snip...
+>
+> (\'All components\' includes any downloaded at installation or during use.)
+
+First, let's think about the authorship. It also explains how to describe the information:
+
+> Preferably, an \'Authors\@R\' field would be used with \'ctb\' roles for the authors of such code. Alternatively, the \'Author\' field should list these authors as contributors.
+>
+> Where copyrights are held by an entity other than the package authors, this should preferably be indicated via \'cph\' roles in the \'Authors\@R\' field, or using a \'Copyright\' field (if necessary referring to an inst/COPYRIGHTS file).
+
+This is a bit complex; this requires to treat humans and non-human entities differently, but it's a bit tough job to judge human and non-human one by one... Fortunately, it seems it's a common practice to use either `inst/AUTHORS` or `inst/COPYRIGHTS` and write "see inst/... for details" in `DESCRIPTION` even when there's both humans and non-humans. These files are explained in [Writing R Extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html):
+
+> Another file sometimes needed in inst is AUTHORS or COPYRIGHTS to specify the authors or copyright holders when this is too complex to put in the DESCRIPTION file.
+
+Then, how about the copyright/license information? Typically, like R packages, a Rust crate describes the license in the metadata. So, rather than actually concatenating all the license statements, I thought it's enough to summarize the licenses. But, how? Writing R Extensions says:
+
+> To include comments about the licensing rather than the body of a license, use a file named something like LICENSE.note.
+
+so it seems this `LICENSE.note` is a good place for this. Actually, several CRAN packages use this file. So, I hope this works.
+
+The details can be found in the following files:
+
+-   [`inst/AUTHORS`](https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/inst/AUTHORS)
+
+-   [`LICENSE.note`](https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/LICENSE.note)
+
+-   [`update_authors.R`](https://github.com/yutannihilation/string2path/blob/main/update_authors.R) : R script to generate the above two files from the \`Cargo.toml\` of the dependency crates.
+
+### 3. downloads the pre-compiled binary without the agreement of the CRAN team
+
+Regarding this one, I have no idea how to do this properly.
+
+First, let's go back to the sentence of the CRAN Policy:
+
+> Only as a last resort and with the agreement of the CRAN team should a package download pre-compiled software.
+
+Yes, I believe it's a "last resort." My package tries to compile the Rust code first, and only when it is found that no Rust compiler is available on the machine, it falls back to downloading the pre-compiled binary. It downloads the fixed version of the binary and verifies the checksum.
+
+But..., how can I get "the agreement"? What state is considered they agree on the use of pre-compiled binary?
+
+I explained above in the cran-comments.md on my latest submission, in the hope that they would manually review it so that the acceptance means the agreement on downloading. However, my package went to CRAN soon after it passed the auto checks. The manual review never happened. So, while my package is still on CRAN at the time of writing this, I'm not sure if that means the problem is fixed.
+
+## Is CRAN suitable for Rust?
+
+Honestly, I was surprised that the CRAN Policy prohibits to rely on the standard mechanism of a language. At the same time, I do understand their stance. It's a common conflict between the package managers.
+
+In response to my email that mistakenly explained about the download mechanism (while the problem was not about how it downloads the binary), the CRAN maintainer wrote:
+
+> \> That mechanism can be found in tools/configure.R.\
+>
+> But the comment in configure says that is for binary downloads. Your code is complicated, and I have spent far too long looking at it. As the CRAN policy says\
+>
+> "The time of the volunteers is CRAN\'s most precious resource"
+
+I'm really sorry that the maintainer had to read my messy code (although I never intended to force it). It's almost impossible to check all the dependency management mechanism outside of R's one no matter if it's a major one like Cargo or a minor one like my script. So, I understand they are strict on this topic.
+
+For example, [Debian Rust Packaging Policy](https://wiki.debian.org/Teams/RustPackaging/Policy) is stricter; it requires:
+
+> Package builds must not allow Cargo to access the network when building. In particular, they must not download or check out any sources at build time.
+
+In Debian package's case, if I understand correctly, it requires creating one Debian package per crate (but the packaging tool is provided so it shouldn't be that difficult, I guess). Probably we can do the same thing on CRAN, but it feels a bit overkill.
+
+I still believe it's possible to keep my package on CRAN, but I don't casually recommend it to others. It requires considerable amount of efforts to comply with the CRAN Policy, at least at the moment.
+
+## So..., should we give up on Rust?
+
+To be clear, I don't think so.
+
+In the context of Debian package, the distro's official repository is not the only way to distribute a Debian package. It can be distributed via unofficial [PPA](https://help.launchpad.net/Packaging/PPA); it's "unofficial" in the sense it's not provided by the distro, but it can be "official" if the developers of the software officially maintain the PPA.
+
+For another example, Emacs has the official repository, [GNU ELPA](https://elpa.gnu.org/). But, the users are not tied to it because there is the popular alternative, [MELPA](https://melpa.org/). GNU ELPA has strict requirements, but the users can enjoy MELPA at the same time.
+
+I think R needs such an alternative to CRAN. I'm expecting [R-universe](https://r-universe.dev/) will eventually be what MELPA is to ELPA. That would be a good thing to CRAN, too. Much of the frustration that we currently feel about CRAN probably comes from the fact that CRAN takes on too much responsibility.

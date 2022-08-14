@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.63">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Hiroaki Yutani">
+<meta name="dcterms.date" content="2022-08-14">
+
+<title>Wannabe Rstats-fu - Rust and the CRAN Repository Policy</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: 1;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<meta name="twitter:title" content="Wannabe Rstats-fu - Rust and the CRAN Repository Policy">
+<meta name="twitter:description" content="One year ago, I succeeded to release an R package using Rust (string2path) on CRAN. After that, I wrote a blog post about how to use Rust in an R package, and I said">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Wannabe Rstats-fu</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/yutannihilat_en"><i class="bi bi-twitter" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/yutannihilation"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Rust and the CRAN Repository Policy</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Rust</div>
+                <div class="quarto-category">extendr</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Hiroaki Yutani </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 14, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#what-went-wrong" id="toc-what-went-wrong" class="nav-link active" data-scroll-target="#what-went-wrong">What went wrong?</a>
+  <ul class="collapse">
+  <li><a href="#downloads-the-rust-sources" id="toc-downloads-the-rust-sources" class="nav-link" data-scroll-target="#downloads-the-rust-sources">1. downloads the Rust sources</a></li>
+  <li><a href="#doesnt-describe-the-authorship-and-copyright" id="toc-doesnt-describe-the-authorship-and-copyright" class="nav-link" data-scroll-target="#doesnt-describe-the-authorship-and-copyright">2. doesn’t describe the authorship and copyright</a></li>
+  <li><a href="#downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team" id="toc-downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team" class="nav-link" data-scroll-target="#downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team">3. downloads the pre-compiled binary without the agreement of the CRAN team</a></li>
+  </ul></li>
+  <li><a href="#is-cran-suitable-for-rust" id="toc-is-cran-suitable-for-rust" class="nav-link" data-scroll-target="#is-cran-suitable-for-rust">Is CRAN suitable for Rust?</a></li>
+  <li><a href="#so-should-we-give-up-on-rust" id="toc-so-should-we-give-up-on-rust" class="nav-link" data-scroll-target="#so-should-we-give-up-on-rust">So…, should we give up on Rust?</a></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>One year ago, I succeeded to release an R package using Rust (<a href="https://cran.r-project.org/package=string2path">string2path</a>) on CRAN. After that, I wrote <a href="https://yutani.rbind.io/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/">a blog post about how to use Rust in an R package</a>, and I said</p>
+<blockquote class="blockquote">
+<p>I've come too far</p>
+</blockquote>
+<p>but it turned out it was not far enough. Enough for what? For satisfying <a href="https://cran.r-project.org/web/packages/policies.html">the CRAN Repository Policy</a>.</p>
+<p>Last month, I got an email titled “CRAN packages downloading rust files” from the CRAN maintainer. What it basically says was that my package violates the policy and will be removed from CRAN if I don’t correct it until 2022-08-10.</p>
+<section id="what-went-wrong" class="level2">
+<h2 class="anchored" data-anchor-id="what-went-wrong">What went wrong?</h2>
+<p>In summary, there were three problems that I had to address (there was one more problem, but let’s ignore for now for simplicity).</p>
+<ol type="1">
+<li>My package downloads the Rust sources</li>
+<li>My package doesn’t describe the authorship and copyright of the Rust sources in the DESCRIPTION file</li>
+<li>My package downloads the pre-compiled binary without the agreement of the CRAN team</li>
+</ol>
+<p>Let’s look at the details one by one.</p>
+<section id="downloads-the-rust-sources" class="level3">
+<h3 class="anchored" data-anchor-id="downloads-the-rust-sources">1. downloads the Rust sources</h3>
+<p>The CRAN Policy says:</p>
+<blockquote class="blockquote">
+<p>Where a package wishes to make use of a library not written solely for the package, the package installation should first look to see if it is already installed and if so is of a suitable version. In case not, it is desirable to include the library sources in the package and compile them as part of package installation. If the sources are too large, it is acceptable to download them as part of installation, but do ensure that the download is of a fixed version rather than the latest. Only as a last resort and with the agreement of the CRAN team should a package download pre-compiled software.</p>
+</blockquote>
+<p>If you are familiar with Rust, you probably notice this doesn’t quite fit the Rust cases. The dependency Rust crates are not “installed” on the machine, but are resolved and downloaded automatically by Cargo, the Rust package manager. Usually, we can just include <code>Cargo.lock</code>, and then Cargo always downloads the fixed versions and verifies the checksums. But, that’s the rule. We should prevent Cargo from downloading any sources.</p>
+<p>The solution is simple. We can use <code>cargo vendor</code> to include the sources of the dependencies. At first, I thought it was not realistic because my dependency was over 100MB. But, David B. Dahl, an author of another R package using Rust, kindly suggested we can compress them to a tarball.</p>
+<p>Converting them into a tarball is necessary also because otherwise we would get this warning:</p>
+<pre><code>storing paths of more than 100 bytes is not portable.</code></pre>
+<p>More details can be found in the following files:</p>
+<ul>
+<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/Makevars.in#L13-L19"><code>src/Makevars.in</code></a></p></li>
+<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/cargo_vendor_config.toml"><code>src/cargo_vendor_config.toml</code></a> : this will be moved to <code>.cargo/config.toml</code> to use the vendored sources on compiling.</p></li>
+<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/rust/vendor.sh"><code>src/rust/vendor.sh</code></a> : this updates the tarball</p></li>
+</ul>
+</section>
+<section id="doesnt-describe-the-authorship-and-copyright" class="level3">
+<h3 class="anchored" data-anchor-id="doesnt-describe-the-authorship-and-copyright">2. doesn’t describe the authorship and copyright</h3>
+<p>This was simply my oversight. The CRAN Policy says:</p>
+<blockquote class="blockquote">
+<p>The ownership of copyright and intellectual property rights of all components of the package must be clear and unambiguous (including from the authors specification in the DESCRIPTION file). Where code is copied (or derived) from the work of others (including from R itself), care must be taken that any copyright/license statements are preserved and authorship is not misrepresented.</p>
+<p>…snip…</p>
+<p>('All components' includes any downloaded at installation or during use.)</p>
+</blockquote>
+<p>First, let’s think about the authorship. It also explains how to describe the information:</p>
+<blockquote class="blockquote">
+<p>Preferably, an 'Authors@R' field would be used with 'ctb' roles for the authors of such code. Alternatively, the 'Author' field should list these authors as contributors.</p>
+<p>Where copyrights are held by an entity other than the package authors, this should preferably be indicated via 'cph' roles in the 'Authors@R' field, or using a 'Copyright' field (if necessary referring to an inst/COPYRIGHTS file).</p>
+</blockquote>
+<p>This is a bit complex; this requires to treat humans and non-human entities differently, but it’s a bit tough job to judge human and non-human one by one… Fortunately, it seems it’s a common practice to use either <code>inst/AUTHORS</code> or <code>inst/COPYRIGHTS</code> and write “see inst/… for details” in <code>DESCRIPTION</code> even when there’s both humans and non-humans. These files are explained in <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html">Writing R Extensions</a>:</p>
+<blockquote class="blockquote">
+<p>Another file sometimes needed in inst is AUTHORS or COPYRIGHTS to specify the authors or copyright holders when this is too complex to put in the DESCRIPTION file.</p>
+</blockquote>
+<p>Then, how about the copyright/license information? Typically, like R packages, a Rust crate describes the license in the metadata. So, rather than actually concatenating all the license statements, I thought it’s enough to summarize the licenses. But, how? Writing R Extensions says:</p>
+<blockquote class="blockquote">
+<p>To include comments about the licensing rather than the body of a license, use a file named something like LICENSE.note.</p>
+</blockquote>
+<p>so it seems this <code>LICENSE.note</code> is a good place for this. Actually, several CRAN packages use this file. So, I hope this works.</p>
+<p>The details can be found in the following files:</p>
+<ul>
+<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/inst/AUTHORS"><code>inst/AUTHORS</code></a></p></li>
+<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/LICENSE.note"><code>LICENSE.note</code></a></p></li>
+<li><p><a href="https://github.com/yutannihilation/string2path/blob/main/update_authors.R"><code>update_authors.R</code></a> : R script to generate the above two files from the `Cargo.toml` of the dependency crates.</p></li>
+</ul>
+</section>
+<section id="downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team" class="level3">
+<h3 class="anchored" data-anchor-id="downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team">3. downloads the pre-compiled binary without the agreement of the CRAN team</h3>
+<p>Regarding this one, I have no idea how to do this properly.</p>
+<p>First, let’s go back to the sentence of the CRAN Policy:</p>
+<blockquote class="blockquote">
+<p>Only as a last resort and with the agreement of the CRAN team should a package download pre-compiled software.</p>
+</blockquote>
+<p>Yes, I believe it’s a “last resort.” My package tries to compile the Rust code first, and only when it is found that no Rust compiler is available on the machine, it falls back to downloading the pre-compiled binary. It downloads the fixed version of the binary and verifies the checksum.</p>
+<p>But…, how can I get “the agreement”? What state is considered they agree on the use of pre-compiled binary?</p>
+<p>I explained above in the cran-comments.md on my latest submission, in the hope that they would manually review it so that the acceptance means the agreement on downloading. However, my package went to CRAN soon after it passed the auto checks. The manual review never happened. So, while my package is still on CRAN at the time of writing this, I’m not sure if that means the problem is fixed.</p>
+</section>
+</section>
+<section id="is-cran-suitable-for-rust" class="level2">
+<h2 class="anchored" data-anchor-id="is-cran-suitable-for-rust">Is CRAN suitable for Rust?</h2>
+<p>Honestly, I was surprised that the CRAN Policy prohibits to rely on the standard mechanism of a language. At the same time, I do understand their stance. It’s a common conflict between the package managers.</p>
+<p>In response to my email that mistakenly explained about the download mechanism (while the problem was not about how it downloads the binary), the CRAN maintainer wrote:</p>
+<blockquote class="blockquote">
+<p>&gt; That mechanism can be found in tools/configure.R.<br>
+</p>
+<p>But the comment in configure says that is for binary downloads.&nbsp;Your code is complicated, and I have spent far too long looking at it.&nbsp;As the CRAN policy says<br>
+</p>
+<p>“The time of the volunteers is CRAN's most precious resource”</p>
+</blockquote>
+<p>I’m really sorry that the maintainer had to read my messy code (although I never intended to force it). It’s almost impossible to check all the dependency management mechanism outside of R’s one no matter if it’s a major one like Cargo or a minor one like my script. So, I understand they are strict on this topic.</p>
+<p>For example, <a href="https://wiki.debian.org/Teams/RustPackaging/Policy">Debian Rust Packaging Policy</a> is stricter; it requires:</p>
+<blockquote class="blockquote">
+<p>Package builds must not allow Cargo to access the network when building. In particular, they must not download or check out any sources at build time.</p>
+</blockquote>
+<p>In Debian package’s case, if I understand correctly, it requires creating one Debian package per crate (but the packaging tool is provided so it shouldn’t be that difficult, I guess). Probably we can do the same thing on CRAN, but it feels a bit overkill.</p>
+<p>I still believe it’s possible to keep my package on CRAN, but I don’t casually recommend it to others. It requires considerable amount of efforts to comply with the CRAN Policy, at least at the moment.</p>
+</section>
+<section id="so-should-we-give-up-on-rust" class="level2">
+<h2 class="anchored" data-anchor-id="so-should-we-give-up-on-rust">So…, should we give up on Rust?</h2>
+<p>To be clear, I don’t think so.</p>
+<p>In the context of Debian package, the distro’s official repository is not the only way to distribute a Debian package. It can be distributed via unofficial <a href="https://help.launchpad.net/Packaging/PPA">PPA</a>; it’s “unofficial” in the sense it’s not provided by the distro, but it can be “official” if the developers of the software officially maintain the PPA.</p>
+<p>For another example, Emacs has the official repository, <a href="https://elpa.gnu.org/">GNU ELPA</a>. But, the users are not tied to it because there is the popular alternative, <a href="https://melpa.org/">MELPA</a>. GNU ELPA has strict requirements, but the users can enjoy MELPA at the same time.</p>
+<p>I think R needs such an alternative to CRAN. I’m expecting <a href="https://r-universe.dev/">R-universe</a> will eventually be what MELPA is to ELPA. That would be a good thing to CRAN, too. Much of the frustration that we currently feel about CRAN probably comes from the fact that CRAN takes on too much responsibility.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

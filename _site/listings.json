@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/post/rust-and-cran-repository-policy/index.html",
       "/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html",
       "/post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html",
       "/post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html",
