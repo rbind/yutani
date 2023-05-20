@@ -6,10 +6,10 @@ categories: ["Rust", "extendr"]
 editor: visual
 ---
 
-In the recent half a year, I've been [struggling to understand how extend
-works](https://github.com/yutannihilation/unextendr). One of the things I found
-is that it's extremely hard to protect and unprotect R objects properly from
-Rust's side. Let me share my incomplete knowledges.
+In the recent half a year, I've been [struggling to understand how the extendr
+framework works](https://github.com/yutannihilation/unextendr). One of the
+things I found is that it's extremely hard to protect and unprotect R objects
+properly from Rust's side. Let me share my incomplete knowledges.
 
 (Disclaimer: I'm not an expert around here. My explanations and terms might be inaccurate or incorrect.)
 
