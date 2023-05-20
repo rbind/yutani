@@ -1,0 +1,395 @@
+---
+title: "R, Rust, Protect, And Unwinding"
+author: "Hiroaki Yutani"
+date: "2023-05-20"
+categories: ["Rust", "extendr"]
+editor: visual
+---
+
+In the recent half a year, I've been [struggling to understand how extend
+works](https://github.com/yutannihilation/unextendr). One of the things I found
+is that it's extremely hard to protect and unprotect R objects properly from
+Rust's side. Let me share my incomplete knowledges.
+
+(Disclaimer: I'm not an expert around here. My explanations and terms might be inaccurate or incorrect.)
+
+## Protect
+
+First, let's talk about how to protect R objects. Protect from what? From the
+garbage collection (GC) mechanism of R. [Writing R
+Extension](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Garbage-Collection)
+(WRE) says:
+
+> The memory allocated for R objects is not freed by the user; instead, the
+memory is from time to time garbage collected. That is, some or all of the
+allocated memory not being used is freed or marked as re-usable.
+
+So, we have to claim the objects we use are in use, otherwise they might be
+accidentally freed while we are using it, which will causes serious problems.
+As far as I know, there are mainly 3 ways to do this "protection".
+
+### `PROTECT()` (or `Rf_protect()`)
+
+The most basic one is the `PROTECT()` macro. WRE says:
+
+> If you create an R object in your C code, you must tell R that you are using
+the object by using the `PROTECT` macro on a pointer to the object. This tells R
+that the object is in use so it is not destroyed during garbage collection
+
+`PROTECT()` takes an `SEXP` and returns the `SEXP`, so you can use this like the
+following example on WRE:
+
+```c
+SEXP ab;
+ab = PROTECT(allocVector(REALSXP, 2));
+REAL(ab)[0] = 123.45;
+REAL(ab)[1] = 67.89;
+```
+
+You can also use `PROTECT()` in a separate line.
+
+```c
+SEXP ab;
+ab = allocVector(REALSXP, 2);
+PROTECT(ab);
+REAL(ab)[0] = 123.45;
+REAL(ab)[1] = 67.89;
+```
+
+Wow, super simple. Now that it gets protected, we've all done, right? Well, no.
+You have to remove that `PROTECT()`ion when it gets no longer needed, otherwise
+your memory will be exhausted.
+
+This can be done by `UNPROTECT()`. So, the full function definition would be like this:
+
+```c
+SEXP new_real2() {
+    SEXP ab;
+    ab = PROTECT(allocVector(REALSXP, 2));
+
+    REAL(ab)[0] = 123.45;
+    REAL(ab)[1] = 67.89;
+
+    UNPROTECT(1);
+    return ab;
+}
+```
+
+Here, you might wonder why `UNPROTECT()` takes an integer while the
+corresponding function `PROTECT()` takes an `SEXP`. This is because the
+protection mechanism is stack-based. WRE says:
+
+> The protection mechanism is stack-based, so `UNPROTECT(n)` unprotects the
+last `n` objects which were protected.
+
+`UNPROTECT()` can unprotect only from the top of the stack. This means you
+cannot do something like "let's return an object with protection and unprotect
+later in another function." If something gets `PROTECT()`ed in a function, it's
+required to be `UNPROTECT()` within the function. WRE says:
+
+> Calls to `PROTECT` and `UNPROTECT` should balance in each function. A function
+may only call `UNPROTECT` or `REPROTECT` on objects it has itself protected.
+
+I don't know well about the design of data structures, but I guess the
+advantages of being stack-based are
+
+* fast
+* can be unwound (WRE says: "Note that the pointer protection stack balance is restored automatically on non-local transfer of control (..snip..) as if a call to `UNPROTECT` was invoked with the right argument.")
+
+### `R_PreserveObject()`
+
+While the rule of `PROTECT()` requires as above, we certainly have many valid
+cases that are not covered by this:
+
+1. We want the object to live among multiple function calls
+2. We want the object to live forever (i.e., until the R session ends)
+
+An example of case 1 is to wrap `SEXP` objects in a C++ class, which should
+protect in its constructor and unprotect in its destructor (how to call the
+destructor properly is another headache, but let's discuss later).
+
+Fortunately, R provides `R_PreserveObject()` and the corresponding function
+`R_ReleaseObject()` for this. WRE says:
+
+> a call to `R_PreserveObject` adds an object to an internal list of objects not
+to be collects, and a subsequent call to `R_ReleaseObject` removes it from that
+list. This provides a way for objects which are not returned as part of R
+objects to be protected across calls to compiled code
+
+So, it sounds like `R_PreserveObject()` supersedes `PROTECT()`. Why not use it
+all the time?? Well, while `R_PreserveObject()` is great, it's slow. WRE says:
+
+> It is less efficient than the normal protection mechanism, and should be used
+sparingly.
+
+Why slow? This is because how it's implemented. The explanation in [the related
+performance issue][Rcpp-issue] says:
+
+[Rcpp-issue]: https://github.com/RcppCore/Rcpp/issues/1081
+
+> This is a simple linked list, so has to be searched linearly to remove objects
+pushed on early.
+
+So, are there any efficient ways to provide protection longer than one function
+call? The answer is simple. To prevent an `SEXP` from being considered as
+unused, we can actually use it!
+
+### Get referenced by another `SEXP`
+
+WRE says:
+
+> Protecting an R object automatically protects all the R objects pointed to in
+the corresponding `SEXPREC`, for example all elements of a protected list are
+automatically protected. 
+
+To put this into simpler words, if an R object already belongs to another R
+object (e.g., an element of a `list`), it doesn't need the protection of
+`PROTECT()` or `R_PreserveObject()`. Actually, that's why functions are supposed
+to return unprotected results; on the R session, the returned value is
+immediately assinged to a variable in some environment.
+
+We can utilize this spec in several ways. A straightforward implementation of
+this is to have one big `R_PreserveObject()`ed list as the "anchor" and assign R
+objects to it. extendr uses this way ([code][extendr-code]). But, if this is
+done naively, it would also be inefficient as `R_ReleaseObject()` to search
+linearly which one to unprotect. So, extendr uses a hashmap nicely. Another
+reason of hashmap is that extendr allows `Clone`, so it must track the reference
+count on Rust's side as well, but let's not talk about the details here.
+
+[extendr-code]: https://github.com/extendr/extendr/blob/ca001033e371ff3f52022cea72aa534f2958f041/extendr-api/src/ownership.rs#L60-L61
+
+More sophisticated example is cpp11. It uses a doubly-linked-list approach
+([code][cpp11-code]), which is based on the suggestion in [the
+issue][Rcpp-issue] above. This is more efficient when unprotecting. The C++ code
+is a bit advanced, so [my naive implementation in Rust][unextendr-code] might be
+a bit easier to read.
+
+[cpp11-code]: https://github.com/r-lib/cpp11/blob/3c877986ce886b320ceafb853358d856f07834f4/inst/include/cpp11/protect.hpp#L431-L433
+[unextendr-code]: https://github.com/yutannihilation/unextendr/blob/master/src/rust/src/protect.rs
+
+### When to use which?
+
+In summary, we have mainly 3 options to protect:
+
+1. `PROTECT()`
+2. `R_PreserveObject()`
+3. Get refrenced by another `SEXP`
+
+You might wonder if we should always use case 3. But, if you look at the
+implementation of cpp11, it will easily reminds you that `PROTECT()` is needed
+anyway until the object gets referenced. If you care about efficiency, you
+should use `PROTECT()` when it's enough.
+
+In my understanding, ideally we should
+
+1. Use `PROTECT()` everywhere as long as the protection is needed within the function
+2. Use `R_PreserveObject()` for objects that are never released during the R session
+3. Use the doubly-linked list when an object needs protection longer than one function call but shorter than one R session
+
+This topic still has more room to discuss, but let's move on as this is not the
+main one of this post!
+
+## Unwinding and `longjmp`
+
+What is unwinding? Honestly, I'm not confident what exactly this term refers to,
+but it seems it's a cleanup process when some exception happens. For example,
+[Wikipedia](https://en.wikipedia.org/wiki/Call_stack#Unwinding) says:
+
+> Returning from the called function will pop the top frame off the stack,
+perhaps leaving a return value. The more general act of popping one or more
+frames off the stack to resume execution elsewhere in the program is called
+**stack unwinding** and must be performed when non-local control structures are
+used, such as those used for exception handling.
+
+Usually, this explanation should be satisfying. But, as I'm talking about Rust,
+things are a bit more complicated. "non-local control structures" means
+`panic!()` to Rust, which we don't try to catch in usual cases. Yes..., this is
+the core of the problem I'm writing. Let's revisit later.
+
+### Different languages have different unwinding mechanism
+
+Let's forget about Rust. Suppose we want to use C++.
+
+C++ and Rust are the same in that it has difficulty to handle `longjmp`. C++'s
+class has destructor, which is called when the object is deleted. So, in theory,
+a C++ class of a wrapper of an R object can manage the protection with including
+the unprotecting operation in its destructor.
+
+However, the problem is that, the destructor can be called only in C++'s
+exception handling. If some R error, which is implemented using `longjmp`,
+happens on calling R's C APIs, the destructor is not called. More details can be
+found the following blog post by the R core member:
+
+[Use of C++ in Packages - The R Blog](https://blog.r-project.org/2019/03/28/use-of-c-in-packages/index.html)
+
+> Unfortunately, RAII does not work with setjmp/longjmp functions provided by
+the C runtime for exception handling.
+
+### `R_UnwindProtect()`
+
+Fortunately, R's C API provides a function for this, `R_UnwindProtect()`. This
+is something like `tryCatch()` in the C level. The signature is:
+
+```c
+SEXP R_UnwindProtect(SEXP (*fun)(void *data), void *data,
+                     void (*clean)(void *data, Rboolean jump), void *cdata,
+                     SEXP cont);
+```
+
+Basically, this is to wrap `fun(data)`. If a `longjmp` error happens during the
+execution of `fun(data)`, `clean(cdata, TRUE)` will be called before actually
+doing `longjmp`.
+
+In the C++'s case, it is intended to throw C++ exception in `clean()` to let
+C++'s stack unwinding happen first. Then, `R_ContinueUnwind(cont)` can be used
+for moving back to C's (or R's) exception handling. `cont` is an R object
+created by `R_MakeUnwindCont()`.
+
+For a real example, cpp11's implemntation is ([code][cpp11-code2]):
+
+[cpp11-code2]: https://github.com/r-lib/cpp11/blob/3c36f7f48a4998c0cd0abb2fc964b24393eafe21/inst/include/cpp11/protect.hpp#L90-L115
+
+```cpp
+  static SEXP token = [] {
+    SEXP res = R_MakeUnwindCont();
+    R_PreserveObject(res);
+    return res;
+  }();
+
+  std::jmp_buf jmpbuf;
+  if (setjmp(jmpbuf)) {
+    should_unwind_protect = TRUE;
+    throw unwind_exception(token);
+  }
+
+  SEXP res = R_UnwindProtect(
+      [](void* data) -> SEXP {
+        auto callback = static_cast<decltype(&code)>(data);
+        return static_cast<Fun&&>(*callback)();
+      },
+      &code,
+      [](void* jmpbuf, Rboolean jump) {
+        if (jump == TRUE) {
+          // We need to first jump back into the C++ stacks because you can't safely
+          // throw exceptions from C stack frames.
+          longjmp(*static_cast<std::jmp_buf*>(jmpbuf), 1);
+        }
+      },
+      &jmpbuf, token);
+```
+
+Note that this is a bit more complex than what WRE describes. As the comment
+says, this first jumps into the C++ stack by `longjmp()`, and throws the C++
+exception there (the `if` branch with `setjmp()`). The error is caught by a
+`try-catch` block like this (a simplefied version of [this original
+code][cpp11-code3]):
+
+[cpp11-code3]: https://github.com/r-lib/cpp11/blob/3c36f7f48a4998c0cd0abb2fc964b24393eafe21/inst/include/cpp11/declarations.hpp#L32-L52
+
+```cpp
+SEXP err = R_NilValue
+try {
+
+  // ...snip...
+
+}
+catch (cpp11::unwind_exception & e) {
+  err = e.token
+  R_ContinueUnwind(err);
+}
+```
+
+### So, what about Rust?
+
+Okay, let's come back to Rust. Can Rust do the same thing?
+
+Rust has a kind of try-catch,
+[`std::panic::catch_unwind()`](https://doc.rust-lang.org/std/panic/fn.catch_unwind.html)
+while its document says:
+
+> It is not recommended to use this function for a general try/catch mechanism.
+
+So..., it's kind of possible. Actually, extendr uses `catch_unwind()`
+([code][extendr-code2]). In the code below, the cleanup function `do_cleanup()`
+calls `panic!()`, which is caught by `catch_unwind()`.
+
+[extendr-code2]: https://github.com/extendr/extendr/blob/ca001033e371ff3f52022cea72aa534f2958f041/extendr-api/src/thread_safety.rs#L105-L148
+
+```rust
+pub fn catch_r_error<F>(f: F) -> Result<SEXP>
+where
+    F: FnOnce() -> SEXP + Copy,
+    F: std::panic::UnwindSafe,
+{
+    // ...snip...
+
+    unsafe extern "C" fn do_cleanup(_: *mut raw::c_void, jump: Rboolean) {
+        if jump != 0 {
+            panic!("R has thrown an error.");
+        }
+    }
+
+    unsafe {
+        let fun_ptr = do_call::<F> as *const ();
+        let clean_ptr = do_cleanup as *const ();
+        let x = false;
+        let fun = std::mem::transmute(fun_ptr);
+        let cleanfun = std::mem::transmute(clean_ptr);
+        let data = std::mem::transmute(&f);
+        let cleandata = std::mem::transmute(&x);
+        let cont = R_MakeUnwindCont();
+        Rf_protect(cont);
+
+        // Note that catch_unwind does not work for 32 bit windows targets.
+        let res = match std::panic::catch_unwind(|| {
+            R_UnwindProtect(fun, data, cleanfun, cleandata, cont)
+        }) {
+            Ok(res) => Ok(res),
+            Err(_) => Err("Error in protected R code".into()),
+        };
+        Rf_unprotect(1);
+        res
+    }
+}
+```
+
+However, we should keep in mind that
+
+- Rust doesn't have `longjmp` / `setjmp`, so Rust cannot jump into Rust's stack
+like cpp11 does.
+
+- cross-language unwinding is generally considered as Undefined behavior (cf.,
+[Rust "ffi-unwind" project -
+FAQ](https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md)), which
+must be avoided.
+
+Considering this, I'm honestly not sure extendr's implementation is really safe.
+Especially, I suspect it's not good that it doesn't call
+`R_ContinueUnwind(cont)` to resume the unwinding process on C's side.
+
+## My take
+
+I'm concluding unwinding cannot be done correctly only with Rust. My take is
+
+- Rust functions should catch all R errors by `R_UnwindProtect()`
+
+- Rust functions should not use `panic!()` and `panic_unwind()` as a substitute for try-catch.
+
+- Rust functions should never call `Rf_errorcall()` directly. Instead, it should
+return the error information to the C wrapper function, and accordingly the C
+function should call `Rf_errorcall()` (or `R_ContinueUnwind()`). Note that this
+is because it's also possible to throw an error at R-level, but
+`R_ContinueUnwind()` is only possible at C-level.
+
+My work-in-progress implementation using [tagged
+pointer](https://en.wikipedia.org/wiki/Tagged_pointer) can be found here: 
+
+- [Rust code](https://github.com/yutannihilation/unextendr/blob/348e1322fbd881a3300f6de1b94fffb0128634fb/src/rust/src/lib.rs#L39-L83)
+- [C code](https://github.com/yutannihilation/unextendr/blob/348e1322fbd881a3300f6de1b94fffb0128634fb/src/init.c#L9-L12)
+
+## References
+
+- [5.9.1 Handling the effects of garbage collection - Writing R Extension](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Garbage-Collection)
+- [Common PROTECT Errors - The R Blog](https://blog.r-project.org/2019/04/18/common-protect-errors/)
+- [The Rustonomicon - FFI and unwinding](https://doc.rust-lang.org/nomicon/ffi.html#ffi-and-unwinding)
+- [Rust "ffi-unwind" project - FAQ](https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md)
