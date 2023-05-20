@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/post/r-rust-protect-and-unwinding/index.html",
       "/post/rust-and-cran-repository-policy/index.html",
       "/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html",
       "/post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html",
