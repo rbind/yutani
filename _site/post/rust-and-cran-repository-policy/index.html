@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.63">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -14,12 +14,12 @@
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: 1;}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
 </style>
@@ -64,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <meta name="twitter:title" content="Wannabe Rstats-fu - Rust and the CRAN Repository Policy">
-<meta name="twitter:description" content="One year ago, I succeeded to release an R package using Rust (string2path) on CRAN. After that, I wrote a blog post about how to use Rust in an R package, and I said">
+<meta name="twitter:description" content="">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -74,29 +74,34 @@ ul.task-list li input[type="checkbox"] {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <a class="navbar-brand" href="../../index.html">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Wannabe Rstats-fu</span>
-  </a>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">About</a>
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/yutannihilat_en"><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/yutannihilat_en" rel="" target=""><i class="bi bi-twitter" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/yutannihilation"><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/yutannihilation" rel="" target=""><i class="bi bi-github" role="img">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
+            <div class="quarto-navbar-tools">
+</div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
@@ -129,13 +134,14 @@ ul.task-list li input[type="checkbox"] {
         <p class="date">August 14, 2022</p>
       </div>
     </div>
+    
       
     </div>
     
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
     <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Contents</h2>
    
@@ -151,6 +157,7 @@ ul.task-list li input[type="checkbox"] {
   </ul>
 </nav>
 </nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     </div>
@@ -162,7 +169,7 @@ ul.task-list li input[type="checkbox"] {
 
 <p>One year ago, I succeeded to release an R package using Rust (<a href="https://cran.r-project.org/package=string2path">string2path</a>) on CRAN. After that, I wrote <a href="https://yutani.rbind.io/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/">a blog post about how to use Rust in an R package</a>, and I said</p>
 <blockquote class="blockquote">
-<p>I've come too far</p>
+<p>I’ve come too far</p>
 </blockquote>
 <p>but it turned out it was not far enough. Enough for what? For satisfying <a href="https://cran.r-project.org/web/packages/policies.html">the CRAN Repository Policy</a>.</p>
 <p>Last month, I got an email titled “CRAN packages downloading rust files” from the CRAN maintainer. What it basically says was that my package violates the policy and will be removed from CRAN if I don’t correct it until 2022-08-10.</p>
@@ -198,12 +205,12 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>The ownership of copyright and intellectual property rights of all components of the package must be clear and unambiguous (including from the authors specification in the DESCRIPTION file). Where code is copied (or derived) from the work of others (including from R itself), care must be taken that any copyright/license statements are preserved and authorship is not misrepresented.</p>
 <p>…snip…</p>
-<p>('All components' includes any downloaded at installation or during use.)</p>
+<p>(‘All components’ includes any downloaded at installation or during use.)</p>
 </blockquote>
 <p>First, let’s think about the authorship. It also explains how to describe the information:</p>
 <blockquote class="blockquote">
-<p>Preferably, an 'Authors@R' field would be used with 'ctb' roles for the authors of such code. Alternatively, the 'Author' field should list these authors as contributors.</p>
-<p>Where copyrights are held by an entity other than the package authors, this should preferably be indicated via 'cph' roles in the 'Authors@R' field, or using a 'Copyright' field (if necessary referring to an inst/COPYRIGHTS file).</p>
+<p>Preferably, an ‘Authors@R’ field would be used with ‘ctb’ roles for the authors of such code. Alternatively, the ‘Author’ field should list these authors as contributors.</p>
+<p>Where copyrights are held by an entity other than the package authors, this should preferably be indicated via ‘cph’ roles in the ‘Authors@R’ field, or using a ‘Copyright’ field (if necessary referring to an inst/COPYRIGHTS file).</p>
 </blockquote>
 <p>This is a bit complex; this requires to treat humans and non-human entities differently, but it’s a bit tough job to judge human and non-human one by one… Fortunately, it seems it’s a common practice to use either <code>inst/AUTHORS</code> or <code>inst/COPYRIGHTS</code> and write “see inst/… for details” in <code>DESCRIPTION</code> even when there’s both humans and non-humans. These files are explained in <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html">Writing R Extensions</a>:</p>
 <blockquote class="blockquote">
@@ -228,7 +235,7 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>Only as a last resort and with the agreement of the CRAN team should a package download pre-compiled software.</p>
 </blockquote>
-<p>Yes, I believe it’s a “last resort.” My package tries to compile the Rust code first, and only when it is found that no Rust compiler is available on the machine, it falls back to downloading the pre-compiled binary. It downloads the fixed version of the binary and verifies the checksum.</p>
+<p>Yes, I believe it’s a “last resort.” My package tries to compile the Rust code first, and only when no Rust compiler is available on the machine, it falls back to downloading the pre-compiled binary. It downloads the fixed version of the binary and verifies the checksum.</p>
 <p>But…, how can I get “the agreement”? What state is considered they agree on the use of pre-compiled binary?</p>
 <p>I explained above in the cran-comments.md on my latest submission, in the hope that they would manually review it so that the acceptance means the agreement on downloading. However, my package went to CRAN soon after it passed the auto checks. The manual review never happened. So, while my package is still on CRAN at the time of writing this, I’m not sure if that means the problem is fixed.</p>
 </section>
@@ -242,9 +249,9 @@ ul.task-list li input[type="checkbox"] {
 </p>
 <p>But the comment in configure says that is for binary downloads.&nbsp;Your code is complicated, and I have spent far too long looking at it.&nbsp;As the CRAN policy says<br>
 </p>
-<p>“The time of the volunteers is CRAN's most precious resource”</p>
+<p>“The time of the volunteers is CRAN’s most precious resource”</p>
 </blockquote>
-<p>I’m really sorry that the maintainer had to read my messy code (although I never intended to force it). It’s almost impossible to check all the dependency management mechanism outside of R’s one no matter if it’s a major one like Cargo or a minor one like my script. So, I understand they are strict on this topic.</p>
+<p>I’m really sorry that the maintainer had to read my messy code (although I never intended to force it). It’s almost impossible to check all the dependency management mechanism outside of R’s one no matter if it’s a major ecosystem like Rust or a minor tool like my script. So, I understand they need to be strict on this topic.</p>
 <p>For example, <a href="https://wiki.debian.org/Teams/RustPackaging/Policy">Debian Rust Packaging Policy</a> is stricter; it requires:</p>
 <blockquote class="blockquote">
 <p>Package builds must not allow Cargo to access the network when building. In particular, they must not download or check out any sources at build time.</p>
@@ -258,6 +265,7 @@ ul.task-list li input[type="checkbox"] {
 <p>In the context of Debian package, the distro’s official repository is not the only way to distribute a Debian package. It can be distributed via unofficial <a href="https://help.launchpad.net/Packaging/PPA">PPA</a>; it’s “unofficial” in the sense it’s not provided by the distro, but it can be “official” if the developers of the software officially maintain the PPA.</p>
 <p>For another example, Emacs has the official repository, <a href="https://elpa.gnu.org/">GNU ELPA</a>. But, the users are not tied to it because there is the popular alternative, <a href="https://melpa.org/">MELPA</a>. GNU ELPA has strict requirements, but the users can enjoy MELPA at the same time.</p>
 <p>I think R needs such an alternative to CRAN. I’m expecting <a href="https://r-universe.dev/">R-universe</a> will eventually be what MELPA is to ELPA. That would be a good thing to CRAN, too. Much of the frustration that we currently feel about CRAN probably comes from the fact that CRAN takes on too much responsibility.</p>
+<p>I actually use R-universe to distribute <a href="https://github.com/yutannihilation/fledgingr">a non-CRAN package using Rust</a>, and it works fine. If you don’t try R-universe yet, I recommend it (probably I’ll write tutorial for R-universe if I can find time).</p>
 
 
 </section>
@@ -290,9 +298,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -304,7 +326,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -333,31 +372,135 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
       // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href');
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

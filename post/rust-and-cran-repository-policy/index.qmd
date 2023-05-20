@@ -8,7 +8,7 @@ editor: visual
 
 One year ago, I succeeded to release an R package using Rust ([string2path](https://cran.r-project.org/package=string2path)) on CRAN. After that, I wrote [a blog post about how to use Rust in an R package](https://yutani.rbind.io/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/), and I said
 
-> I\'ve come too far
+> I've come too far
 
 but it turned out it was not far enough. Enough for what? For satisfying [the CRAN Repository Policy](https://cran.r-project.org/web/packages/policies.html).
 
@@ -36,7 +36,9 @@ The solution is simple. We can use `cargo vendor` to include the sources of the 
 
 Converting them into a tarball is necessary also because otherwise we would get this warning:
 
-    storing paths of more than 100 bytes is not portable.
+```         
+storing paths of more than 100 bytes is not portable.
+```
 
 More details can be found in the following files:
 
@@ -50,18 +52,17 @@ More details can be found in the following files:
 
 This was simply my oversight. The CRAN Policy says:
 
-> The ownership of copyright and intellectual property rights of all components of the package must be clear and unambiguous (including from the authors specification in the DESCRIPTION file). Where code
-> is copied (or derived) from the work of others (including from R itself), care must be taken that any copyright/license statements are preserved and authorship is not misrepresented.
+> The ownership of copyright and intellectual property rights of all components of the package must be clear and unambiguous (including from the authors specification in the DESCRIPTION file). Where code is copied (or derived) from the work of others (including from R itself), care must be taken that any copyright/license statements are preserved and authorship is not misrepresented.
 >
 > ...snip...
 >
-> (\'All components\' includes any downloaded at installation or during use.)
+> ('All components' includes any downloaded at installation or during use.)
 
 First, let's think about the authorship. It also explains how to describe the information:
 
-> Preferably, an \'Authors\@R\' field would be used with \'ctb\' roles for the authors of such code. Alternatively, the \'Author\' field should list these authors as contributors.
+> Preferably, an 'Authors\@R' field would be used with 'ctb' roles for the authors of such code. Alternatively, the 'Author' field should list these authors as contributors.
 >
-> Where copyrights are held by an entity other than the package authors, this should preferably be indicated via \'cph\' roles in the \'Authors\@R\' field, or using a \'Copyright\' field (if necessary referring to an inst/COPYRIGHTS file).
+> Where copyrights are held by an entity other than the package authors, this should preferably be indicated via 'cph' roles in the 'Authors\@R' field, or using a 'Copyright' field (if necessary referring to an inst/COPYRIGHTS file).
 
 This is a bit complex; this requires to treat humans and non-human entities differently, but it's a bit tough job to judge human and non-human one by one... Fortunately, it seems it's a common practice to use either `inst/AUTHORS` or `inst/COPYRIGHTS` and write "see inst/... for details" in `DESCRIPTION` even when there's both humans and non-humans. These files are explained in [Writing R Extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html):
 
@@ -89,7 +90,7 @@ First, let's go back to the sentence of the CRAN Policy:
 
 > Only as a last resort and with the agreement of the CRAN team should a package download pre-compiled software.
 
-Yes, I believe it's a "last resort." My package tries to compile the Rust code first, and only when it is found that no Rust compiler is available on the machine, it falls back to downloading the pre-compiled binary. It downloads the fixed version of the binary and verifies the checksum.
+Yes, I believe it's a "last resort." My package tries to compile the Rust code first, and only when no Rust compiler is available on the machine, it falls back to downloading the pre-compiled binary. It downloads the fixed version of the binary and verifies the checksum.
 
 But..., how can I get "the agreement"? What state is considered they agree on the use of pre-compiled binary?
 
@@ -105,9 +106,9 @@ In response to my email that mistakenly explained about the download mechanism (
 >
 > But the comment in configure says that is for binary downloads. Your code is complicated, and I have spent far too long looking at it. As the CRAN policy says\
 >
-> "The time of the volunteers is CRAN\'s most precious resource"
+> "The time of the volunteers is CRAN's most precious resource"
 
-I'm really sorry that the maintainer had to read my messy code (although I never intended to force it). It's almost impossible to check all the dependency management mechanism outside of R's one no matter if it's a major one like Cargo or a minor one like my script. So, I understand they are strict on this topic.
+I'm really sorry that the maintainer had to read my messy code (although I never intended to force it). It's almost impossible to check all the dependency management mechanism outside of R's one no matter if it's a major ecosystem like Rust or a minor tool like my script. So, I understand they need to be strict on this topic.
 
 For example, [Debian Rust Packaging Policy](https://wiki.debian.org/Teams/RustPackaging/Policy) is stricter; it requires:
 
@@ -126,3 +127,5 @@ In the context of Debian package, the distro's official repository is not the on
 For another example, Emacs has the official repository, [GNU ELPA](https://elpa.gnu.org/). But, the users are not tied to it because there is the popular alternative, [MELPA](https://melpa.org/). GNU ELPA has strict requirements, but the users can enjoy MELPA at the same time.
 
 I think R needs such an alternative to CRAN. I'm expecting [R-universe](https://r-universe.dev/) will eventually be what MELPA is to ELPA. That would be a good thing to CRAN, too. Much of the frustration that we currently feel about CRAN probably comes from the fact that CRAN takes on too much responsibility.
+
+I actually use R-universe to distribute [a non-CRAN package using Rust](https://github.com/yutannihilation/fledgingr), and it works fine. If you don't try R-universe yet, I recommend it (probably I'll write tutorial for R-universe if I can find time).
