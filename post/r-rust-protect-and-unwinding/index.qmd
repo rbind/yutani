@@ -228,7 +228,7 @@ the C runtime for exception handling.
 ### `R_UnwindProtect()`
 
 Fortunately, R's C API provides a function for this, `R_UnwindProtect()`. This
-is something like `tryCatch()` in the C level. The signature is:
+is something like `tryCatch()` at the C-level. The signature is:
 
 ```c
 SEXP R_UnwindProtect(SEXP (*fun)(void *data), void *data,
@@ -305,7 +305,7 @@ Okay, let's come back to Rust.
 Rust also has destructor (i.e., `Drop` trait), so we'll face the same problem.
 Can we survive with the same approach as C++?
 
-Rust has a kind of try-catch,
+Yes and no. Rust has a kind of try-catch,
 [`std::panic::catch_unwind()`](https://doc.rust-lang.org/std/panic/fn.catch_unwind.html)
 while its document says:
 
@@ -355,27 +355,43 @@ where
 }
 ```
 
-However, we should keep in mind that
+In general, `panic!()` should be avoided when the Rust function is called over
+FFI. `panic!()` causes unwinding, and cross-language unwinding is considered as
+undefined behavior (cf., [Rust "ffi-unwind" project -
+FAQ](https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md)).
 
-- Rust doesn't have `longjmp` / `setjmp`, so Rust cannot jump into Rust's stack
-like cpp11 does.
+However, the problem is, we have to jump. We must escape from the cleanup
+function. Otherwise, `R_ContinueUnwind(cont)` will be called ([code][R code])
+automatically.
 
-- Cross-language unwinding is generally considered as undefined behavior (cf.,
-[Rust "ffi-unwind" project -
-FAQ](https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md)), which
-must be avoided.
+[R code]: https://github.com/r-devel/r-svn/blob/e29a22b8faf9c329ad4aafc2a0823666d43d1d84/src/main/context.c#L970-L973
 
-Considering this, I'm honestly not sure the current extendr's implementation is
-really safe. Especially, I suspect it's not good that it doesn't call
-`R_ContinueUnwind(cont)` to resume the unwinding process on C's side.
+```c
+    cleanfun(cleandata, jump);
+
+    if (jump)
+        R_ContinueUnwind(cont); 
+```
+
+Rust doesn't have `longjmp` / `setjmp` ([rust-lang/rfcs#2625][rfc]), so the last
+resort is `panic!()`. While we know it's not good, there's no option left as far
+as I know.
+
+[rfc]: https://github.com/rust-lang/rfcs/issues/2625
+
+I'm honestly not sure the current extendr's implementation is really safe, but
+it seems we anyway need a similar implementation to get things work. (However, I
+think it's probably a mistake that it doesn't call `R_ContinueUnwind(cont)` to
+resume the unwinding process on C's side.)
 
 ## My take
 
 I'm concluding unwinding cannot be done correctly only with Rust. My take is
 
-- Rust functions should catch all R errors by `R_UnwindProtect()`
+- Rust functions should catch all R errors by `R_UnwindProtect()`.
 
-- Rust functions should not use `panic!()` and `panic_unwind()` as a substitute for try-catch.
+- Rust functions should not use `panic!()` and `panic_unwind()` as a substitute
+for try-catch, but it seems there's no other options.
 
 - Rust functions should never call `Rf_errorcall()` directly. Instead, it should
 return the error information to the C wrapper function, and accordingly the C

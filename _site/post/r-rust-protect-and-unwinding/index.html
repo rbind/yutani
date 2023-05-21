@@ -329,7 +329,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="r_unwindprotect" class="level3">
 <h3 class="anchored" data-anchor-id="r_unwindprotect"><code>R_UnwindProtect()</code></h3>
-<p>Fortunately, R’s C API provides a function for this, <code>R_UnwindProtect()</code>. This is something like <code>tryCatch()</code> in the C level. The signature is:</p>
+<p>Fortunately, R’s C API provides a function for this, <code>R_UnwindProtect()</code>. This is something like <code>tryCatch()</code> at the C-level. The signature is:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>SEXP R_UnwindProtect<span class="op">(</span>SEXP <span class="op">(*</span>fun<span class="op">)(</span><span class="dt">void</span> <span class="op">*</span>data<span class="op">),</span> <span class="dt">void</span> <span class="op">*</span>data<span class="op">,</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                     <span class="dt">void</span> <span class="op">(*</span>clean<span class="op">)(</span><span class="dt">void</span> <span class="op">*</span>data<span class="op">,</span> Rboolean jump<span class="op">),</span> <span class="dt">void</span> <span class="op">*</span>cdata<span class="op">,</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                     SEXP cont<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -377,7 +377,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="so-what-about-rust" class="level3">
 <h3 class="anchored" data-anchor-id="so-what-about-rust">So, what about Rust?</h3>
 <p>Okay, let’s come back to Rust. Rust also has destructor (i.e., <code>Drop</code> trait), so we’ll face the same problem. Can we survive with the same approach as C++?</p>
-<p>Rust has a kind of try-catch, <a href="https://doc.rust-lang.org/std/panic/fn.catch_unwind.html"><code>std::panic::catch_unwind()</code></a> while its document says:</p>
+<p>Yes and no. Rust has a kind of try-catch, <a href="https://doc.rust-lang.org/std/panic/fn.catch_unwind.html"><code>std::panic::catch_unwind()</code></a> while its document says:</p>
 <blockquote class="blockquote">
 <p>It is not recommended to use this function for a general try/catch mechanism.</p>
 </blockquote>
@@ -417,20 +417,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        res</span>
 <span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>However, we should keep in mind that</p>
-<ul>
-<li><p>Rust doesn’t have <code>longjmp</code> / <code>setjmp</code>, so Rust cannot jump into Rust’s stack like cpp11 does.</p></li>
-<li><p>Cross-language unwinding is generally considered as undefined behavior (cf., <a href="https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md">Rust “ffi-unwind” project - FAQ</a>), which must be avoided.</p></li>
-</ul>
-<p>Considering this, I’m honestly not sure the current extendr’s implementation is really safe. Especially, I suspect it’s not good that it doesn’t call <code>R_ContinueUnwind(cont)</code> to resume the unwinding process on C’s side.</p>
+<p>In general, <code>panic!()</code> should be avoided when the Rust function is called over FFI. <code>panic!()</code> causes unwinding, and cross-language unwinding is considered as undefined behavior (cf., <a href="https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md">Rust “ffi-unwind” project - FAQ</a>).</p>
+<p>However, the problem is, we have to jump. We must escape from the cleanup function. Otherwise, <code>R_ContinueUnwind(cont)</code> will be called (<a href="https://github.com/r-devel/r-svn/blob/e29a22b8faf9c329ad4aafc2a0823666d43d1d84/src/main/context.c#L970-L973">code</a>) automatically.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>    cleanfun<span class="op">(</span>cleandata<span class="op">,</span> jump<span class="op">);</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>jump<span class="op">)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        R_ContinueUnwind<span class="op">(</span>cont<span class="op">);</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Rust doesn’t have <code>longjmp</code> / <code>setjmp</code> (<a href="https://github.com/rust-lang/rfcs/issues/2625">rust-lang/rfcs#2625</a>), so the last resort is <code>panic!()</code>. While we know it’s not good, there’s no option left as far as I know.</p>
+<p>I’m honestly not sure the current extendr’s implementation is really safe, but it seems we anyway need a similar implementation to get things work. (However, I think it’s probably a mistake that it doesn’t call <code>R_ContinueUnwind(cont)</code> to resume the unwinding process on C’s side.)</p>
 </section>
 </section>
 <section id="my-take" class="level2">
 <h2 class="anchored" data-anchor-id="my-take">My take</h2>
 <p>I’m concluding unwinding cannot be done correctly only with Rust. My take is</p>
 <ul>
-<li><p>Rust functions should catch all R errors by <code>R_UnwindProtect()</code></p></li>
-<li><p>Rust functions should not use <code>panic!()</code> and <code>panic_unwind()</code> as a substitute for try-catch.</p></li>
+<li><p>Rust functions should catch all R errors by <code>R_UnwindProtect()</code>.</p></li>
+<li><p>Rust functions should not use <code>panic!()</code> and <code>panic_unwind()</code> as a substitute for try-catch, but it seems there’s no other options.</p></li>
 <li><p>Rust functions should never call <code>Rf_errorcall()</code> directly. Instead, it should return the error information to the C wrapper function, and accordingly the C function should call <code>Rf_errorcall()</code> (or <code>R_ContinueUnwind()</code>). Note that this is because it’s also possible to throw an error at R-level, but <code>R_ContinueUnwind()</code> is only possible at C-level.</p></li>
 </ul>
 <p>My work-in-progress implementation using <a href="https://en.wikipedia.org/wiki/Tagged_pointer">tagged pointer</a> can be found here:</p>
