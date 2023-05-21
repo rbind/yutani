@@ -176,7 +176,7 @@ In summary, we have mainly 3 options to protect:
 3. Get refrenced by another `SEXP`
 
 You might wonder if we should always use case 3. But, if you look at the
-implementation of cpp11, it will easily reminds you that `PROTECT()` is needed
+implementation of cpp11, it will easily remind you that `PROTECT()` is needed
 anyway until the object gets referenced. If you care about efficiency, you
 should use `PROTECT()` when it's enough.
 
@@ -301,7 +301,9 @@ catch (cpp11::unwind_exception & e) {
 
 ### So, what about Rust?
 
-Okay, let's come back to Rust. Can Rust do the same thing?
+Okay, let's come back to Rust. 
+Rust also has destructor (i.e., `Drop` trait), so we'll face the same problem.
+Can we survive with the same approach as C++?
 
 Rust has a kind of try-catch,
 [`std::panic::catch_unwind()`](https://doc.rust-lang.org/std/panic/fn.catch_unwind.html)
@@ -358,13 +360,13 @@ However, we should keep in mind that
 - Rust doesn't have `longjmp` / `setjmp`, so Rust cannot jump into Rust's stack
 like cpp11 does.
 
-- cross-language unwinding is generally considered as Undefined behavior (cf.,
+- Cross-language unwinding is generally considered as undefined behavior (cf.,
 [Rust "ffi-unwind" project -
 FAQ](https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md)), which
 must be avoided.
 
-Considering this, I'm honestly not sure extendr's implementation is really safe.
-Especially, I suspect it's not good that it doesn't call
+Considering this, I'm honestly not sure the current extendr's implementation is
+really safe. Especially, I suspect it's not good that it doesn't call
 `R_ContinueUnwind(cont)` to resume the unwinding process on C's side.
 
 ## My take

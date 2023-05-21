@@ -300,7 +300,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>R_PreserveObject()</code></li>
 <li>Get refrenced by another <code>SEXP</code></li>
 </ol>
-<p>You might wonder if we should always use case 3. But, if you look at the implementation of cpp11, it will easily reminds you that <code>PROTECT()</code> is needed anyway until the object gets referenced. If you care about efficiency, you should use <code>PROTECT()</code> when it’s enough.</p>
+<p>You might wonder if we should always use case 3. But, if you look at the implementation of cpp11, it will easily remind you that <code>PROTECT()</code> is needed anyway until the object gets referenced. If you care about efficiency, you should use <code>PROTECT()</code> when it’s enough.</p>
 <p>In my understanding, ideally we should</p>
 <ol type="1">
 <li>Use <code>PROTECT()</code> everywhere as long as the protection is needed within the function</li>
@@ -376,7 +376,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="so-what-about-rust" class="level3">
 <h3 class="anchored" data-anchor-id="so-what-about-rust">So, what about Rust?</h3>
-<p>Okay, let’s come back to Rust. Can Rust do the same thing?</p>
+<p>Okay, let’s come back to Rust. Rust also has destructor (i.e., <code>Drop</code> trait), so we’ll face the same problem. Can we survive with the same approach as C++?</p>
 <p>Rust has a kind of try-catch, <a href="https://doc.rust-lang.org/std/panic/fn.catch_unwind.html"><code>std::panic::catch_unwind()</code></a> while its document says:</p>
 <blockquote class="blockquote">
 <p>It is not recommended to use this function for a general try/catch mechanism.</p>
@@ -420,9 +420,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>However, we should keep in mind that</p>
 <ul>
 <li><p>Rust doesn’t have <code>longjmp</code> / <code>setjmp</code>, so Rust cannot jump into Rust’s stack like cpp11 does.</p></li>
-<li><p>cross-language unwinding is generally considered as Undefined behavior (cf., <a href="https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md">Rust “ffi-unwind” project - FAQ</a>), which must be avoided.</p></li>
+<li><p>Cross-language unwinding is generally considered as undefined behavior (cf., <a href="https://github.com/rust-lang/project-ffi-unwind/blob/master/faq.md">Rust “ffi-unwind” project - FAQ</a>), which must be avoided.</p></li>
 </ul>
-<p>Considering this, I’m honestly not sure extendr’s implementation is really safe. Especially, I suspect it’s not good that it doesn’t call <code>R_ContinueUnwind(cont)</code> to resume the unwinding process on C’s side.</p>
+<p>Considering this, I’m honestly not sure the current extendr’s implementation is really safe. Especially, I suspect it’s not good that it doesn’t call <code>R_ContinueUnwind(cont)</code> to resume the unwinding process on C’s side.</p>
 </section>
 </section>
 <section id="my-take" class="level2">
