@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/post/rust-1.70-and-build-failure-on-windows/index.html",
       "/post/r-rust-protect-and-unwinding/index.html",
       "/post/rust-and-cran-repository-policy/index.html",
       "/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html",

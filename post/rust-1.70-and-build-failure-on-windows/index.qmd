@@ -1,0 +1,75 @@
+---
+title: "Rust 1.70 And Build Failures On Windows"
+author: "Hiroaki Yutani"
+date: "2023-06-10"
+categories: ["Rust", "extendr"]
+editor: visual
+---
+
+This is a quick notice for developers of R packages using Rust. I posted the same
+thing on [the R-devel-package mailing list](https://stat.ethz.ch/pipermail/r-package-devel/2023q2/009229.html),
+so if you already read it, you don't need to read this post.
+
+Rust 1.70 was released on June 1st, 2023 [^1]. If you use Rust in your R package,
+you'll probably start to see an error and a warning on the final linking step of
+Windows builds.
+
+# Error
+
+The first thing you'll notice is that linking fails with errors like this one:
+
+```
+...snip...\std\src\sys\windows/handle.rs:290: undefined reference to `NtWriteFile'
+```
+
+This is because Rust 1.70 started to use several Windows APIs defined in `NTDLL.DLL` [^2]. So, this can be easily fixed by adding `-lntdll` to `PKG_LIBS`.
+
+``` makefile
+PKG_LIBS = ...snip... -lntdll
+```
+
+# Warning
+
+This one is a bit tricky, After modifying `PKG_LIBS`, your build should succeed, but you might or might not see a lot of warnings like this one:
+
+```
+Warning: corrupt .drectve at end of def file
+```
+
+This is because Rust 1.70 upgraded LLVM to version 16, and LLVM generates a binary containing directives that only the very latest version (2.40) of GNU linker can understand [^3]. What's fortunate is that the latest Rtools43 uses Binutils 2.40, so this warning won't happen if you target only R >= 4.3. However, the following cases might be a problem:
+
+1. On R < 4.3
+2. On R >= 4.3 with outdated Rtools43 (this rarely happens except when you installed Rtools43 before the release of R 4.3)
+
+Unfortunately, it seems there's no option to suppress this warning, so there's no way to save `R CMD check` from failing if you run it with `--as-cran` and treat warnings as failure. In other words, if you are a maintainer of some R package on CRAN, you might need to consider giving up your package on oldrel when the CRAN Windows server upgrades Rust (I heard the current installed version is 1.69, but I'm not sure).
+
+For non-CRAN packages, I think you can ignore the warnings. The directive is added in order to reduce the number of exported symbols so that it won't overflow [^5]. So, it should be fine if it doesn't overflow in actual.
+But, I'm not an expert here, so please decide at your own risk.
+
+For example, you can tweak the GitHub Actions settings like the following to allow warnings on R 4.2 or before.
+
+``` yaml
+- name: Check R version
+  id: error-on
+  run: |
+    output <- Sys.getenv("GITHUB_OUTPUT")
+    if (.Platform$OS.type == "windows" && getRversion() < "4.3.0") {
+      cat('level=error', file = output, append = TRUE)
+    } else {
+      cat('level=warning', file = output, append = TRUE)
+    }
+  shell: Rscript {0}
+
+- uses: r-lib/actions/check-r-package@v2
+  with:
+    error-on: '"${{ steps.error-on.outputs.level }}"'
+```
+
+Hope this helps.
+
+
+[^1]: https://blog.rust-lang.org/2023/06/01/Rust-1.70.0.html
+[^2]: https://en.wikipedia.org/wiki/Microsoft_Windows_library_files#NTDLL.DLL
+[^3]: https://github.com/rust-lang/rust/issues/112368#issuecomment-1581917714
+[^5]:
+https://github.com/llvm/llvm-project/commit/c5b3de6745c37dd991430b9b88ff97c35b6fc455
