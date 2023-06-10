@@ -68,8 +68,7 @@ For example, you can tweak the GitHub Actions settings like the following to all
 Hope this helps.
 
 
-[^1]: https://blog.rust-lang.org/2023/06/01/Rust-1.70.0.html
-[^2]: https://en.wikipedia.org/wiki/Microsoft_Windows_library_files#NTDLL.DLL
-[^3]: https://github.com/rust-lang/rust/issues/112368#issuecomment-1581917714
-[^5]:
-https://github.com/llvm/llvm-project/commit/c5b3de6745c37dd991430b9b88ff97c35b6fc455
+[^1]: <https://blog.rust-lang.org/2023/06/01/Rust-1.70.0.html>
+[^2]: <https://en.wikipedia.org/wiki/Microsoft_Windows_library_files#NTDLL.DLL>
+[^3]: <https://github.com/rust-lang/rust/issues/112368#issuecomment-1581917714>
+[^5]: <https://github.com/llvm/llvm-project/commit/c5b3de6745c37dd991430b9b88ff97c35b6fc455>

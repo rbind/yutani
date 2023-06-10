@@ -2,98 +2,98 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://yutani.rbind.io/about.html</loc>
-    <lastmod>2023-06-10T01:08:52.415Z</lastmod>
+    <lastmod>2023-06-10T01:13:19.449Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/index.html</loc>
-    <lastmod>2023-06-10T01:08:54.184Z</lastmod>
+    <lastmod>2023-06-10T01:13:21.263Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2017-11-07-ggplot-add/index.html</loc>
-    <lastmod>2023-06-10T01:08:54.865Z</lastmod>
+    <lastmod>2023-06-10T01:13:21.906Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2018-06-03-anatomy-of-gghighlight/index.html</loc>
-    <lastmod>2023-06-10T01:08:55.730Z</lastmod>
+    <lastmod>2023-06-10T01:13:22.733Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2018-06-09-plot-osm-tiles/index.html</loc>
-    <lastmod>2023-06-10T01:08:56.559Z</lastmod>
+    <lastmod>2023-06-10T01:13:23.638Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html</loc>
-    <lastmod>2023-06-10T01:08:57.320Z</lastmod>
+    <lastmod>2023-06-10T01:13:24.490Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html</loc>
-    <lastmod>2023-06-10T01:08:57.748Z</lastmod>
+    <lastmod>2023-06-10T01:13:24.932Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2021-06-07-gghighlight-032/index.html</loc>
-    <lastmod>2023-06-10T01:08:58.445Z</lastmod>
+    <lastmod>2023-06-10T01:13:25.655Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html</loc>
-    <lastmod>2023-06-10T01:08:59.329Z</lastmod>
+    <lastmod>2023-06-10T01:13:26.548Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html</loc>
-    <lastmod>2023-06-10T01:09:00.056Z</lastmod>
+    <lastmod>2023-06-10T01:13:27.327Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html</loc>
-    <lastmod>2023-06-10T01:09:01.006Z</lastmod>
+    <lastmod>2023-06-10T01:13:28.516Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html</loc>
-    <lastmod>2023-06-10T01:09:01.774Z</lastmod>
+    <lastmod>2023-06-10T01:13:29.440Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/a-tip-to-debug-ggplot2/index.html</loc>
-    <lastmod>2023-06-10T01:09:02.392Z</lastmod>
+    <lastmod>2023-06-10T01:13:30.061Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/double-dispatch-of-s3-method/index.html</loc>
-    <lastmod>2023-06-10T01:09:03.183Z</lastmod>
+    <lastmod>2023-06-10T01:13:30.810Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html</loc>
-    <lastmod>2023-06-10T01:09:04.580Z</lastmod>
+    <lastmod>2023-06-10T01:13:32.177Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/gather-and-spread-explained-by-gt/index.html</loc>
-    <lastmod>2023-06-10T01:09:05.559Z</lastmod>
+    <lastmod>2023-06-10T01:13:33.165Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/geom-sf-text-and-geom-sf-label-are-coming/index.html</loc>
-    <lastmod>2023-06-10T01:09:06.398Z</lastmod>
+    <lastmod>2023-06-10T01:13:33.948Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/gghighlight-0-2-0/index.html</loc>
-    <lastmod>2023-06-10T01:09:07.129Z</lastmod>
+    <lastmod>2023-06-10T01:13:34.719Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/how-to-convert-a-human-to-waves-by-magick-package/index.html</loc>
-    <lastmod>2023-06-10T01:09:07.997Z</lastmod>
+    <lastmod>2023-06-10T01:13:35.490Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/quote-while-the-promise-is-hot/index.html</loc>
-    <lastmod>2023-06-10T01:09:08.619Z</lastmod>
+    <lastmod>2023-06-10T01:13:36.091Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/r-rust-protect-and-unwinding/index.html</loc>
-    <lastmod>2023-06-10T01:09:09.427Z</lastmod>
+    <lastmod>2023-06-10T01:13:36.868Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/rust-1.70-and-build-failure-on-windows/index.html</loc>
-    <lastmod>2023-06-10T01:09:09.918Z</lastmod>
+    <lastmod>2023-06-10T01:13:37.364Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/rust-and-cran-repository-policy/index.html</loc>
-    <lastmod>2023-06-10T01:09:10.578Z</lastmod>
+    <lastmod>2023-06-10T01:13:38.009Z</lastmod>
   </url>
   <url>
     <loc>https://yutani.rbind.io/post/some-more-notes-about-using-rust-code-in-r-packages/index.html</loc>
-    <lastmod>2023-06-10T01:09:11.391Z</lastmod>
+    <lastmod>2023-06-10T01:13:38.825Z</lastmod>
   </url>
 </urlset>
