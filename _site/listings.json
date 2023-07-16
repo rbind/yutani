@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/post/a-quick-note-about-how-to-bundle-rust/index.html",
       "/post/rust-1.70-and-build-failure-on-windows/index.html",
       "/post/r-rust-protect-and-unwinding/index.html",
       "/post/rust-and-cran-repository-policy/index.html",

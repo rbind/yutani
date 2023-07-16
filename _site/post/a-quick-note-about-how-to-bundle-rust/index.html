@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Hiroaki Yutani">
-<meta name="dcterms.date" content="2022-08-14">
+<meta name="dcterms.date" content="2023-07-16">
 
-<title>Wannabe Rstats-fu - Rust and the CRAN Repository Policy</title>
+<title>Wannabe Rstats-fu - A Quick Note About How To Bundle Rust Crates For An R Package</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -64,7 +98,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<meta name="twitter:title" content="Wannabe Rstats-fu - Rust and the CRAN Repository Policy">
+<meta name="twitter:title" content="Wannabe Rstats-fu - A Quick Note About How To Bundle Rust Crates For An R Package">
 <meta name="twitter:description" content="">
 <meta name="twitter:card" content="summary">
 </head>
@@ -111,7 +145,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Rust and the CRAN Repository Policy</h1>
+      <h1 class="title">A Quick Note About How To Bundle Rust Crates For An R Package</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Rust</div>
                 <div class="quarto-category">extendr</div>
@@ -132,7 +166,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">August 14, 2022</p>
+        <p class="date">July 16, 2023</p>
       </div>
     </div>
     
@@ -147,14 +181,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#what-went-wrong" id="toc-what-went-wrong" class="nav-link active" data-scroll-target="#what-went-wrong">What went wrong?</a>
-  <ul class="collapse">
-  <li><a href="#downloads-the-rust-sources" id="toc-downloads-the-rust-sources" class="nav-link" data-scroll-target="#downloads-the-rust-sources">1. downloads the Rust sources</a></li>
-  <li><a href="#doesnt-describe-the-authorship-and-copyright" id="toc-doesnt-describe-the-authorship-and-copyright" class="nav-link" data-scroll-target="#doesnt-describe-the-authorship-and-copyright">2. doesn’t describe the authorship and copyright</a></li>
-  <li><a href="#downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team" id="toc-downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team" class="nav-link" data-scroll-target="#downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team">3. downloads the pre-compiled binary without the agreement of the CRAN team</a></li>
-  </ul></li>
-  <li><a href="#is-cran-suitable-for-rust" id="toc-is-cran-suitable-for-rust" class="nav-link" data-scroll-target="#is-cran-suitable-for-rust">Is CRAN suitable for Rust?</a></li>
-  <li><a href="#so-should-we-give-up-on-rust" id="toc-so-should-we-give-up-on-rust" class="nav-link" data-scroll-target="#so-should-we-give-up-on-rust">So…, should we give up on Rust?</a></li>
+  <li><a href="#my-stance" id="toc-my-stance" class="nav-link active" data-scroll-target="#my-stance">My stance</a></li>
+  <li><a href="#cargo-vendor" id="toc-cargo-vendor" class="nav-link" data-scroll-target="#cargo-vendor"><code>cargo vendor</code></a></li>
+  <li><a href="#path-length-limit-on-windows" id="toc-path-length-limit-on-windows" class="nav-link" data-scroll-target="#path-length-limit-on-windows">Path length limit on Windows</a></li>
+  <li><a href="#r-cmd-check-considers-.cargo-as-a-hidden-directory" id="toc-r-cmd-check-considers-.cargo-as-a-hidden-directory" class="nav-link" data-scroll-target="#r-cmd-check-considers-.cargo-as-a-hidden-directory"><code>R CMD check</code> considers <code>.cargo</code> as a “hidden directory”</a></li>
   </ul>
 </nav>
 </nav>
@@ -168,105 +198,54 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>One year ago, I succeeded to release an R package using Rust (<a href="https://cran.r-project.org/package=string2path">string2path</a>) on CRAN. After that, I wrote <a href="https://yutani.rbind.io/post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/">a blog post about how to use Rust in an R package</a>, and I said</p>
-<blockquote class="blockquote">
-<p>I’ve come too far</p>
-</blockquote>
-<p>but it turned out it was not far enough. Enough for what? For satisfying <a href="https://cran.r-project.org/web/packages/policies.html">the CRAN Repository Policy</a>.</p>
-<p>Last month, I got an email titled “CRAN packages downloading rust files” from the CRAN maintainer. What it basically says was that my package violates the policy and will be removed from CRAN if I don’t correct it until 2022-08-10.</p>
-<section id="what-went-wrong" class="level2">
-<h2 class="anchored" data-anchor-id="what-went-wrong">What went wrong?</h2>
-<p>In summary, there were three problems that I had to address (there was one more problem, but let’s ignore for now for simplicity).</p>
+<p>Recently, CRAN published <a href="https://cran.r-project.org/web/packages/using_rust.html">a document tiled “Using Rust in CRAN packages”</a> and it refers to my R package, <a href="https://github.com/yutannihilation/string2path">string2path</a> as an example of bundling all the source codes of the dependency Rust crates (Not sure if my name is still there at the point when you’re reading this). As I didn’t intend to develope the package as such a good example, let me explain about two possible pitfalls that you might not find easily just by reading the code.</p>
+<p>Note that, I don’t talk about the case that requires downloading here.</p>
+<section id="my-stance" class="level2">
+<h2 class="anchored" data-anchor-id="my-stance">My stance</h2>
+<p>First of all, while I’m hoping CRAN will success with Rust (so I sent <a href="https://stat.ethz.ch/pipermail/r-package-devel/2023q3/009331.html">some feedback</a> about unclear points that everyone would wonder), I’d say, ultimately, CRAN is not a suitable place for using Rust. You should first consider <a href="https://ropensci.org/r-universe/">R-universe</a> to distribute your R pacakge using Rust. I believe R community needs a strong alternative to CRAN and R-univese can be. If you are interested in why I insist so, please read <a href="https://yutani.rbind.io/post/rust-and-cran-repository-policy/">my blog post I wrote last year</a>.</p>
+</section>
+<section id="cargo-vendor" class="level2">
+<h2 class="anchored" data-anchor-id="cargo-vendor"><code>cargo vendor</code></h2>
+<p>Bundling, or “vendoring,” all dependency crates for your package can be easily done by <a href="https://doc.rust-lang.org/cargo/commands/cargo-vendor.html"><code>cargo vendor</code></a>. More specifically,</p>
 <ol type="1">
-<li>My package downloads the Rust sources</li>
-<li>My package doesn’t describe the authorship and copyright of the Rust sources in the DESCRIPTION file</li>
-<li>My package downloads the pre-compiled binary without the agreement of the CRAN team</li>
+<li>run <code>cargo vendor</code> and</li>
+<li>copy the configuration show in the output of <code>cargo vendor</code> to <code>.cargo/config.toml</code> to use that vendored dependency</li>
 </ol>
-<p>Let’s look at the details one by one.</p>
-<section id="downloads-the-rust-sources" class="level3">
-<h3 class="anchored" data-anchor-id="downloads-the-rust-sources">1. downloads the Rust sources</h3>
-<p>The CRAN Policy says:</p>
-<blockquote class="blockquote">
-<p>Where a package wishes to make use of a library not written solely for the package, the package installation should first look to see if it is already installed and if so is of a suitable version. In case not, it is desirable to include the library sources in the package and compile them as part of package installation. If the sources are too large, it is acceptable to download them as part of installation, but do ensure that the download is of a fixed version rather than the latest. Only as a last resort and with the agreement of the CRAN team should a package download pre-compiled software.</p>
-</blockquote>
-<p>If you are familiar with Rust, you probably notice this doesn’t quite fit the Rust cases. The dependency Rust crates are not “installed” on the machine, but are resolved and downloaded automatically by Cargo, the Rust package manager. Usually, we can just include <code>Cargo.lock</code>, and then Cargo always downloads the fixed versions and verifies the checksums. But, that’s the rule. We should prevent Cargo from downloading any sources.</p>
-<p>The solution is simple. We can use <code>cargo vendor</code> to include the sources of the dependencies. At first, I thought it was not realistic because my dependency was over 100MB. But, David B. Dahl, an author of another R package using Rust, kindly suggested we can compress them to a tarball.</p>
-<p>Converting them into a tarball is necessary also because otherwise we would get this warning:</p>
-<pre><code>storing paths of more than 100 bytes is not portable.</code></pre>
-<p>More details can be found in the following files:</p>
-<ul>
-<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/Makevars.in#L13-L19"><code>src/Makevars.in</code></a></p></li>
-<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/cargo_vendor_config.toml"><code>src/cargo_vendor_config.toml</code></a> : this will be moved to <code>.cargo/config.toml</code> to use the vendored sources on compiling.</p></li>
-<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/src/rust/vendor.sh"><code>src/rust/vendor.sh</code></a> : this updates the tarball</p></li>
-</ul>
+<p>You can try adding <code>--offline</code> option to <code>cargo build</code> to check if the build really uses the vendored ones.</p>
+<p>While this mechanism is very simple, you can hit the following problems.</p>
 </section>
-<section id="doesnt-describe-the-authorship-and-copyright" class="level3">
-<h3 class="anchored" data-anchor-id="doesnt-describe-the-authorship-and-copyright">2. doesn’t describe the authorship and copyright</h3>
-<p>This was simply my oversight. The CRAN Policy says:</p>
-<blockquote class="blockquote">
-<p>The ownership of copyright and intellectual property rights of all components of the package must be clear and unambiguous (including from the authors specification in the DESCRIPTION file). Where code is copied (or derived) from the work of others (including from R itself), care must be taken that any copyright/license statements are preserved and authorship is not misrepresented.</p>
-<p>…snip…</p>
-<p>(‘All components’ includes any downloaded at installation or during use.)</p>
-</blockquote>
-<p>First, let’s think about the authorship. It also explains how to describe the information:</p>
-<blockquote class="blockquote">
-<p>Preferably, an ‘Authors@R’ field would be used with ‘ctb’ roles for the authors of such code. Alternatively, the ‘Author’ field should list these authors as contributors.</p>
-<p>Where copyrights are held by an entity other than the package authors, this should preferably be indicated via ‘cph’ roles in the ‘Authors@R’ field, or using a ‘Copyright’ field (if necessary referring to an inst/COPYRIGHTS file).</p>
-</blockquote>
-<p>This is a bit complex; this requires to treat humans and non-human entities differently, but it’s a bit tough job to judge human and non-human one by one… Fortunately, it seems it’s a common practice to use either <code>inst/AUTHORS</code> or <code>inst/COPYRIGHTS</code> and write “see inst/… for details” in <code>DESCRIPTION</code> even when there’s both humans and non-humans. These files are explained in <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html">Writing R Extensions</a>:</p>
-<blockquote class="blockquote">
-<p>Another file sometimes needed in inst is AUTHORS or COPYRIGHTS to specify the authors or copyright holders when this is too complex to put in the DESCRIPTION file.</p>
-</blockquote>
-<p>Then, how about the copyright/license information? Typically, like R packages, a Rust crate describes the license in the metadata. So, rather than actually concatenating all the license statements, I thought it’s enough to summarize the licenses. But, how? Writing R Extensions says:</p>
-<blockquote class="blockquote">
-<p>To include comments about the licensing rather than the body of a license, use a file named something like LICENSE.note.</p>
-</blockquote>
-<p>so it seems this <code>LICENSE.note</code> is a good place for this. Actually, several CRAN packages use this file. So, I hope this works.</p>
-<p>The details can be found in the following files:</p>
-<ul>
-<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/inst/AUTHORS"><code>inst/AUTHORS</code></a></p></li>
-<li><p><a href="https://github.com/yutannihilation/string2path/blob/6c2c2f7025de913121cbc266638de41be744388a/LICENSE.note"><code>LICENSE.note</code></a></p></li>
-<li><p><a href="https://github.com/yutannihilation/string2path/blob/main/update_authors.R"><code>update_authors.R</code></a> : R script to generate the above two files from the `Cargo.toml` of the dependency crates.</p></li>
-</ul>
+<section id="path-length-limit-on-windows" class="level2">
+<h2 class="anchored" data-anchor-id="path-length-limit-on-windows">Path length limit on Windows</h2>
+<p>Vendored directories are so deep that you can easily hit with the path length limit on Windows. So, you probably cannot package the <code>vendor</code> directory as it is.</p>
+<p>There can be some better solution, but I use <code>tar</code> command to avoid this failure; create a tar archive file and expand it in <code>Makevars</code> before <code>cargo build</code>. Here’s the command line that I actually use (<a href="https://github.com/yutannihilation/string2path/blob/main/src/rust/vendor.sh">ref</a>):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># c.f. https://reproducible-builds.org/docs/archives/</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--sort</span><span class="op">=</span>name <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mtime</span><span class="op">=</span><span class="st">'1970-01-01 00:00:00Z'</span> <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--owner</span><span class="op">=</span>0 <span class="dt">\</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--group</span><span class="op">=</span>0 <span class="dt">\</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--numeric-owner</span> <span class="dt">\</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--xz</span> <span class="dt">\</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--create</span> <span class="dt">\</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--file</span><span class="op">=</span>vendor.tar.xz <span class="dt">\</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  vendor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Another reason to use tar is that the size of these source codes. R package itself is compressed, but I found it’s more compact if I create another <code>.xz</code> file.</p>
 </section>
-<section id="downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team" class="level3">
-<h3 class="anchored" data-anchor-id="downloads-the-pre-compiled-binary-without-the-agreement-of-the-cran-team">3. downloads the pre-compiled binary without the agreement of the CRAN team</h3>
-<p>Regarding this one, I have no idea how to do this properly.</p>
-<p>First, let’s go back to the sentence of the CRAN Policy:</p>
-<blockquote class="blockquote">
-<p>Only as a last resort and with the agreement of the CRAN team should a package download pre-compiled software.</p>
-</blockquote>
-<p>Yes, I believe it’s a “last resort.” My package tries to compile the Rust code first, and only when no Rust compiler is available on the machine, it falls back to downloading the pre-compiled binary. It downloads the fixed version of the binary and verifies the checksum.</p>
-<p>But…, how can I get “the agreement”? What state is considered they agree on the use of pre-compiled binary?</p>
-<p>I explained above in the cran-comments.md on my latest submission, in the hope that they would manually review it so that the acceptance means the agreement on downloading. However, my package went to CRAN soon after it passed the auto checks. The manual review never happened. So, while my package is still on CRAN at the time of writing this, I’m not sure if that means the problem is fixed.</p>
-</section>
-</section>
-<section id="is-cran-suitable-for-rust" class="level2">
-<h2 class="anchored" data-anchor-id="is-cran-suitable-for-rust">Is CRAN suitable for Rust?</h2>
-<p>Honestly, I was surprised that the CRAN Policy prohibits to rely on the standard mechanism of a language. At the same time, I do understand their stance. It’s a common conflict between the package managers.</p>
-<p>In response to my email that mistakenly explained about the download mechanism (while the problem was not about how it downloads the binary), the CRAN maintainer wrote:</p>
-<blockquote class="blockquote">
-<p>&gt; That mechanism can be found in tools/configure.R.<br>
-</p>
-<p>But the comment in configure says that is for binary downloads.&nbsp;Your code is complicated, and I have spent far too long looking at it.&nbsp;As the CRAN policy says<br>
-</p>
-<p>“The time of the volunteers is CRAN’s most precious resource”</p>
-</blockquote>
-<p>I’m really sorry that the maintainer had to read my messy code (although I never intended to force it). It’s almost impossible to check all the dependency management mechanism outside of R’s one no matter if it’s a major ecosystem like Rust or a minor tool like my script. So, I understand they need to be strict on this topic.</p>
-<p>For example, <a href="https://wiki.debian.org/Teams/RustPackaging/Policy">Debian Rust Packaging Policy</a> is stricter; it requires:</p>
-<blockquote class="blockquote">
-<p>Package builds must not allow Cargo to access the network when building. In particular, they must not download or check out any sources at build time.</p>
-</blockquote>
-<p>In Debian package’s case, if I understand correctly, it requires creating one Debian package per crate (but the packaging tool is provided so it shouldn’t be that difficult, I guess). Probably we can do the same thing on CRAN, but it feels a bit overkill.</p>
-<p>I still believe it’s possible to keep my package on CRAN, but I don’t casually recommend it to others. It requires considerable amount of efforts to comply with the CRAN Policy, at least at the moment.</p>
-</section>
-<section id="so-should-we-give-up-on-rust" class="level2">
-<h2 class="anchored" data-anchor-id="so-should-we-give-up-on-rust">So…, should we give up on Rust?</h2>
-<p>To be clear, I don’t think so.</p>
-<p>In the context of Debian package, the distro’s official repository is not the only way to distribute a Debian package. It can be distributed via unofficial <a href="https://help.launchpad.net/Packaging/PPA">PPA</a>; it’s “unofficial” in the sense it’s not provided by the distro, but it can be “official” if the developers of the software officially maintain the PPA.</p>
-<p>For another example, Emacs has the official repository, <a href="https://elpa.gnu.org/">GNU ELPA</a>. But, the users are not tied to it because there is the popular alternative, <a href="https://melpa.org/">MELPA</a>. GNU ELPA has strict requirements, but the users can enjoy MELPA at the same time.</p>
-<p>I think R needs such an alternative to CRAN. I’m expecting <a href="https://r-universe.dev/">R-universe</a> will eventually be what MELPA is to ELPA. That would be a good thing to CRAN, too. Much of the frustration that we currently feel about CRAN probably comes from the fact that CRAN takes on too much responsibility.</p>
-<p>I actually use R-universe to distribute <a href="https://github.com/yutannihilation/fledgingr">a non-CRAN package using Rust</a>, and it works fine. If you don’t try R-universe yet, I recommend it (probably I’ll write tutorial for R-universe if I can find time).</p>
+<section id="r-cmd-check-considers-.cargo-as-a-hidden-directory" class="level2">
+<h2 class="anchored" data-anchor-id="r-cmd-check-considers-.cargo-as-a-hidden-directory"><code>R CMD check</code> considers <code>.cargo</code> as a “hidden directory”</h2>
+<p>As I described above, you have to configure <code>.cargo/config.toml</code> to use the vendored sources. But, if you include it naively, you’ll see this NOTE on <code>R CMD check</code> because <code>.cargo</code> starts with <code>.</code>:</p>
+<pre><code>Found the following hidden files and directories</code></pre>
+<p>So, you have to include <code>.cargo/config.toml</code> as a different name, and put it to the right place before <code>cargo build</code>. I do this like this (the file is named <code>cargo_vendor_config.toml</code>):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vendoring (Note: to avoid </span><span class="al">NOTE</span><span class="co"> of "Found the following hidden files and</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># directories", .cargo needs to be created here)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="st">"</span><span class="va">$(</span><span class="ex">VENDORING</span><span class="va">)</span><span class="st">"</span> <span class="ot">=</span> <span class="st">"yes"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span> <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">$(</span><span class="ex">TAR</span><span class="va">)</span> <span class="at">--extract</span> <span class="at">--xz</span> <span class="at">-f</span> ./rust/vendor.tar.xz <span class="at">-C</span> ./rust <span class="kw">&amp;&amp;</span> <span class="dt">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mkdir</span> <span class="at">-p</span> ./rust/.cargo <span class="kw">&amp;&amp;</span> <span class="dt">\</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">cp</span> ./cargo_vendor_config.toml ./rust/.cargo/config.toml<span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="ex">@BEFORE_CARGO_BUILD@</span> cd ./rust <span class="kw">&amp;&amp;</span> <span class="ex">cargo</span> build <span class="at">--target</span><span class="op">=</span><span class="va">$(</span><span class="ex">TARGET</span><span class="va">)</span> <span class="at">--lib</span> <span class="at">--release</span> <span class="at">--offline</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The full <code>Makevars</code> can be found <a href="https://github.com/yutannihilation/string2path/blob/main/src/Makevars.in">here</a>.</p>
 
 
 </section>

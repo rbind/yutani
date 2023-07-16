@@ -1,0 +1,104 @@
+---
+title: "A Quick Note About How To Bundle Rust Crates For An R Package"
+author: "Hiroaki Yutani"
+date: "2023-07-16"
+categories: ["Rust", "extendr"]
+editor: visual
+---
+
+Recently, CRAN published [a document tiled "Using Rust in CRAN packages"][1]
+and it refers to my R package, [string2path][2] as an example of bundling 
+all the source codes of the dependency Rust crates (Not sure if my name is
+still there at the point when you're reading this). As I didn't intend to
+develope the package as such a good example, let me explain about two
+possible pitfalls that you might not find easily just by reading the code.
+
+Note that, I don't talk about the case that requires downloading here.
+
+## My stance
+
+First of all, while I'm hoping CRAN will success with Rust (so I sent
+[some feedback][3] about unclear points that everyone would wonder),
+I'd say, ultimately, CRAN is not a suitable place for using Rust.
+You should first consider [R-universe][4] to distribute your R pacakge
+using Rust. I believe R community needs a strong alternative to CRAN
+and R-univese can be. If you are interested in why I insist so, please
+read [my blog post I wrote last year][5].
+
+## `cargo vendor`
+
+Bundling, or "vendoring," all dependency crates for your package can be easily
+done by [`cargo vendor`][6]. More specifically,
+
+1. run `cargo vendor` and
+2. copy the configuration show in the output of `cargo vendor` to 
+`.cargo/config.toml` to use that vendored dependency
+
+You can try adding `--offline` option to `cargo build` to check if the build 
+really uses the vendored ones.
+
+While this mechanism is very simple, you can hit the following problems.
+
+## Path length limit on Windows
+
+Vendored directories are so deep that you can easily hit with the path length
+limit on Windows. So, you probably cannot package the `vendor` directory as it is.
+
+There can be some better solution, but I use `tar` command to avoid this failure;
+create a tar archive file and expand it in `Makevars` before `cargo build`.
+Here's the command line that I actually use ([ref][7]):
+
+```sh
+# c.f. https://reproducible-builds.org/docs/archives/
+tar \
+  --sort=name \
+  --mtime='1970-01-01 00:00:00Z' \
+  --owner=0 \
+  --group=0 \
+  --numeric-owner \
+  --xz \
+  --create \
+  --file=vendor.tar.xz \
+  vendor
+```
+
+Another reason to use tar is that the size of these source codes.
+R package itself is compressed, but I found it's more compact if
+I create another `.xz` file.
+
+## `R CMD check` considers `.cargo` as a "hidden directory"
+
+As I described above, you have to configure `.cargo/config.toml` to use
+the vendored sources. But, if you include it naively, you'll see this
+NOTE on `R CMD check` because `.cargo` starts with `.`:
+
+```
+Found the following hidden files and directories
+```
+
+So, you have to include `.cargo/config.toml` as a different name,
+and put it to the right place before `cargo build`.
+I do this like this (the file is named `cargo_vendor_config.toml`):
+
+``` sh
+    # vendoring (Note: to avoid NOTE of "Found the following hidden files and
+    # directories", .cargo needs to be created here)
+    if [ "$(VENDORING)" = "yes" ]; then \
+        $(TAR) --extract --xz -f ./rust/vendor.tar.xz -C ./rust && \
+        mkdir -p ./rust/.cargo && \
+        cp ./cargo_vendor_config.toml ./rust/.cargo/config.toml; \
+    fi
+
+    @BEFORE_CARGO_BUILD@ cd ./rust && cargo build --target=$(TARGET) --lib --release --offline
+```
+
+The full `Makevars` can be found [here][8].
+
+[1]: https://cran.r-project.org/web/packages/using_rust.html
+[2]: https://github.com/yutannihilation/string2path
+[3]: https://stat.ethz.ch/pipermail/r-package-devel/2023q3/009331.html
+[4]: https://ropensci.org/r-universe/
+[5]: https://yutani.rbind.io/post/rust-and-cran-repository-policy/
+[6]: https://doc.rust-lang.org/cargo/commands/cargo-vendor.html
+[7]: https://github.com/yutannihilation/string2path/blob/main/src/rust/vendor.sh
+[8]: https://github.com/yutannihilation/string2path/blob/main/src/Makevars.in
