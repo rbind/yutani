@@ -592,7 +592,7 @@
     "href": "post/a-quick-note-about-how-to-bundle-rust/index.html",
     "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
     "section": "",
-    "text": "Recently, CRAN published a document tiled “Using Rust in CRAN packages” and it refers to my R package, string2path as an example of bundling all the source codes of the dependency Rust crates (Not sure if my name is still there at the point when you’re reading this). As I didn’t intend to develope the package as such a good example, let me explain about two possible pitfalls that you might not find easily just by reading the code.\nNote that, I don’t talk about the case that requires downloading here."
+    "text": "Recently, CRAN published a document titled “Using Rust in CRAN packages” and it refers to my R package, string2path as an example of bundling all the source codes of the dependency Rust crates (I’m not sure if my name is still there at the point when you’re reading this). As I didn’t intend to develope the package as such a good example, let me explain about two possible pitfalls that you might not find easily just by reading the code.\nNote that, I don’t talk about the case that requires downloading here."
   },
   {
     "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#my-stance",
