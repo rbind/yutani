@@ -36,6 +36,10 @@ which allows us to call a custom cleanup function before aborting. C++ can
 utilize this to delay R's stack unwinding by escaping from it by `longjmp`
 and then resuming by another API, `R_ContinueUnwind()`. But, as Rust desn't
 support `longjmp`, Rust cannot implement such a custom cleanup function.
+So, I concluded that, while it's not totally safe, we have no choice but
+to use `panic!()` to escape from `R_UnwindProtect()`.
+
+However, I was wrong.
 
 ## Overview
 
@@ -97,9 +101,25 @@ SEXP unwind_protect_impl(SEXP (*fun)(void *data), void *data) {
 }
 ```
 
+#### Tagged pointer
+
+You might wonder what `| 1` does. This is a trick called
+["tagged pointer"][tagged pointer], using a few of the least significant bits 
+to store additional information. This time, the implementation uses the lowest
+bit as an error flag.
+[tagged pointer]: https://en.wikipedia.org/wiki/Tagged_pointer
+
+Of course, tagged pointer is not the only answer. For example, you can probably
+define a struct or enum to share the definition between Rust and C. But, I use
+tagged `SEXP` because it's simpler in the sense it doesn't require additional
+allocation.
+
+Also note that I could just return `Result` here and create the tagged `SEXP`
+later. It's just a matter of preferences.
+
 #### `build.rs`
 
-This C function needs to be compiled before the Rust code compiles because it's
+This C function needs to be compiled before compiling the Rust code because it's
 needed at the linking stage. We can use `cc` crate to compile it in the build
 script like this:
 
@@ -118,22 +138,6 @@ fn main() {
     println!("cargo:rerun-if-changed=src/unwind_protect_wrapper.c");
 }
 ```
-
-#### Tagged pointer
-
-You might wonder what `| 1` does. This is a trick called
-["tagged pointer"][tagged pointer], using a few of the least significant bits 
-to store additional information. This time, the implementation uses the lowest
-bit as an error flag.
-[tagged pointer]: https://en.wikipedia.org/wiki/Tagged_pointer
-
-Of course, tagged pointer is not the only answer. For example, you can probably
-define a struct or enum to share the definition between Rust and C. But, I use
-tagged `SEXP` because it's simpler in the sense it doesn't require additional
-allocation.
-
-Also note that I could just return `Result` here and create the tagged `SEXP`
-later. It's just a matter of preferences.
 
 ### Extern function definiton on Rust's side
 

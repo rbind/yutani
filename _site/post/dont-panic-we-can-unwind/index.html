@@ -217,7 +217,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="what-was-the-problem" class="level2">
 <h2 class="anchored" data-anchor-id="what-was-the-problem">What was the problem?</h2>
 <p>Let’s summarise the last blog post quickly. On error, the resources need to be freed before aborting. But, different languages have different error handling mechanism, and it might not work well to attempt to free resources beyond the language boundaries.</p>
-<p>In order to solve this problem, R’s C API provices <code>R_UnwindProtect()</code>, which allows us to call a custom cleanup function before aborting. C++ can utilize this to delay R’s stack unwinding by escaping from it by <code>longjmp</code> and then resuming by another API, <code>R_ContinueUnwind()</code>. But, as Rust desn’t support <code>longjmp</code>, Rust cannot implement such a custom cleanup function.</p>
+<p>In order to solve this problem, R’s C API provices <code>R_UnwindProtect()</code>, which allows us to call a custom cleanup function before aborting. C++ can utilize this to delay R’s stack unwinding by escaping from it by <code>longjmp</code> and then resuming by another API, <code>R_ContinueUnwind()</code>. But, as Rust desn’t support <code>longjmp</code>, Rust cannot implement such a custom cleanup function. So, I concluded that, while it’s not totally safe, we have no choice but to use <code>panic!()</code> to escape from <code>R_UnwindProtect()</code>.</p>
+<p>However, I was wrong.</p>
 </section>
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
@@ -264,9 +265,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res<span class="op">;</span></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="tagged-pointer" class="level4">
+<h4 class="anchored" data-anchor-id="tagged-pointer">Tagged pointer</h4>
+<p>You might wonder what <code>| 1</code> does. This is a trick called <a href="#tagged-pointer">“tagged pointer”</a>, using a few of the least significant bits to store additional information. This time, the implementation uses the lowest bit as an error flag. <a href="#tagged-pointer">tagged pointer</a>: https://en.wikipedia.org/wiki/Tagged_pointer</p>
+<p>Of course, tagged pointer is not the only answer. For example, you can probably define a struct or enum to share the definition between Rust and C. But, I use tagged <code>SEXP</code> because it’s simpler in the sense it doesn’t require additional allocation.</p>
+<p>Also note that I could just return <code>Result</code> here and create the tagged <code>SEXP</code> later. It’s just a matter of preferences.</p>
+</section>
 <section id="build.rs" class="level4">
 <h4 class="anchored" data-anchor-id="build.rs"><code>build.rs</code></h4>
-<p>This C function needs to be compiled before the Rust code compiles because it’s needed at the linking stage. We can use <code>cc</code> crate to compile it in the build script like this:</p>
+<p>This C function needs to be compiled before compiling the Rust code because it’s needed at the linking stage. We can use <code>cc</code> crate to compile it in the build script like this:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode rust code-with-copy"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">std::path::</span><span class="dt">Path</span><span class="op">;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> main() <span class="op">{</span></span>
@@ -280,12 +287,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="pp">println!</span>(<span class="st">"cargo:rerun-if-changed=src/unwind_protect_wrapper.c"</span>)<span class="op">;</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="tagged-pointer" class="level4">
-<h4 class="anchored" data-anchor-id="tagged-pointer">Tagged pointer</h4>
-<p>You might wonder what <code>| 1</code> does. This is a trick called <a href="#tagged-pointer">“tagged pointer”</a>, using a few of the least significant bits to store additional information. This time, the implementation uses the lowest bit as an error flag. <a href="#tagged-pointer">tagged pointer</a>: https://en.wikipedia.org/wiki/Tagged_pointer</p>
-<p>Of course, tagged pointer is not the only answer. For example, you can probably define a struct or enum to share the definition between Rust and C. But, I use tagged <code>SEXP</code> because it’s simpler in the sense it doesn’t require additional allocation.</p>
-<p>Also note that I could just return <code>Result</code> here and create the tagged <code>SEXP</code> later. It’s just a matter of preferences.</p>
 </section>
 </section>
 <section id="extern-function-definiton-on-rusts-side" class="level3">
