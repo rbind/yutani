@@ -161,32 +161,389 @@
     "text": "How can I overcome this?\nHadley says ggplot2 might eventually end up using the double-dispatch approach in vctrs. So, we can wait for the last hope.\nIf you cannot wait, use S4. S4 can naturally do double dispatch because their method dispatch depends on the whole combination of types of the arguments."
   },
   {
-    "objectID": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html",
-    "href": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html",
-    "title": "A Survival Guide To Install rlang From GitHub On Windows",
+    "objectID": "post/a-tip-to-debug-ggplot2/index.html",
+    "href": "post/a-tip-to-debug-ggplot2/index.html",
+    "title": "A Tip to Debug ggplot2",
     "section": "",
-    "text": "I don’t have any strong feelings about OSs. They are just tools. I had been a Mac user for 10+ years since I was 10, and now I’m using Windows for no reason. All OSs have their pros and cons. For example, I like Mac, but, in the late 90s, I was very disappointed at Mac because it didn’t have fonts to display Shift_JIS art nicely.\nAnyway, I’m using Windows and I need to survive. Here’s an error I often see when I try to install rlang package from GitHub by devtools::install_github():\nThis is because rlang.dll is used by the current R session (or other session?), so Windows won’t let me overwrite it. What should I do? Here’s some advice."
+    "text": "Since the tidyverse developer day is near, I share my very very secret technique to debug ggplot2. Though this is a very small thing, hope this helps someone a bit."
   },
   {
-    "objectID": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#restart-the-r-session",
-    "href": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#restart-the-r-session",
-    "title": "A Survival Guide To Install rlang From GitHub On Windows",
-    "section": "Restart the R session",
-    "text": "Restart the R session\nThis is always necessary. Since rlang is very fundamental package, it might be loaded as a dependency of some attached or loaded package (if you are curious about the differences between load and attach, R Packages helps). You need a fresh session with no packages (except for base packages) loaded. On RStudio, Ctrl+Shift+F10, or “Restart R” in “Session” menu.\n\nFor usual packages, this is enough. But, rlang is not the case…"
+    "objectID": "post/a-tip-to-debug-ggplot2/index.html#ggplot2-is-unbreakable",
+    "href": "post/a-tip-to-debug-ggplot2/index.html#ggplot2-is-unbreakable",
+    "title": "A Tip to Debug ggplot2",
+    "section": "ggplot2 is unbreakable!",
+    "text": "ggplot2 is unbreakable!\nYou might want to debug() the methods of Geoms or Stats.\ndebug(GeomPoint$draw_panel)\nBut, this is not effective because the geom_point() generates different instances, so their draw_panel are all different objects (c.f. R6 classes have debug method for this). (edit: @BrodieGaslamtold me I’m wrong. The reason we can’t do debug(GeomPoint$draw_panel) s because $ is overridden and debug(get(\"draw_panel\", GeomPoint)) definitely works.)\nThen what about RStudio’s nice breakpoint features?\n\nUsually, this is enough. But, ggplot2’s ggprotos are not the case. You cannot use breakpoints to dig into them.\n\nHmm… But, no, you don’t need to scratch your head. The solution is pretty simple."
   },
   {
-    "objectID": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#use-remotesinstall_github-instead-of-devtools",
-    "href": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#use-remotesinstall_github-instead-of-devtools",
-    "title": "A Survival Guide To Install rlang From GitHub On Windows",
-    "section": "Use remotes::install_github() instead of devtools",
-    "text": "Use remotes::install_github() instead of devtools\ndevtools::install_github() is just re-exported from remotes package. So, are the same one. But, if I use devtools::, devtools’s dependencies are loaded, and, at the moment, rlang is included here. So, the same error will occur.\nOn the other hand, remotes:: doesn’t need rlang directly or indirectly. So, run\nremotes::install_github(\"r-lib/rlang\")\n(You might also need remotes::install_github() for other dependency packages like glue.)\nNote that, pkg package seems aware of this kind of problems, so we’ll be free from this kind of problems when pkg is mature!"
+    "objectID": "post/a-tip-to-debug-ggplot2/index.html#use-browser",
+    "href": "post/a-tip-to-debug-ggplot2/index.html#use-browser",
+    "title": "A Tip to Debug ggplot2",
+    "section": "Use browser()",
+    "text": "Use browser()\nYou just need to\n\nadd browser() on the line where you want to debug, and\nload all (Cmd+Shift+L for Mac, Ctrl+Shift+L for Windows, and C-c C-w l for Emacs/ESS).\n\n\nThen, you’ll be on debug mode at last!"
   },
   {
-    "objectID": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#extra-steps",
-    "href": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#extra-steps",
-    "title": "A Survival Guide To Install rlang From GitHub On Windows",
-    "section": "Extra steps?",
-    "text": "Extra steps?\nUsually, restarting the session + using remotes::install_github() works. But, in the past, I needed some extra steps. I don’t know why, but it seemed RStudio loads rlang in background (c.f. https://github.com/r-lib/remotes/issues/131). So, for future references, I note some. Hope this will never be needed again…\n\nRemove rlang\nRemoving package might help, since removed package cannot be loaded.\nremove.packages(\"rlang\")\n\n\nUse git clone, R CMD build and R CMD INSTALL\nIf you really need to be away from RStudio, or even from any R sessions. In those cases, you can use git and R CMD build and R CMD INSTALL on console.\ngit clone https://github.com/r-lib/rlang\nR.exe CMD build --no-manual --no-build-vignettes rlang/\nR.exe CMD INSTALL [--some-options-i-dont-remember] rlang_*.tar.gz"
+    "objectID": "post/a-tip-to-debug-ggplot2/index.html#ymmv",
+    "href": "post/a-tip-to-debug-ggplot2/index.html#ymmv",
+    "title": "A Tip to Debug ggplot2",
+    "section": "YMMV",
+    "text": "YMMV\nThat’s all for this posts. But, I guess there are many alternative ways to achieve this, and I’m almost sure, at the end of the developer day, I will feel shame to have published this post, which just describes my debug skill is so poor… I’m really looking forward to learning from others. See you there!"
+  },
+  {
+    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html",
+    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html",
+    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
+    "section": "",
+    "text": "Recently, CRAN published a document titled “Using Rust in CRAN packages” and it refers to my R package, string2path, as an example of bundling all the source codes of the dependency Rust crates (I’m not sure if my name is still there at the point when you’re reading this). As I didn’t intend to develope the package as such a good example, let me explain about two possible pitfalls that you might not find easily just by reading the code.\nNote that, I don’t talk about the case that requires downloading here."
+  },
+  {
+    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#my-stance",
+    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html#my-stance",
+    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
+    "section": "My stance",
+    "text": "My stance\nFirst of all, while I’m hoping CRAN will success with Rust (so I sent some feedback about unclear points that everyone would wonder), I’d say, ultimately, CRAN is not a suitable place for using Rust. You should first consider R-universe to distribute your R pacakge using Rust. I believe R community needs a strong alternative to CRAN and R-univese can be. If you are interested in why I insist so, please read my blog post I wrote last year."
+  },
+  {
+    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#cargo-vendor",
+    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html#cargo-vendor",
+    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
+    "section": "cargo vendor",
+    "text": "cargo vendor\nBundling, or “vendoring,” all dependency crates for your package can be easily done by cargo vendor. More specifically,\n\nrun cargo vendor and\ncopy the configuration shown in the output of cargo vendor to .cargo/config.toml to use that vendored dependency\n\nYou can try adding --offline option to cargo build to check if the build really uses the vendored ones.\nWhile this mechanism is very simple, you can hit the following problems."
+  },
+  {
+    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#path-length-limit-on-windows",
+    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html#path-length-limit-on-windows",
+    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
+    "section": "Path length limit on Windows",
+    "text": "Path length limit on Windows\nVendored directories are so deep that you can easily hit with the path length limit on Windows. So, you probably cannot package the vendor directory as it is.\nThere can be some better solution, but I use tar command to avoid this failure; create a tar archive file and expand it in Makevars before cargo build. Here’s the command line that I actually use (ref):\n# c.f. https://reproducible-builds.org/docs/archives/\ntar \\\n  --sort=name \\\n  --mtime='1970-01-01 00:00:00Z' \\\n  --owner=0 \\\n  --group=0 \\\n  --numeric-owner \\\n  --xz \\\n  --create \\\n  --file=vendor.tar.xz \\\n  vendor\nAnother reason to use tar is that the size of these source codes. R package itself is compressed, but I found it’s more compact if I create another .xz file."
+  },
+  {
+    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#r-cmd-check-considers-.cargo-as-a-hidden-directory",
+    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html#r-cmd-check-considers-.cargo-as-a-hidden-directory",
+    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
+    "section": "R CMD check considers .cargo as a “hidden directory”",
+    "text": "R CMD check considers .cargo as a “hidden directory”\nAs I described above, you have to configure .cargo/config.toml to use the vendored sources. But, if you include it naively, you’ll see this NOTE on R CMD check because .cargo starts with .:\nFound the following hidden files and directories\nSo, you have to include .cargo/config.toml as a different name, and put it to the right place before cargo build. I do this like this (the file is named cargo_vendor_config.toml):\n    # vendoring (Note: to avoid NOTE of \"Found the following hidden files and\n    # directories\", .cargo needs to be created here)\n    if [ \"$(VENDORING)\" = \"yes\" ]; then \\\n        $(TAR) --extract --xz -f ./rust/vendor.tar.xz -C ./rust && \\\n        mkdir -p ./rust/.cargo && \\\n        cp ./cargo_vendor_config.toml ./rust/.cargo/config.toml; \\\n    fi\n\n    @BEFORE_CARGO_BUILD@ cd ./rust && cargo build --target=$(TARGET) --lib --release --offline\nThe full Makevars can be found here."
+  },
+  {
+    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html",
+    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html",
+    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
+    "section": "",
+    "text": "extendr is a project that provides an interface between R and Rust. In the series of posts, I explained how to use extendr, but, this time, let me pick a complementary topic. The CI setup is important to develop a package and it’s not difficult to tweak the existing GitHub Actions (GHA) settings to compile Rust code. By using GHA, you can even provide precompiled binaries via GitHub releases."
+  },
+  {
+    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#setup-rust-toolchain",
+    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#setup-rust-toolchain",
+    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
+    "section": "Setup Rust toolchain",
+    "text": "Setup Rust toolchain\nA GitHub repository for R package development typically has such a YAML for testing:\nhttps://github.com/r-lib/actions/blob/master/examples/check-standard.yaml\nTo test a package using extendr, it’s as easy as to just add the steps to setup Rust toolchain. Note that the runners might already have Rust toolchain installed, but these steps ensure the intended toolchain is used.\n- name: Set up Rust\n  uses: actions-rs/toolchain@v1\n  with:\n    toolchain: stable\n    default: true\n\n- name: Additional Rust set up for Windows\n  if: runner.os == 'Windows'\n  run: |\n    rustup target add i686-pc-windows-gnu\n    rustup target add x86_64-pc-windows-gnu\nIf you want to run tests also on the nightly toolchain, you can include the channel in the build matrix like this1:\n- {os: windows-latest, r: 'release', rust: 'stable'}\n- {os: macOS-latest,   r: 'release', rust: 'stable'}\n- {os: ubuntu-20.04,   r: 'release', rust: 'stable',  rspm: \"...\"}\n- {os: ubuntu-20.04,   r: 'devel',   rust: 'stable',  rspm: \"...\"}\n- {os: ubuntu-20.04,   r: 'release', rust: 'nightly', rspm: \"...\"}\nand specify the channel in the actions-rs/toolchain@v1 step:\n- name: Set up Rust\n  uses: actions-rs/toolchain@v1\n  with:\n    toolchain: ${{ matrix.config.rust }}\n    default: true\nYou might need more setups depending on the crates you use, but basically that’s all you need to do."
+  },
+  {
+    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#provide-precompiled-binaries-for-windows",
+    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#provide-precompiled-binaries-for-windows",
+    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
+    "section": "Provide precompiled binaries for Windows",
+    "text": "Provide precompiled binaries for Windows\nAs you might have already noticed, the setup instruction for Windows is a bit complex compared to other OSes (i.e., Linux and macOS). So, it might be worth considering providing the precompiled static libraries, just like rwinlib does for many C++ libraries.\nOther motivation is that some of CRAN machines don’t have Rust toolchain. If the package author wants to submit their package to CRAN, such a mechanism is needed.\n(edit: it seems macOS is also the case, but I don’t find what’s the best way to solve this. I’ll probably write another post for this.)\nThere probably isn’t a single standard way to achieve this, but let me share what I did for my package, string2path here. YMMV, of course.\nI used softprops/action-gh-release action to publish the binaries as a GitHub release. The setting would be like this:\n# rename the binaries before uploading so that we can distinguish them easily.\n- name: Tweak staticlib\n  if: runner.os == 'Windows'\n  run: |\n    mv ./check/string2path.Rcheck/00_pkg_src/string2path/src-i386/rust/target/i686-pc-windows-gnu/release/libstring2path.a \\\n      i686-pc-windows-gnu-libstring2path.a\n    mv ./check/string2path.Rcheck/00_pkg_src/string2path/src-x64/rust/target/x86_64-pc-windows-gnu/release/libstring2path.a \\\n      x86_64-pc-windows-gnu-libstring2path.a\n\n- name: Release\n  uses: softprops/action-gh-release@v1\n  # only run this on a tag event\n  if: runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/')\n  with:\n    fail_on_unmatched_files: true\n    files: |\n      i686-pc-windows-gnu-libstring2path.a\n      x86_64-pc-windows-gnu-libstring2path.a\nWith this setup, you can publish the binaries by pushing tags. For example, let’s create windows_20210801-3 tag and push it.\ngit tag windows_20210801-3\ngit push origin windows_20210801-3\nThen, the GHA will publish the corresponding release like this:\n\nNext, tweak src/Makefile.win as follows to allow users to download the binaries when cargo is not available. There might be more nicer code to choose the latest release automatically, but I think it’s safe to specify a fixed tag name, though it’s a bit tiresome to update this manually every time you update Rust code.\n(edit: I found this violates the CRAN policy. A package is not allowed to write “anywhere else on the file system apart from the R session’s temporary directory. You need to set CARGO_HOME envvar to some temporary directory to avoid this.)\nCRATE = foo   # your crate name\nBASE_TAG = windows_20210801-3  # the tag you want to use\n\n# c.f. https://stackoverflow.com/a/34756868\n# Note that this assignment (`:=`) is not available on Solaris, so you need to\n# add \"GNU make\" to SystemRequirements field on DESCRIPTION, even though this\n# can never compile on Solaris anyway...\nCARGO_EXISTS := $(shell cargo --version 2&gt; /dev/null)\n\n# ..snip...\n\n$(STATLIB):\nifdef CARGO_EXISTS\n    cargo build --target=$(TARGET) --lib --release --manifest-path=./rust/Cargo.toml\nelse\n    mkdir -p $(LIBDIR)\n    curl -L -o $(STATLIB) https://github.com/yutannihilation/$(CRATE)/releases/download/$(BASE_TAG)/$(TARGET)-lib$(CRATE).a\nendif\nOne caveat is that this won’t work when cargo is installed but with the GNU toolchain (extendr requires the MSVC toolchain on Windows). I guess some friendlier check can be done in configure.win, but this post won’t look into the details."
+  },
+  {
+    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#other-topics-i-couldnt-cover",
+    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#other-topics-i-couldnt-cover",
+    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
+    "section": "Other topics I couldn’t cover",
+    "text": "Other topics I couldn’t cover\n\nsccache: Builds can be faster by using sccache, a ccache-like compiler caching tool for Rust. A blog post describes how to use this on GHA, but I don’t think I understand it to the extent where I can explain it here in clear words, sorry…\nHow to run tests on Rust’s side?: This post doesn’t explain how to run Rust tests (i.e., cargo test) or lints (i.e., cargo fmt, and cargo clippy). I even don’t figure out what tests should live in R or in Rust."
+  },
+  {
+    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#example",
+    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#example",
+    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
+    "section": "Example",
+    "text": "Example\nHere’s the real example of the settings on my repo:\nhttps://github.com/yutannihilation/string2path/blob/main/.github/workflows/check-pak.yaml"
+  },
+  {
+    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#footnotes",
+    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#footnotes",
+    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nOn Windows, you need to use 'stalble-msvc', not 'stable-gnu', but msvc should be the default so you can just specify 'stable'↩︎"
+  },
+  {
+    "objectID": "post/2021-06-07-gghighlight-032/index.html",
+    "href": "post/2021-06-07-gghighlight-032/index.html",
+    "title": "gghighlight 0.3.2",
+    "section": "",
+    "text": "gghighlight 0.3.2 is on CRAN now!\nThis release is mainly for fixing the potential test failures with upcoming version of ggplot2, but this version contains two new features."
+  },
+  {
+    "objectID": "post/2021-06-07-gghighlight-032/index.html#n",
+    "href": "post/2021-06-07-gghighlight-032/index.html#n",
+    "title": "gghighlight 0.3.2",
+    "section": "n()",
+    "text": "n()\nSince gghighlight uses dplyr inside, you can now use dplyr’s expression, n(). This is useful to highlight based on the size of the group.\nSuppose we have this data:\n\nlibrary(gghighlight)\n\nLoading required package: ggplot2\n\nlibrary(dplyr, warn.conflicts = FALSE)\n\nset.seed(1098)\ncenters &lt;- tibble(\n  id = sample(letters, 11),\n  x = c(-1, -2, -3,   0,  1,  4,  2,  5,  7,  1, -1),\n  y = c( 4, -3, -7, -10, -8, -3,  9,  5, -1,  1, -1),\n  n = c(50, 50, 100, 50, 50, 120, 40, 10, 20, 5, 8)\n)\n\nd &lt;- centers %&gt;% \n  rowwise() %&gt;% \n  summarise(id = id, x = x + rnorm(n, sd = 3), y = y + rnorm(n, sd = 3))\n\np &lt;- ggplot(d, aes(x, y, colour = id)) + geom_point()\np\n\n\n\n\nBy using n(), we can focus on the large groups.\n\np +\n  gghighlight(n() &gt;= 100, use_direct_label = FALSE)\n\n\n\n\nOr small groups.\n\np +\n  gghighlight(n() &lt; 10, use_direct_label = FALSE)\n\n\n\n\nYou can also use n() as a non-logical predicate, whose values are used for sorting data and the top max_highlight of rows/groups are highlighted.\n\n# Same result as above\np +\n  gghighlight(-n(), max_highlight = 2, use_direct_label = FALSE)"
+  },
+  {
+    "objectID": "post/2021-06-07-gghighlight-032/index.html#to-unhighlight-or-not-to-unhighlight",
+    "href": "post/2021-06-07-gghighlight-032/index.html#to-unhighlight-or-not-to-unhighlight",
+    "title": "gghighlight 0.3.2",
+    "section": "To unhighlight or not to unhighlight…",
+    "text": "To unhighlight or not to unhighlight…\nBy default, unhighlighted data are grayed out. unhighlighted_params is the option to override this. Now, you can even choose not to unhighlight at all by specifying explicit NULL to colour or fill!\n\np +\n  gghighlight(n() &lt; 10, use_direct_label = FALSE,\n              unhighlighted_params = list(colour = NULL))\n\n\n\n\nHmm…, but this is the very same plot as the original one. How can this be useful? Well, remember we still can tweak other parameters like alpha.\n\np +\n  gghighlight(n() &lt; 10, use_direct_label = FALSE,\n              unhighlighted_params = list(colour = NULL, alpha = 0.2))\n\n\n\n\nThis plot doesn’t look very nice in that the colors are a bit difficult to distinguish. This is mainly because I didn’t come up with some nice data, but it’s generally a tough job to tweak colors by alpha properly, so I don’t recommend this much. But, hope you can find some good use case for this!"
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "",
+    "text": "Slidev is a tool to create slides from Markdown. Recently, I used this with R Markdown and it was generally comfortable to use.\nThat said, there were some points I needed to google around to find solutions, so let me share these in this post.\n(You might wonder what this presentation talks about R and Rust, but the contents are all in Japanese, sorry. I’m preparing another blog post for this, so stay tuned!)"
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#getting-started",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#getting-started",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "Getting started",
+    "text": "Getting started\nFirst of all, we need to create a project that has Slidev installed. This is done by:\nnpm init slidev\nThen, you’ll be asked several questions:\n❯ npm init slidev\nnpx: installed 22 in 3.269s\n\n  ●■▲\n  Slidev Creator  v0.19.6\n\n✔ Project name: … slidev-rmarkdown-test\n  Scaffolding project in slidev-rmarkdown-test ...\n  Done.\n\n✔ Install and start it now? … yes\n✔ Choose the agent › npm\n[ .................] / fetchMetadata: sill pacote version manifest for @nodelib/fs.scandir@2.1.5 fetched in 2883ms\nProject name will be the directory name of the new project, so choose a name that doesn’t exist yet.\nAfter finishing the installation, a web browser is launched and displays the template slides. These slides are generated from slides.md by a local Node.js server. slides.md is located in the top directory of the project created right now.\n❯ tree -L 1 slidev-rmarkdown-test\nslidev-rmarkdown-test\n|-- README.md\n|-- components\n|-- netlify.toml\n|-- node_modules\n|-- package-lock.json\n|-- package.json\n|-- slides.md\n`-- vercel.json\n\n2 directories, 6 files\nSo, what we should do next is obvious; let’s place slides.Rmd in the same directory so that we can render it to overwrite slides.md. The Node.js server detects the change on slides.md and regenerates slides from it on the fly.\nWe can stop the server with Ctrl+C on console. To launch again, execute this:\nnpm run dev"
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#choose-md_document",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#choose-md_document",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "Choose md_document",
+    "text": "Choose md_document\nFirst of all, the target we want to generate is a Markdown file, so let’s specify md_document as the output.\n---\n# R Markdown metadata\ntitle: R Markdown to Slidev\noutput:\n  md_document:\n    variant: \"markdown_github\"\n---"
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#preserve-yaml-front-matter",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#preserve-yaml-front-matter",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "Preserve YAML front-matter",
+    "text": "Preserve YAML front-matter\nWhat’s a bit tricky here is that Slidev also uses YAML front-matter for defining metadata. So, we need to put both items for R Markdown and those for Slidev together, and preserve it after rendering. Let’s specify preserve_yaml: true.\n---\n...\n  md_document:\n    variant: \"markdown_github\"\n    preserve_yaml: true\n---\nThen, put settings for Slidev. There might be some name collision between R Markdown and Slidev, but I don’t find it yet, fortunately. The full YAML would be like this:\n---\n# R Markdown metadata\ntitle: R Markdown to Slidev\noutput:\n  md_document:\n    variant: \"markdown_github\"\n    preserve_yaml: true\n\n# Slidev metadata\ntheme: seriph\nbackground: ./images/top.gif\nclass: 'text-center'\nhighlighter: shiki\ninfo: |\n  ## Use Slidev with R Markdown\n  \n  Source code can be found on &lt;https://github.com/yutannihilation/slidev-rmarkdown&gt;.\n---"
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#per-slide-yaml-front-matter",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#per-slide-yaml-front-matter",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "Per-slide YAML Front-matter",
+    "text": "Per-slide YAML Front-matter\nOne of the great things with Slidev is that it’s very customizable. Per-slide YAML Front-matter is a good example of this; for example, we can specify layout per slide like this (image is a specific parameter for image-right layout):\n---\nlayout: image-right\nimage: './images/image.png'\n---\nThis will generate a slide like this:\n\n\n\nslides\n\n\nBut, the problem is, R Markdown (or probably underlying Pandoc?) seems to allow only one YAML front-matter. So, if we simply write\n---\nlayout: image-right\nimage: './images/image.png'\n---\nit will just disappear, alas… What can we do??\nWell, we can use Pandoc’s raw attribute to bypass the unnecessary conversion.\n```{=html}\n---\nlayout: image-right\nimage: './images/image.png'\n---\n```"
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#setting-base-url",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#setting-base-url",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "Setting Base URL",
+    "text": "Setting Base URL\nThe base.url chunk option must be specified, otherwise the generated images will be broken. If the slides will be served on the root path (/), the setting should be like this:\n::: {.cell}\n\n```{.r .cell-code}\nknitr::opts_knit$set(base.url = \"/\")\n```\n:::\nFor another example, if the presentation is served under some path like /slides/presentation1, then the base.url should be like this:\n::: {.cell}\n\n```{.r .cell-code}\nknitr::opts_knit$set(base.url = \"/slides/presentation1/\")\n```\n:::"
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#add-blank-lines-between-custom-tags",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#add-blank-lines-between-custom-tags",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "Add blank lines between custom tags",
+    "text": "Add blank lines between custom tags\nSlidev provides some custome tags. For example, &lt;v-click&gt; is a tag to apply annimations (c.f. https://sli.dev/guide/animations.html). But, for unknown reason, this won’t work (I don’t find the reason yet, but I think something is happening in conversions by Pandoc):\n&lt;v-click&gt;\n* item1\n&lt;/v-click&gt;\n&lt;v-click&gt;\n* item2\n&lt;/v-click&gt;\nIt seems we need to insert blank lines between the tags.\n&lt;v-click&gt;\n\n* item1\n\n&lt;/v-click&gt;\n\n&lt;v-click&gt;\n\n* item2\n\n&lt;/v-click&gt;"
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#deploy-to-github-pages",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#deploy-to-github-pages",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "Deploy to GitHub Pages",
+    "text": "Deploy to GitHub Pages\nSlidev needs Node.js server to serve the slides, but it can also be exported as an standalone single-page application by the following command:\nnpm run build\nThe generated result goes to dist/, which can be deployed to GitHub Pages.\nSlidev also provides PDF export. For more details, please refer to the official document."
+  },
+  {
+    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#limitations",
+    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#limitations",
+    "title": "Tips To Turn R Markdown Into Slidev Presentation",
+    "section": "Limitations",
+    "text": "Limitations\nWhile Slidev has many cool features, I doubt it can be an R package like revealjs or xaringan, as Slidev requires Node.js to build or run, which is not very portable. So, I’m not sure how useful this post is to R users, but hope you enjoy!"
+  },
+  {
+    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html",
+    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html",
+    "title": "Anatomy of gghighlight",
+    "section": "",
+    "text": "I’m overhauling my gghighlight package toward the upcoming release of ggplot2 2.3.0. I think I will introduce about the new gghighlight() soon, but before that, I want to write out the ideas behind gghighlight.\nNote that what I’ll write here contains few new things, as the basic idea is already covered by this great post:\nMy post is mainly for organizing my thought, yet I hope someone find this useful :)\n# tweak for plotting\nknit_print.ggplot &lt;- function(x, ...) {\n  x &lt;- x  +\n    theme_minimal() +\n    scale_x_continuous(expand = expand_scale(mult = 0.5)) +\n    scale_y_continuous(expand = expand_scale(mult = 0.2))\n  ggplot2:::print.ggplot(x, ...)\n}"
+  },
+  {
+    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#data",
+    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#data",
+    "title": "Anatomy of gghighlight",
+    "section": "Data",
+    "text": "Data\nSuppose we have this data:\n\n\n\n\n\nx\ny\ntype\nvalue\n\n\n\n\n3\n3\na\n0\n\n\n8\n3\na\n1\n\n\n13\n3\na\n0\n\n\n2\n2\nb\n0\n\n\n7\n2\nb\n10\n\n\n12\n2\nb\n10\n\n\n1\n1\nc\n10\n\n\n6\n1\nc\n20\n\n\n11\n1\nc\n0"
+  },
+  {
+    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#simple-plot",
+    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#simple-plot",
+    "title": "Anatomy of gghighlight",
+    "section": "Simple plot",
+    "text": "Simple plot\nIf we plot the data very simply, the code would be like this:\n\nlibrary(tidyverse)\n\nggplot(d, aes(x, y, colour = type)) +\n  geom_point(size = 10)\n\nWarning: `expand_scale()` was deprecated in ggplot2 3.3.0.\nPlease use `expansion()` instead.\nThis warning is displayed once every 8 hours.\nCall `lifecycle::last_lifecycle_warnings()` to see where this warning was generated."
+  },
+  {
+    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#highlighted-plot",
+    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#highlighted-plot",
+    "title": "Anatomy of gghighlight",
+    "section": "Highlighted plot",
+    "text": "Highlighted plot\nNow, what if we want to highlight only the points of records whose type are \"b\"?\nWe need two layers:\n\nunhighlighted layer\nhighlighted layer\n\n\nCreate an unhighlighted layer\nAn unhighlighted layer is the colorless version of the above points with the same data. To create this, we can simply remove colour from aes() and specify a static colour \"grey\". I call this operation as bleach.\n\nbleached_layer &lt;- geom_point(data = d, aes(x, y),\n                             size = 10, colour = \"grey\")\n\nIf we plot this, the result would be below:\n\nggplot() +\n  bleached_layer\n\n\n\n\n\n\nCreate a highlighted layer\nA highlighted layer is the fewer-data version of the above points with (not necessarily the same) colors. To create this, we need some data manipulation. Let’s filter the data.\n\nd_sieved &lt;- filter(d, type == \"b\")\n\nThen the layer we want can be created like below. I call this operation as sieve (filter might be a better word, but I wanted to choose another word than dplyr’s verbs to avoid confusion).\n\nsieved_layer &lt;- geom_point(data = d_sieved, aes(x, y, colour = type),\n                           size = 10)\n\nIf we plot this, the result would be below:\n\nggplot() +\n  sieved_layer\n\n\n\n\n\n\nJoin the two layers\nNow we can draw the highlighted version of the plot as below:\n\nggplot() +\n  bleached_layer +\n  sieved_layer"
+  },
+  {
+    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#by-point-vs-by-group",
+    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#by-point-vs-by-group",
+    "title": "Anatomy of gghighlight",
+    "section": "“by point” vs “by group”",
+    "text": "“by point” vs “by group”\nSo far, so good. Then, let’s consider a bit about the case when the geom is not point, but line.\nWhile points can be plotted one by one, lines cannot be drawn without the relationship between points. For example, haven’t you experienced an unexpected zigzag line?\n\nggplot(d, aes(x, y)) +\n  geom_line(size = 3)\n\nsize aesthetic has been deprecated for use with lines as of ggplot2 3.4.0\nℹ Please use linewidth aesthetic instead\nThis message is displayed once every 8 hours.\n\n\n\n\n\nLines need group variable, which indicates the series of data points.\n\nggplot(d, aes(x, y, group = type)) +\n  geom_line(size = 3)\n\n\n\n\nNote that group doesn’t need to be declared explicitly, as ggplot2 infers the groups from the specified variables. More precisely, it calculates group IDs based on the combination of discrete variables here. So, usually, specifying a discrete variable on colour or fill is enough.\n\nggplot(d, aes(x, y, colour = type)) +\n  geom_line(size = 3)\n\n\n\n\nAnyway, lines need groups. Accordingly, we need to consider the group when we sieve the data. Otherwise, the lines will be incomplete as this example:\n\n# data whose values are &gt;=10\nd_sieved2 &lt;- filter(d, value &gt;= 10)\n\nggplot() +\n  geom_line(data = d, aes(x, y, group = type), size = 3, colour = \"grey\") +\n  geom_line(data = d_sieved2, aes(x, y, colour = type), size = 3)\n\n\n\n\nSo, the correct way of doing this is to use group_by() and some aggregate functions like max() so that the calculations are done by group.\n\n# data series whose max values are &gt;=10\nd_sieved3 &lt;- d %&gt;%\n  group_by(type) %&gt;% \n  filter(max(value) &gt;= 10)\n\nggplot() +\n  geom_line(data = d, aes(x, y, group = type), size = 3, colour = \"grey\") +\n  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3)"
+  },
+  {
+    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#prevent-unhighlighted-layer-from-facetted",
+    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#prevent-unhighlighted-layer-from-facetted",
+    "title": "Anatomy of gghighlight",
+    "section": "Prevent unhighlighted layer from facetted",
+    "text": "Prevent unhighlighted layer from facetted\nNext topic is facetting. Let’s naively facet the plot above.\n\nggplot() +\n  geom_line(data = d, aes(x, y, group = type), size = 3, colour = \"grey\") +\n  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3) +\n  facet_wrap(~ type)\n\n\n\n\nHmm…, unhighlighted lines are facetted. But, maybe we want the grey ones exists in all of the panels.\nfacet_*() facets all layers if the data contains the specified variable, in this case type. In other words, if the layer’s data doesn’t have the variable, it won’t get facetted. Let’s rename it.\n\nd_bleached &lt;- d\nnames(d_bleached)[3] &lt;- \"GROUP\"\n\nggplot() +\n  geom_line(data = d_bleached, aes(x, y, group = GROUP), size = 3, colour = \"grey\") +\n  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3) +\n  facet_wrap(~ type)\n\n\n\n\nYou may notice about one more good thing; the panel for \"a\" disappeared. This is because now d_sieved3 is the only data that contains type and it has only records of \"b\" and \"c\"."
+  },
+  {
+    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#some-spoilers",
+    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#some-spoilers",
+    "title": "Anatomy of gghighlight",
+    "section": "Some spoilers",
+    "text": "Some spoilers\nThe next version of gghighlight will do the above things almost automatically. All you have to do is just adding gghighlight().\n\nlibrary(gghighlight)\n\nggplot(d, aes(x, y, colour = type)) +\n  geom_point(size = 10) +\n  gghighlight(type == \"b\")\n\nWarning: Tried to calculate with group_by(), but the calculation failed.\nFalling back to ungrouped filter operation...\n\n\nlabel_key: type\n\n\n\n\n\n\nggplot(d, aes(x, y, colour = type)) +\n  geom_line(size = 3) +\n  gghighlight(max(value) &gt;= 10)\n\nlabel_key: type\n\n\n\n\n\nStay tuned!"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Wannabe Rstats-fu",
+    "section": "",
+    "text": "Don’t panic!, We Can Unwind On Rust\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nAug 6, 2023\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nA Quick Note About How To Bundle Rust Crates For An R Package\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nRust 1.70 And Build Failures On Windows\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nJun 10, 2023\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nR, Rust, Protect, And Unwinding\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nMay 20, 2023\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nRust and the CRAN Repository Policy\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nAug 14, 2022\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nWriting A Configure Script For An R Package Using Rust\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\nconfigure.win and configure\n\n\n\n\n\n\nSep 21, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nUnofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\nIntegrate R and Rust with extendr\n\n\n\n\n\n\nAug 1, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nUnofficial Introduction To extendr (2): Type Conversion Between R and Rust\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\nIntegrate R and Rust with extendr\n\n\n\n\n\n\nJun 14, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\ngghighlight 0.3.2\n\n\n\n\n\n\n\ngghighlight\n\n\nggplot2\n\n\nR package\n\n\n\n\n\n\n\n\n\n\n\nJun 7, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nUnofficial Introduction To extendr (1): Your First R Package With Rust\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\nIntegrate R and Rust with extendr.\n\n\n\n\n\n\nJun 6, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nTips To Turn R Markdown Into Slidev Presentation\n\n\n\n\n\n\n\nR Markdown\n\n\nSlidev\n\n\n\n\nSlidev is a tool to create slides from Markdown. This post is about some tips to use it in combination with R Markdown.\n\n\n\n\n\n\nJun 5, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nSome more notes about using Rust code in R packages\n\n\n\n\n\n\n\nRust\n\n\n\n\n\n\n\n\n\n\n\nSep 15, 2020\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\ngghighlight 0.2.0\n\n\n\n\n\n\n\ngghighlight\n\n\nggplot2\n\n\nR package\n\n\n\n\ngghighlight 0.2.0 is released!\n\n\n\n\n\n\nFeb 17, 2020\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nEnhancing gather() and spread() by Using “Bundled” data.frames\n\n\n\n\n\n\n\ntidyr\n\n\ntidy data\n\n\n\n\n\n\n\n\n\n\n\nFeb 3, 2019\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nA Survival Guide To Install rlang From GitHub On Windows\n\n\n\n\n\n\n\nrlang\n\n\nWindows\n\n\n\n\n\n\n\n\n\n\n\nJan 25, 2019\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\ngather() and spread() Explained By gt\n\n\n\n\n\n\n\ntidyr\n\n\ntidy data\n\n\ngt\n\n\n\n\n\n\n\n\n\n\n\nJan 24, 2019\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nA Tip to Debug ggplot2\n\n\n\n\n\n\n\npackage development\n\n\n\n\n\n\n\n\n\n\n\nJan 11, 2019\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nHow To Convert A Human To Waves By Magick Package\n\n\n\n\n\n\n\nggplot2\n\n\nmagick\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nQuote While the Promise Is Hot!\n\n\n\n\n\n\n\ntidyeval\n\n\ntidyverse\n\n\n\n\n\n\n\n\n\n\n\nOct 18, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\ngeom_sf_text() and geom_sf_label() Are Coming!\n\n\n\n\n\n\n\ntidyverse\n\n\nggplot2\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nDouble dispatch of S3 method\n\n\n\n\n\n\n\nR internal\n\n\n\n\n\n\n\n\n\n\n\nSep 17, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nPlot geom_sf() On OpenStreetMap Tiles\n\n\n\n\n\n\n\nggplot2\n\n\nGIS\n\n\n\n\n\n\n\n\n\n\n\nJun 9, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nAnatomy of gghighlight\n\n\n\n\n\n\n\ngghighlight\n\n\nggplot2\n\n\n\n\n\n\n\n\n\n\n\nJun 3, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nAn Example Usage of ggplot_add()\n\n\n\n\n\n\n\ngghighlight\n\n\nggplot2\n\n\nR package\n\n\n\n\n\n\n\n\n\n\n\nNov 7, 2017\n\n\nHiroaki Yutani\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Hi! I’m Hiroaki Yutani. You can call me either Yutani or Hiroaki (I guess Yutani is easier).\nThis blog is where I struggle to learn about R (and improve my poor English)."
+  },
+  {
+    "objectID": "post/2017-11-07-ggplot-add/index.html",
+    "href": "post/2017-11-07-ggplot-add/index.html",
+    "title": "An Example Usage of ggplot_add()",
+    "section": "",
+    "text": "A generic function ggplot_add() was added to ggplot2 by this PR:\nAllow addition of custom objects by thomasp85 · Pull Request #2309 · tidyverse/ggplot2\nI think creating a custom Geom or Stat and its constructor (geom_*() or stat_*()) is enough for the most of the extension packages of ggplot2, but some people, including me, need this."
+  },
+  {
+    "objectID": "post/2017-11-07-ggplot-add/index.html#why-are-there-no-geom_highlight",
+    "href": "post/2017-11-07-ggplot-add/index.html#why-are-there-no-geom_highlight",
+    "title": "An Example Usage of ggplot_add()",
+    "section": "Why are there no geom_highlight()?",
+    "text": "Why are there no geom_highlight()?\nHere is an example code of my package gghighlight:\ngghighlight_point(d, aes(foo, bar), predicate = bar &gt; 20 & baz == \"A\")\nYou may wonder why this can’t be written like this:\nggplot(d, aes(foo, bar)) +\n  geom_highlight_point(bar &gt; 20 & baz == \"A\")\nLet me explain a bit."
+  },
+  {
+    "objectID": "post/2017-11-07-ggplot-add/index.html#geom_stat_-doesnt-know-about-the-other-layers",
+    "href": "post/2017-11-07-ggplot-add/index.html#geom_stat_-doesnt-know-about-the-other-layers",
+    "title": "An Example Usage of ggplot_add()",
+    "section": "geom_*()/stat_*() doesn’t know about the other layers",
+    "text": "geom_*()/stat_*() doesn’t know about the other layers\ngeom_highlight_point(bar &gt; 20 & baz == \"A\") is passed bar &gt; 20 & baz == \"A\" without the data d, with which the expression should be evaluated. It needs d specified in ggplot(...).\nBut, considering the structure of the above code, geom_highlight_point(...) cannot access to the result of ggplot(...) in any usual way:\n`+`(ggplot(...), geom_highlight_point(...))\nIf ggplot2 were designed pipe-friendly, this\n`%&gt;%`(ggplot(...), geom_highlight_point(...))\nwould be evaluated as this, which means geom_highlight_point(...) could take d from ggplot(...)…\ngeom_highlight_point(ggplot(...), ...)\nAnyway, let’s give up here. All I have to do is set this expression as an attribute of a custom Geom and pray that it will be evaluated with the proper data in the phase of building a plot."
+  },
+  {
+    "objectID": "post/2017-11-07-ggplot-add/index.html#geomstat-doesnt-know-about-the-original-data",
+    "href": "post/2017-11-07-ggplot-add/index.html#geomstat-doesnt-know-about-the-original-data",
+    "title": "An Example Usage of ggplot_add()",
+    "section": "Geom*/Stat* doesn’t know about the original data",
+    "text": "Geom*/Stat* doesn’t know about the original data\nTake a look at the simplest example in the vignette “Extending ggplot2”:\nStatChull &lt;- ggproto(\"StatChull\", Stat,\n  compute_group = function(data, scales) {\n    data[chull(data$x, data$y), , drop = FALSE]\n  },\n\n  required_aes = c(\"x\", \"y\")\n)\nYou may notice that compute_group() expects data has the fixed column x and y. Actually, data is not the original data but the one the mapping is already applied. So, there is no column bar and baz anymore; bar is renamed to y and baz is dropped. Oh no, I cannot evaluate bar &gt; 20 & baz == \"A\" here, too…"
+  },
+  {
+    "objectID": "post/2017-11-07-ggplot-add/index.html#ggplot_add",
+    "href": "post/2017-11-07-ggplot-add/index.html#ggplot_add",
+    "title": "An Example Usage of ggplot_add()",
+    "section": "ggplot_add()",
+    "text": "ggplot_add()\nLet’s remember this one:\n`+`(ggplot(...), geom_highlight_point(...))\nOnly + (or +.gg) can access to both ggplot(...) and geom_highlight_point(...). This means that, inside +.gg, bar &gt; 20 & baz == \"A\" can be evaluated.\nSo…, should I implement my custom +.gg by myself? No, because I will be able to use ggplot_add()!\nggplot_add() is called in +.gg() via add_ggplot() (very confusing..) and is passed both the original plot and the new object. The current implementation is this:\n\"+.gg\" &lt;- function(e1, e2) {\n  # Get the name of what was passed in as e2, and pass along so that it\n  # can be displayed in error messages\n  e2name &lt;- deparse(substitute(e2))\n\n  if      (is.theme(e1))  add_theme(e1, e2, e2name)\n  else if (is.ggplot(e1)) add_ggplot(e1, e2, e2name)\n  else if (is.ggproto(e1)) {\n    stop(\"Cannot add ggproto objects together.\",\n         \" Did you forget to add this object to a ggplot object?\",\n         call. = FALSE)\n  }\n}\n(https://github.com/tidyverse/ggplot2/blob/7d0549a03e5ea08c27c768e88d5717f18cb4a5ce/R/plot-construction.r#L40-L52)\nadd_ggplot &lt;- function(p, object, objectname) {\n  if (is.null(object)) return(p)\n\n  p &lt;- plot_clone(p)\n  p &lt;- ggplot_add(object, p, objectname)\n  set_last_plot(p)\n  p\n}\n(https://github.com/tidyverse/ggplot2/blob/7d0549a03e5ea08c27c768e88d5717f18cb4a5ce/R/plot-construction.r#L59-L66)\nBy using this, I can implement the proof-of-concept version of geom_highlight_point() as bellow:\ngeom_highlight_point &lt;- function(expr) {\n  structure(list(expr = rlang::enquo(expr)), class = \"highlight\")\n}\n\nggplot_add.highlight &lt;- function(object, plot, object_name) {\n  new_data &lt;- dplyr::filter(plot$data, !! object$expr)\n  new_layer &lt;- geom_point(data = new_data,\n                          mapping = plot$mapping,\n                          colour = alpha(\"red\", 0.5),\n                          size = 5)\n  plot$layers &lt;- append(plot$layers, new_layer)\n  plot\n}\nlibrary(ggplot2)\n\nd &lt;- data.frame(foo = 11:30, bar = 11:30, baz = rep(c(\"A\", \"B\", \"C\"), length.out = 20),\n                stringsAsFactors = FALSE)\n\nggplot(d, aes(foo, bar)) +\n  geom_highlight_point(bar &gt; 20 & baz == \"A\") +\n  geom_point()  # for comparison\n\nI’m not sure if this is the intended usage of ggplot_add(), but this seems very nice. Looking forward to the next release of ggplot2!"
+  },
+  {
+    "objectID": "post/2018-06-09-plot-osm-tiles/index.html",
+    "href": "post/2018-06-09-plot-osm-tiles/index.html",
+    "title": "Plot geom_sf() On OpenStreetMap Tiles",
+    "section": "",
+    "text": "mapview is a very nice package to explore an sf object. It can overlay sf object on the map images:\nnc &lt;- sf::read_sf(system.file(\"shape/nc.shp\", package=\"sf\"))\n\n# mapview::mapview(nc)\nBut, how can I do this with ggplot2? (My friend told me mapview::mapshot() can generate a PNG, but I want to do this with ggplot2!)"
+  },
+  {
+    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#rtfm",
+    "href": "post/2018-06-09-plot-osm-tiles/index.html#rtfm",
+    "title": "Plot geom_sf() On OpenStreetMap Tiles",
+    "section": "RTFM",
+    "text": "RTFM\nBefore anything, I need to read Tile Usage Policy to use the OpenStreetMap tiles. For “Requirements” section, this is important:\n\nClearly display license attribution.\n\nAccording to Copyright and License, it’s so simple as just adding this caption to my plots:\n\nlabs(caption = \"\\U00a9 OpenStreetMap contributors\")\n\nFor “Technical Usage Requirements” section, I have to read this more carefully. Let’s look at the requirements one by one.\n\nValid HTTP User-Agent identifying application. Faking another app’s User-Agent WILL get you blocked.\n\nOh, it seems I need to add User-Agent header. OK, let’s invent some nice name… If I use httr::GET(), the code will probably like this:\n\nGET(\n  \"https://...\",\n  add_headers(`User-Agent` = \"Yutani's blog post\")\n)\n\n\nIf known, a valid HTTP Referer.\n\nI don’t have Referers, so I skip this.\n\nDO NOT send no-cache headers. (“Cache-Control: no-cache”, “Pragma: no-cache” etc.)\n\nI do nothing other than swearing I’ll never use this header.\n\nCache Tile downloads locally according to HTTP Expiry Header, alternatively a minimum of 7 days.\n\nAh, this is important. Let’s implement later.\n\nMaximum of 2 download threads. (Unmodified web browsers’ download thread limits are acceptable.)\n\nFortunately, I’m not good at parallelism, so this is fine."
+  },
+  {
+    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#get-tile-urls",
+    "href": "post/2018-06-09-plot-osm-tiles/index.html#get-tile-urls",
+    "title": "Plot geom_sf() On OpenStreetMap Tiles",
+    "section": "Get Tile URLs",
+    "text": "Get Tile URLs\nAccording to Slippy map tilenames, the URL of a tile follows this format:\nhttps://[abc].tile.openstreetmap.org/zoom/x/y.png \nI have to fill these four parts:\n\n[abc]\nzoom\nx\ny\n\nLet’s look at these one by one.\n\n[abc]\n[abc] means there are three domains; a.tile.openstreetmap.org, b.tile.openstreetmap.org, c.tile.openstreetmap.org. But, why? It says:\n\nBrowser-based applications can thus request multiple tiles from multiple subdomains faster than from one subdomain.\n\nSo, as I’m not browser-based, I can choose arbitrary one.\n\n\nzoom\nZoom parameter is an integer number from 0 to 19. If zoom is 0, there’s only one tile. Likewise 2 x 2 tiles for zoom 1, 4 x 4 tiles for zoom 2, and so on. Then, which one should I choose? This can be roughly determined based on the size of the bbox (boundary box) of the sf object.\n\n# get the bbox\nb &lt;- sf::st_bbox(nc)\nb\n\n     xmin      ymin      xmax      ymax \n-84.32385  33.88199 -75.45698  36.58965 \n\n# calculate the lengths of x and y of the bbox\nx_len &lt;- b[\"xmax\"] - b[\"xmin\"]\ny_len &lt;- b[\"ymax\"] - b[\"ymin\"]\n\n# calculate the minimum zoom level that is smaller than the lengths\nx_zoom &lt;- sum(x_len &lt; 360 / 2^(0:19)) - 1\ny_zoom &lt;- sum(y_len &lt; 170.1022 / 2^(0:19)) - 1\n\nzoom &lt;- min(x_zoom, y_zoom)\nzoom\n\n[1] 5\n\n\nBut, since the tile is so small as 256 × 256 pixel, it’s often better to zoom more.\n\nzoom &lt;- zoom + 2\n\n(I’m not sure how to do this correctly, I guess the zoom level should be determined by the size of the plot canvas, not the bbox.)\n\n\nx and y\nA pair of x and y represents the location of a tile. x corresponds to longitude, y to latitude. If the zoom is given, I can convert longitudes and latitudes to x and y according to the pseudo code on OpenStreetMap’s wiki:\n\nsec &lt;- function(x) {\n  1 / cos(x)\n}\n\nlonlat2xy &lt;- function(lat_deg, lon_deg, zoom) {\n  n &lt;- 2^zoom\n\n  x &lt;- (n * (lat_deg + 180)) %/% 360\n  lon_rad &lt;- lon_deg * pi / 180\n  y &lt;- (n * (1 - log(tan(lon_rad) + sec(lon_rad)) / pi)) %/% 2\n\n  list(x = x, y = y)\n}\n\nBut, how can I find the set of tiles which covers the whole bbox?\n\nlibrary(ggplot2)\n\np &lt;- ggplot(nc) +\n  geom_sf() +\n  annotate(\"rect\", xmin = b[\"xmin\"], xmax = b[\"xmax\"], ymin = b[\"ymin\"], ymax = b[\"ymax\"],\n           colour = alpha(\"red\", 0.4), fill = \"transparent\", linetype = \"dashed\", size = 1.2)\n\nsize aesthetic has been deprecated for use with lines as of ggplot2 3.4.0\nℹ Please use linewidth aesthetic instead\nThis message is displayed once every 8 hours.\n\np\n\n\n\n\nThis problem can be simplified; I can focus only two corners, the north-west and the south-east. If I calculate which tiles of x and y those two points fall in, I can find the rest of the tiles by filling the sequences of x and y between these two tiles.\n\ncorners &lt;- expand.grid(x = b[c(1, 3)], y = b[c(2, 4)])\n\np +\n  geom_point(aes(x, y), corners[2:3,], colour = \"red\", size = 5)\n\n\n\n\nHere’s the tiles:\n\nxy &lt;- lonlat2xy(b[c(\"xmin\", \"xmax\")], b[c(\"ymin\", \"ymax\")], zoom)\n\ntiles &lt;- expand.grid(x = seq(xy$x[\"xmin\"], xy$x[\"xmax\"]),\n                     y = seq(xy$y[\"ymin\"], xy$y[\"ymax\"]))\n\ntiles\n\n   x  y\n1 34 51\n2 35 51\n3 36 51\n4 37 51\n5 34 50\n6 35 50\n7 36 50\n8 37 50\n\n\n\n\nTile URLs\nFrom the results above, I can yield the URLs of the tiles:\n\nurls &lt;- sprintf(\"https://a.tile.openstreetmap.org/%d/%d/%d.png\", zoom, tiles$x, tiles$y)\nurls\n\n[1] \"https://a.tile.openstreetmap.org/7/34/51.png\"\n[2] \"https://a.tile.openstreetmap.org/7/35/51.png\"\n[3] \"https://a.tile.openstreetmap.org/7/36/51.png\"\n[4] \"https://a.tile.openstreetmap.org/7/37/51.png\"\n[5] \"https://a.tile.openstreetmap.org/7/34/50.png\"\n[6] \"https://a.tile.openstreetmap.org/7/35/50.png\"\n[7] \"https://a.tile.openstreetmap.org/7/36/50.png\"\n[8] \"https://a.tile.openstreetmap.org/7/37/50.png\"\n\n\nOK, now I can download them. But, before that, let’s confirm that the tiles really cover the expected area.\n\n\nTile positions\nTo plot these tiles, I calculate the north-west corner of a tile by the following code (the pseudo code for this is also found on the wiki):\n\nxy2lonlat &lt;- function(x, y, zoom) {\n  n &lt;- 2^zoom\n\n  lon_deg &lt;- x / n * 360.0 - 180.0\n  lat_rad &lt;- atan(sinh(pi * (1 - 2 * y / n)))\n  lat_deg &lt;- lat_rad * 180.0 / pi\n\n  list(lon_deg = lon_deg, lat_deg = lat_deg)\n}\n\nThen, south-east corners can be also calculated easily. Let’s calculate the both corners and bind them to a data.frame.\n\nlibrary(purrr)\nlibrary(dplyr, warn.conflicts = FALSE)\n\nnw_corners &lt;- pmap_dfr(tiles, xy2lonlat, zoom = zoom)\n# add 1 to x and y to get the south-east corners\nse_corners &lt;- pmap_dfr(mutate_all(tiles, `+`, 1), xy2lonlat, zoom = zoom)\n\nnames(nw_corners) &lt;- c(\"xmin\", \"ymax\")\nnames(se_corners) &lt;- c(\"xmax\", \"ymin\")\n\ntile_positions &lt;- bind_cols(nw_corners, se_corners)\ntile_positions\n\n# A tibble: 8 × 4\n   xmin  ymax  xmax  ymin\n  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 -84.4  34.3 -81.6  32.0\n2 -81.6  34.3 -78.8  32.0\n3 -78.8  34.3 -75.9  32.0\n4 -75.9  34.3 -73.1  32.0\n5 -84.4  36.6 -81.6  34.3\n6 -81.6  36.6 -78.8  34.3\n7 -78.8  36.6 -75.9  34.3\n8 -75.9  36.6 -73.1  34.3\n\n\nNow I can plot the empty tiles as below:\n\np +\n  geom_point(aes(x, y), corners[2:3,], colour = \"red\", size = 5) +\n  geom_rect(data = tile_positions,\n            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),\n            colour = \"blue\", fill = \"transparent\")\n\n\n\n\nYay, confirmed! Let’s proceed to the next step."
+  },
+  {
+    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#get-tile-data",
+    "href": "post/2018-06-09-plot-osm-tiles/index.html#get-tile-data",
+    "title": "Plot geom_sf() On OpenStreetMap Tiles",
+    "section": "Get tile data",
+    "text": "Get tile data\nIf I just get the response from a URL, httr::GET() is handy. But, this time, for the requirement of caching, I have to save the responses to disk first. So, I use curl::curl_download() here.\nNote that PNG data can be read into R session by png::readPNG().\n\nget_tile &lt;- function(url) {\n  # build a local path\n  path &lt;- stringr::str_extract(url, \"/\\\\d+/\\\\d+/\\\\d+.png\")\n  local_png &lt;- here::here(file.path(\"data\", \"osm-tiles\", path))\n\n  if (!file.exists(local_png)) {\n    dir.create(dirname(local_png), showWarnings = FALSE, recursive = TRUE)\n    \n    # add header\n    h &lt;- curl::new_handle()\n    curl::handle_setheaders(h, `User-Agent` = \"Yutani's blog post\")\n    \n    curl::curl_download(url, destfile = local_png)\n  }\n\n  png::readPNG(local_png)\n}\n\nThen, let’s get all tiles.\n\npngs &lt;- map(urls, get_tile)"
+  },
+  {
+    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#plot-tiles",
+    "href": "post/2018-06-09-plot-osm-tiles/index.html#plot-tiles",
+    "title": "Plot geom_sf() On OpenStreetMap Tiles",
+    "section": "Plot tiles",
+    "text": "Plot tiles\nTo plot tiles, I use annotation_raster(), whose necessary arguments are:\n\nraster\nxmin\nxmax\nymin\nymax\n\nThe first one is pngs and the others are contained in tile_positions. So, let’s combine them so that I can use pmap().\n\nargs &lt;- tile_positions %&gt;%\n  mutate(raster = pngs)\n\nargs\n\n# A tibble: 8 × 5\n   xmin  ymax  xmax  ymin raster               \n  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;list&gt;               \n1 -84.4  34.3 -81.6  32.0 &lt;dbl [256 × 256 × 3]&gt;\n2 -81.6  34.3 -78.8  32.0 &lt;dbl [256 × 256 × 3]&gt;\n3 -78.8  34.3 -75.9  32.0 &lt;dbl [256 × 256 × 3]&gt;\n4 -75.9  34.3 -73.1  32.0 &lt;dbl [256 × 256 × 3]&gt;\n5 -84.4  36.6 -81.6  34.3 &lt;dbl [256 × 256 × 3]&gt;\n6 -81.6  36.6 -78.8  34.3 &lt;dbl [256 × 256 × 3]&gt;\n7 -78.8  36.6 -75.9  34.3 &lt;dbl [256 × 256 × 3]&gt;\n8 -75.9  36.6 -73.1  34.3 &lt;dbl [256 × 256 × 3]&gt;\n\n\nNow I can plot tiles at last.\n\nggplot(nc) +\n  pmap(args, annotation_raster, interpolate = TRUE) +\n  geom_sf(fill = alpha(\"red\", 0.3)) +\n  # don't forget the license notice!\n  labs(caption = \"\\U00a9 OpenStreetMap contributors\") +\n  theme_minimal()\n\n\n\n\nDone!\nBut, I didn’t expect the code would be this long… Maybe I need to create a package for this."
+  },
+  {
+    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#caveats",
+    "href": "post/2018-06-09-plot-osm-tiles/index.html#caveats",
+    "title": "Plot geom_sf() On OpenStreetMap Tiles",
+    "section": "Caveats",
+    "text": "Caveats\nNote that, I didn’t care about the CRS because nc’s CRS is fortunately EPSG 3857, which OpenStreetMap uses. If the sf object I want to plot has the different CRS, there may be a bit more to consider (and I don’t understand the CRS well…).\nUpdate:\nSorry, I was wrong… nc’s CRS is EPSG 4267 and OpenStreetMap tiles use EPSG 4326. Thanks Edzer for pointing this out!\n\nsf::st_crs(nc)\n\nCoordinate Reference System:\n  User input: NAD27 \n  wkt:\nGEOGCRS[\"NAD27\",\n    DATUM[\"North American Datum 1927\",\n        ELLIPSOID[\"Clarke 1866\",6378206.4,294.978698213898,\n            LENGTHUNIT[\"metre\",1]]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433]],\n    CS[ellipsoidal,2],\n        AXIS[\"latitude\",north,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        AXIS[\"longitude\",east,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n    ID[\"EPSG\",4267]]\n\n\nSo, I should have converted nc to the CRS first.\n\nnc_4326 &lt;- sf::st_transform(nc, 4326)\n\nFortunately, the difference between EPSG 4267 and EPSG 4326 is rather negligible for this scale, so the result map should look almost same if I used nc_4326 instead of nc. Here’s the difference (can you see there’s a little red colors?):\n\nnc_4326_not_transformed &lt;- sf::`st_crs&lt;-`(nc, 4326)\n\nWarning: st_crs&lt;- : replacing crs does not reproject data; use st_transform for\nthat\n\nggplot() +\n  geom_sf(data = nc_4326_not_transformed, fill = \"transparent\", colour = \"red\") +\n  geom_sf(data = nc_4326, fill = \"transparent\", colour = \"blue\") +\n  theme_minimal()"
+  },
+  {
+    "objectID": "post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html",
+    "href": "post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html",
+    "title": "Unofficial Introduction To extendr (1): Your First R Package With Rust",
+    "section": "",
+    "text": "Now the official version of the introduction is available!\nhttps://extendr.github.io/rextendr/articles/package.html"
+  },
+  {
+    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html",
+    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html",
+    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
+    "section": "",
+    "text": "extendr is a project that provides an interface between R and Rust. In the last post, I explained about how to create an R package with extendr briefly. This time, we’ll walk though how to handle various R types."
+  },
+  {
+    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#vector",
+    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#vector",
+    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
+    "section": "Vector",
+    "text": "Vector\nLet’s start with the last example in the last post.\n\n#[extendr]\nfn add(x: i32, y: i32) -&gt; i32 {\n    x + y\n}\n\nWhile this works perfectly fine with a single value, this fails when the length is more than one.\n\nadd(1:2, 2:3)\n\nError in add(1:2, 2:3): Input must be of length 1. Vector of length &gt;1 given.\n\n\nThis is very easy to fix. In Rust, we can use Vec&lt;T&gt; to represent a vector of values of type T.\n\n// I don't explain much about the Rust code this time, but, for now, please don't\n// worry if you can't understand what it does at the moment. Probably it's not\n// very important to understand this post. Move forward.\n\n#[extendr]\nfn add2(x: Vec&lt;i32&gt;, y: Vec&lt;i32&gt;) -&gt; Vec&lt;i32&gt; {\n    x.iter().enumerate().map(|(i, x)| x + y[i]).collect()\n}\n\n\nadd2(1:2, 2:3)\n\n[1] 3 5\n\n\nEasy!\n\nWait, didn’t you say we can’t do this…!?\nSome of you might remember, in this post, I wrote\n\nWe cannot simply pass a variable length of vector\n\nfrom R to Rust.\nYeah, it’s true it was too difficult because I was struggling to do it via FFI! There’s no metadata available about the length or the structure of the data by default. But, with extendr, we can seamlessly access these metadata via R’s C API. So, in short, extendr is the game changer.\n\n\n&[T]\nIf you are already familiar with Rust, you might feel using Vec&lt;T&gt; as arguments looks a bit weird. In fact, the document of Vec&lt;T&gt; says:\n\nIn Rust, it’s more common to pass slices as arguments rather than vectors when you just want to provide read access. The same goes for String and &str.\n(https://doc.rust-lang.org/std/vec/struct.Vec.html#slicing)\n\nYes, you can use &[T] instead of Vec&lt;T&gt;, and this seems to matter on the performance slightly. If you are familiar with Rust to the extent that you know the difference between &[T] and Vec&lt;T&gt; (confession: I’m not!), you can should use &[T] instead. Otherwise, Vec&lt;T&gt; just works.\n\n#[extendr]\nfn add2_slice(x: &[i32], y: &[i32]) -&gt; Vec&lt;i32&gt; {\n    x.iter().enumerate().map(|(i, x)| x + y[i]).collect()\n}\n\n\nadd2_slice(1:2, 2:3)\n\n[1] 3 5\n\n\nPlease note that this isn’t the reference to the original R object, just that to the copied values. If you really want no copying, you should use the “proxy” types, which I’ll cover in the next post."
+  },
+  {
+    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#na",
+    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#na",
+    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
+    "section": "NA",
+    "text": "NA\nOne more caveat about add() is that this cannot handle a missing value, NA.\n\nadd(1L, NA)\n\nError in add(1L, NA): unable to convert R object to primitive\n\n\nIn Rust, we can use Option&lt;T&gt; to represent an optional, or possibly missing, value.\n\n// pattern match is one of the most powerful things in Rust, btw!\n\n#[extendr]\nfn add3(x: Option&lt;i32&gt;, y: Option&lt;i32&gt;) -&gt; Option&lt;i32&gt; {\n    match (x, y) {\n        (Some(x), Some(y)) =&gt; Some(x + y),\n        _ =&gt; NA_INTEGER\n    }\n}\n\nThis function can handle NA.\n\nadd3(1L, 2L)\n\n[1] 3\n\nadd3(1L, NA)\n\n[1] NA\n\n\nIt might be safe to always use Option since there’s always possibility that R value can be NA by nature. But, we might want to choose non-Option version to avoid the overhead (c.f. How much overhead is there with Options and Results? - The Rust Programming Language Forum), so it depends."
+  },
+  {
+    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#primitive-types",
+    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#primitive-types",
+    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
+    "section": "Primitive types",
+    "text": "Primitive types\nOkay, let’s learn about the primitive types at last. Here’s the corresponding table of R types and Rust types. We don’t have the direct equivalent of factor and complex here, but let’s talk about it later.\n\n\n\nR\nRust\n\n\n\n\ninteger\ni32\n\n\nnumeric\nf64\n\n\nlogical\nbool\n\n\ncharacter\nString &str\n\n\nfactor\n-\n\n\ncomplex\n-\n\n\n\n\ninteger and numeric\ninteger and numeric can mainly be converted into i32 and f64 respectively. I used “mainly” because it’s not that strict. They both can be converted into either of:\n\nu8\nu16\nu32\nu64\ni8\ni16\ni32\ni64\nf32\nf64\n\nSo, in other words, if you don’t want to prevent from numeric values are coerced into integers, you’ll need to check the types by yourself.\n\n\nlogical\nlogical is translated from/into bool. That’s all.\n\n\ncharacter\ncharacter is a bit tricky in that you can convert it to either of String and &str. You’ll probably have to scratch your head to understand the concept of “lifetime” to choose the proper one (confession: I still don’t understand it). But, in short,\n\nString : choose this when you modify the content strings\n&str: choose this (probably with 'static lifetime) when you only reference the strings\n\nIf you are not familiar with Rust yet, I recommend you to start with String. String is copied around so you might have unnecessary overhead, but it’s generally easier to handle because we need to think about the lifetimes less frequently.\n\n\nfactor\nTo put things simpler, until this point, I deliberately chose the cases when we have the corresponding types in Rust’s side. But, factor isn’t the case. It cannot be directly converted into a simple Rust type (at least at the moment). Instead, it can be cast into StrItr. StrItr is a “proxy” to the underlying data on R’s side.\nI’ll try explaining this in another post, but keep in mind that extendr provides that “proxy”-type of interface as well as the simple conversion to Rust’s primitive types."
+  },
+  {
+    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#list",
+    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#list",
+    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
+    "section": "list",
+    "text": "list\nThe corresponding Rust class for list is List. A List can be converted into HashMap&lt;&str, Robj&gt;. Be careful that R’s list can be a different data structure than Hashmap; it can have duplicated elements and unnamed elements.\n\nuse std::collections::HashMap;\n\n#[extendr]\nfn print_a(x: List) {\n    let x_hashmap: HashMap&lt;&str, Robj&gt; = x.into_hashmap();\n    \n    println!(\"{:?}\", x_hashmap.get(\"a\"));\n}\n\n\nprint_a(list(a = 1, b = 2))\nprint_a(list(b = 2))\n\nr! is a macro to create an R object from a Rust expression, by the way."
+  },
+  {
+    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#robj",
+    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#robj",
+    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
+    "section": "Robj?",
+    "text": "Robj?\nAs a sneak peak of the next post, let’s take a look at the usage of Robj.\nSo far, I created only functions that accepts just one type. What if we want to create a function that accepts multiple types of arguments? In this case, we can create a function that takes Robj as its argument and convert it by ourselves. Robj has many methods as_XXX() to convert to (or, more precisely, extract and copy the value of R object, and turn it into) a type. Here, let’s use as_integer() to generate Option&lt;i32&gt; .\n\n#[extendr]\nfn int(x: Robj) -&gt; Option&lt;i32&gt; {\n    x.as_integer()\n}\n\n\n# integer\nint(1L)\n\n[1] 1\n\n# not integer-ish\nint(\"foo\")\n\n[1] NA"
+  },
+  {
+    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#whats-next",
+    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#whats-next",
+    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
+    "section": "What’s next?",
+    "text": "What’s next?\nIn this post, I focused mainly the Rust’s side of the type ecosystem. Next, I probably need to write about more R-ish things like Function or Symbol , which I need some time to understand correctly. Stay tuned…"
   },
   {
     "objectID": "post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html",
@@ -266,389 +623,60 @@
     "text": "Footnotes\n\n\nThere’s also configure.ucrt, but you can forget this for now.↩︎"
   },
   {
-    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html",
-    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html",
-    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
+    "objectID": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html",
+    "href": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html",
+    "title": "A Survival Guide To Install rlang From GitHub On Windows",
     "section": "",
-    "text": "extendr is a project that provides an interface between R and Rust. In the last post, I explained about how to create an R package with extendr briefly. This time, we’ll walk though how to handle various R types."
+    "text": "I don’t have any strong feelings about OSs. They are just tools. I had been a Mac user for 10+ years since I was 10, and now I’m using Windows for no reason. All OSs have their pros and cons. For example, I like Mac, but, in the late 90s, I was very disappointed at Mac because it didn’t have fonts to display Shift_JIS art nicely.\nAnyway, I’m using Windows and I need to survive. Here’s an error I often see when I try to install rlang package from GitHub by devtools::install_github():\nThis is because rlang.dll is used by the current R session (or other session?), so Windows won’t let me overwrite it. What should I do? Here’s some advice."
   },
   {
-    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#vector",
-    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#vector",
-    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
-    "section": "Vector",
-    "text": "Vector\nLet’s start with the last example in the last post.\n\n#[extendr]\nfn add(x: i32, y: i32) -&gt; i32 {\n    x + y\n}\n\nWhile this works perfectly fine with a single value, this fails when the length is more than one.\n\nadd(1:2, 2:3)\n\nError in add(1:2, 2:3): Input must be of length 1. Vector of length &gt;1 given.\n\n\nThis is very easy to fix. In Rust, we can use Vec&lt;T&gt; to represent a vector of values of type T.\n\n// I don't explain much about the Rust code this time, but, for now, please don't\n// worry if you can't understand what it does at the moment. Probably it's not\n// very important to understand this post. Move forward.\n\n#[extendr]\nfn add2(x: Vec&lt;i32&gt;, y: Vec&lt;i32&gt;) -&gt; Vec&lt;i32&gt; {\n    x.iter().enumerate().map(|(i, x)| x + y[i]).collect()\n}\n\n\nadd2(1:2, 2:3)\n\n[1] 3 5\n\n\nEasy!\n\nWait, didn’t you say we can’t do this…!?\nSome of you might remember, in this post, I wrote\n\nWe cannot simply pass a variable length of vector\n\nfrom R to Rust.\nYeah, it’s true it was too difficult because I was struggling to do it via FFI! There’s no metadata available about the length or the structure of the data by default. But, with extendr, we can seamlessly access these metadata via R’s C API. So, in short, extendr is the game changer.\n\n\n&[T]\nIf you are already familiar with Rust, you might feel using Vec&lt;T&gt; as arguments looks a bit weird. In fact, the document of Vec&lt;T&gt; says:\n\nIn Rust, it’s more common to pass slices as arguments rather than vectors when you just want to provide read access. The same goes for String and &str.\n(https://doc.rust-lang.org/std/vec/struct.Vec.html#slicing)\n\nYes, you can use &[T] instead of Vec&lt;T&gt;, and this seems to matter on the performance slightly. If you are familiar with Rust to the extent that you know the difference between &[T] and Vec&lt;T&gt; (confession: I’m not!), you can should use &[T] instead. Otherwise, Vec&lt;T&gt; just works.\n\n#[extendr]\nfn add2_slice(x: &[i32], y: &[i32]) -&gt; Vec&lt;i32&gt; {\n    x.iter().enumerate().map(|(i, x)| x + y[i]).collect()\n}\n\n\nadd2_slice(1:2, 2:3)\n\n[1] 3 5\n\n\nPlease note that this isn’t the reference to the original R object, just that to the copied values. If you really want no copying, you should use the “proxy” types, which I’ll cover in the next post."
+    "objectID": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#restart-the-r-session",
+    "href": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#restart-the-r-session",
+    "title": "A Survival Guide To Install rlang From GitHub On Windows",
+    "section": "Restart the R session",
+    "text": "Restart the R session\nThis is always necessary. Since rlang is very fundamental package, it might be loaded as a dependency of some attached or loaded package (if you are curious about the differences between load and attach, R Packages helps). You need a fresh session with no packages (except for base packages) loaded. On RStudio, Ctrl+Shift+F10, or “Restart R” in “Session” menu.\n\nFor usual packages, this is enough. But, rlang is not the case…"
   },
   {
-    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#na",
-    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#na",
-    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
-    "section": "NA",
-    "text": "NA\nOne more caveat about add() is that this cannot handle a missing value, NA.\n\nadd(1L, NA)\n\nError in add(1L, NA): unable to convert R object to primitive\n\n\nIn Rust, we can use Option&lt;T&gt; to represent an optional, or possibly missing, value.\n\n// pattern match is one of the most powerful things in Rust, btw!\n\n#[extendr]\nfn add3(x: Option&lt;i32&gt;, y: Option&lt;i32&gt;) -&gt; Option&lt;i32&gt; {\n    match (x, y) {\n        (Some(x), Some(y)) =&gt; Some(x + y),\n        _ =&gt; NA_INTEGER\n    }\n}\n\nThis function can handle NA.\n\nadd3(1L, 2L)\n\n[1] 3\n\nadd3(1L, NA)\n\n[1] NA\n\n\nIt might be safe to always use Option since there’s always possibility that R value can be NA by nature. But, we might want to choose non-Option version to avoid the overhead (c.f. How much overhead is there with Options and Results? - The Rust Programming Language Forum), so it depends."
+    "objectID": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#use-remotesinstall_github-instead-of-devtools",
+    "href": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#use-remotesinstall_github-instead-of-devtools",
+    "title": "A Survival Guide To Install rlang From GitHub On Windows",
+    "section": "Use remotes::install_github() instead of devtools",
+    "text": "Use remotes::install_github() instead of devtools\ndevtools::install_github() is just re-exported from remotes package. So, are the same one. But, if I use devtools::, devtools’s dependencies are loaded, and, at the moment, rlang is included here. So, the same error will occur.\nOn the other hand, remotes:: doesn’t need rlang directly or indirectly. So, run\nremotes::install_github(\"r-lib/rlang\")\n(You might also need remotes::install_github() for other dependency packages like glue.)\nNote that, pkg package seems aware of this kind of problems, so we’ll be free from this kind of problems when pkg is mature!"
   },
   {
-    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#primitive-types",
-    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#primitive-types",
-    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
-    "section": "Primitive types",
-    "text": "Primitive types\nOkay, let’s learn about the primitive types at last. Here’s the corresponding table of R types and Rust types. We don’t have the direct equivalent of factor and complex here, but let’s talk about it later.\n\n\n\nR\nRust\n\n\n\n\ninteger\ni32\n\n\nnumeric\nf64\n\n\nlogical\nbool\n\n\ncharacter\nString &str\n\n\nfactor\n-\n\n\ncomplex\n-\n\n\n\n\ninteger and numeric\ninteger and numeric can mainly be converted into i32 and f64 respectively. I used “mainly” because it’s not that strict. They both can be converted into either of:\n\nu8\nu16\nu32\nu64\ni8\ni16\ni32\ni64\nf32\nf64\n\nSo, in other words, if you don’t want to prevent from numeric values are coerced into integers, you’ll need to check the types by yourself.\n\n\nlogical\nlogical is translated from/into bool. That’s all.\n\n\ncharacter\ncharacter is a bit tricky in that you can convert it to either of String and &str. You’ll probably have to scratch your head to understand the concept of “lifetime” to choose the proper one (confession: I still don’t understand it). But, in short,\n\nString : choose this when you modify the content strings\n&str: choose this (probably with 'static lifetime) when you only reference the strings\n\nIf you are not familiar with Rust yet, I recommend you to start with String. String is copied around so you might have unnecessary overhead, but it’s generally easier to handle because we need to think about the lifetimes less frequently.\n\n\nfactor\nTo put things simpler, until this point, I deliberately chose the cases when we have the corresponding types in Rust’s side. But, factor isn’t the case. It cannot be directly converted into a simple Rust type (at least at the moment). Instead, it can be cast into StrItr. StrItr is a “proxy” to the underlying data on R’s side.\nI’ll try explaining this in another post, but keep in mind that extendr provides that “proxy”-type of interface as well as the simple conversion to Rust’s primitive types."
+    "objectID": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#extra-steps",
+    "href": "post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html#extra-steps",
+    "title": "A Survival Guide To Install rlang From GitHub On Windows",
+    "section": "Extra steps?",
+    "text": "Extra steps?\nUsually, restarting the session + using remotes::install_github() works. But, in the past, I needed some extra steps. I don’t know why, but it seemed RStudio loads rlang in background (c.f. https://github.com/r-lib/remotes/issues/131). So, for future references, I note some. Hope this will never be needed again…\n\nRemove rlang\nRemoving package might help, since removed package cannot be loaded.\nremove.packages(\"rlang\")\n\n\nUse git clone, R CMD build and R CMD INSTALL\nIf you really need to be away from RStudio, or even from any R sessions. In those cases, you can use git and R CMD build and R CMD INSTALL on console.\ngit clone https://github.com/r-lib/rlang\nR.exe CMD build --no-manual --no-build-vignettes rlang/\nR.exe CMD INSTALL [--some-options-i-dont-remember] rlang_*.tar.gz"
   },
   {
-    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#list",
-    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#list",
-    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
-    "section": "list",
-    "text": "list\nThe corresponding Rust class for list is List. A List can be converted into HashMap&lt;&str, Robj&gt;. Be careful that R’s list can be a different data structure than Hashmap; it can have duplicated elements and unnamed elements.\n\nuse std::collections::HashMap;\n\n#[extendr]\nfn print_a(x: List) {\n    let x_hashmap: HashMap&lt;&str, Robj&gt; = x.into_hashmap();\n    \n    println!(\"{:?}\", x_hashmap.get(\"a\"));\n}\n\n\nprint_a(list(a = 1, b = 2))\nprint_a(list(b = 2))\n\nr! is a macro to create an R object from a Rust expression, by the way."
-  },
-  {
-    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#robj",
-    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#robj",
-    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
-    "section": "Robj?",
-    "text": "Robj?\nAs a sneak peak of the next post, let’s take a look at the usage of Robj.\nSo far, I created only functions that accepts just one type. What if we want to create a function that accepts multiple types of arguments? In this case, we can create a function that takes Robj as its argument and convert it by ourselves. Robj has many methods as_XXX() to convert to (or, more precisely, extract and copy the value of R object, and turn it into) a type. Here, let’s use as_integer() to generate Option&lt;i32&gt; .\n\n#[extendr]\nfn int(x: Robj) -&gt; Option&lt;i32&gt; {\n    x.as_integer()\n}\n\n\n# integer\nint(1L)\n\n[1] 1\n\n# not integer-ish\nint(\"foo\")\n\n[1] NA"
-  },
-  {
-    "objectID": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#whats-next",
-    "href": "post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html#whats-next",
-    "title": "Unofficial Introduction To extendr (2): Type Conversion Between R and Rust",
-    "section": "What’s next?",
-    "text": "What’s next?\nIn this post, I focused mainly the Rust’s side of the type ecosystem. Next, I probably need to write about more R-ish things like Function or Symbol , which I need some time to understand correctly. Stay tuned…"
-  },
-  {
-    "objectID": "post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html",
-    "href": "post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html",
-    "title": "Unofficial Introduction To extendr (1): Your First R Package With Rust",
+    "objectID": "post/dont-panic-we-can-unwind/index.html",
+    "href": "post/dont-panic-we-can-unwind/index.html",
+    "title": "Don’t panic!, We Can Unwind On Rust",
     "section": "",
-    "text": "Now the official version of the introduction is available!\nhttps://extendr.github.io/rextendr/articles/package.html"
+    "text": "Three months ago, I wrote a blog post about R’s protection mechanism and stack unwinding. In the post, I said:\nBut, soon after I published this, Lionel Henry kindly told me that we have another option; it’s true that Rust doesn’t have longjmp, but we can write a C function that does longjmp and call the function from Rust.\nDisclaimer: I still don’t have enough time to test these implementations, so please read carefully. I might be wrong."
   },
   {
-    "objectID": "post/2018-06-09-plot-osm-tiles/index.html",
-    "href": "post/2018-06-09-plot-osm-tiles/index.html",
-    "title": "Plot geom_sf() On OpenStreetMap Tiles",
-    "section": "",
-    "text": "mapview is a very nice package to explore an sf object. It can overlay sf object on the map images:\nnc &lt;- sf::read_sf(system.file(\"shape/nc.shp\", package=\"sf\"))\n\n# mapview::mapview(nc)\nBut, how can I do this with ggplot2? (My friend told me mapview::mapshot() can generate a PNG, but I want to do this with ggplot2!)"
+    "objectID": "post/dont-panic-we-can-unwind/index.html#what-was-the-problem",
+    "href": "post/dont-panic-we-can-unwind/index.html#what-was-the-problem",
+    "title": "Don’t panic!, We Can Unwind On Rust",
+    "section": "What was the problem?",
+    "text": "What was the problem?\nLet’s summarise the last blog post quickly. On error, the resources need to be freed before aborting. But, different languages have different error handling mechanism, and it might not work well to attempt to free resources beyond the language boundaries.\nIn order to solve this problem, R’s C API provices R_UnwindProtect(), which allows us to call a custom cleanup function before aborting. C++ can utilize this to delay R’s stack unwinding by escaping from it by longjmp and then resuming by another API, R_ContinueUnwind(). But, as Rust desn’t support longjmp, Rust cannot implement such a custom cleanup function."
   },
   {
-    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#rtfm",
-    "href": "post/2018-06-09-plot-osm-tiles/index.html#rtfm",
-    "title": "Plot geom_sf() On OpenStreetMap Tiles",
-    "section": "RTFM",
-    "text": "RTFM\nBefore anything, I need to read Tile Usage Policy to use the OpenStreetMap tiles. For “Requirements” section, this is important:\n\nClearly display license attribution.\n\nAccording to Copyright and License, it’s so simple as just adding this caption to my plots:\n\nlabs(caption = \"\\U00a9 OpenStreetMap contributors\")\n\nFor “Technical Usage Requirements” section, I have to read this more carefully. Let’s look at the requirements one by one.\n\nValid HTTP User-Agent identifying application. Faking another app’s User-Agent WILL get you blocked.\n\nOh, it seems I need to add User-Agent header. OK, let’s invent some nice name… If I use httr::GET(), the code will probably like this:\n\nGET(\n  \"https://...\",\n  add_headers(`User-Agent` = \"Yutani's blog post\")\n)\n\n\nIf known, a valid HTTP Referer.\n\nI don’t have Referers, so I skip this.\n\nDO NOT send no-cache headers. (“Cache-Control: no-cache”, “Pragma: no-cache” etc.)\n\nI do nothing other than swearing I’ll never use this header.\n\nCache Tile downloads locally according to HTTP Expiry Header, alternatively a minimum of 7 days.\n\nAh, this is important. Let’s implement later.\n\nMaximum of 2 download threads. (Unmodified web browsers’ download thread limits are acceptable.)\n\nFortunately, I’m not good at parallelism, so this is fine."
+    "objectID": "post/dont-panic-we-can-unwind/index.html#overview",
+    "href": "post/dont-panic-we-can-unwind/index.html#overview",
+    "title": "Don’t panic!, We Can Unwind On Rust",
+    "section": "Overview",
+    "text": "Overview\nThe basic idea is to write a C function that wraps R_UnwindProtect() and escapes by longjmp, and call it from Rust’s side. Rust then returns normally instead of aborting so that the Rust’s cleanup mechanism works. Returns what to what? The continuous token for R_ContinueUnwind() to the C’s side.\nYou might wonder what’s “the C’s side” mean, especially if you are familiar with extendr framework. Yes, Rust functions can be called directly from R via FFI if compiled so. However, to handle exceptions properly, we must use a C wrapper function to call R_ContinueUnwind().\n\nOne more thing that might be confusing is that we are going to write two C functions:\n\nC function to be called from Rust (i.e., a wrapper around R_UnwindProtect()).\nC function to be called from R session (i.e., a wrapper to inspect and handle the result from the Rust function)"
   },
   {
-    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#get-tile-urls",
-    "href": "post/2018-06-09-plot-osm-tiles/index.html#get-tile-urls",
-    "title": "Plot geom_sf() On OpenStreetMap Tiles",
-    "section": "Get Tile URLs",
-    "text": "Get Tile URLs\nAccording to Slippy map tilenames, the URL of a tile follows this format:\nhttps://[abc].tile.openstreetmap.org/zoom/x/y.png \nI have to fill these four parts:\n\n[abc]\nzoom\nx\ny\n\nLet’s look at these one by one.\n\n[abc]\n[abc] means there are three domains; a.tile.openstreetmap.org, b.tile.openstreetmap.org, c.tile.openstreetmap.org. But, why? It says:\n\nBrowser-based applications can thus request multiple tiles from multiple subdomains faster than from one subdomain.\n\nSo, as I’m not browser-based, I can choose arbitrary one.\n\n\nzoom\nZoom parameter is an integer number from 0 to 19. If zoom is 0, there’s only one tile. Likewise 2 x 2 tiles for zoom 1, 4 x 4 tiles for zoom 2, and so on. Then, which one should I choose? This can be roughly determined based on the size of the bbox (boundary box) of the sf object.\n\n# get the bbox\nb &lt;- sf::st_bbox(nc)\nb\n\n     xmin      ymin      xmax      ymax \n-84.32385  33.88199 -75.45698  36.58965 \n\n# calculate the lengths of x and y of the bbox\nx_len &lt;- b[\"xmax\"] - b[\"xmin\"]\ny_len &lt;- b[\"ymax\"] - b[\"ymin\"]\n\n# calculate the minimum zoom level that is smaller than the lengths\nx_zoom &lt;- sum(x_len &lt; 360 / 2^(0:19)) - 1\ny_zoom &lt;- sum(y_len &lt; 170.1022 / 2^(0:19)) - 1\n\nzoom &lt;- min(x_zoom, y_zoom)\nzoom\n\n[1] 5\n\n\nBut, since the tile is so small as 256 × 256 pixel, it’s often better to zoom more.\n\nzoom &lt;- zoom + 2\n\n(I’m not sure how to do this correctly, I guess the zoom level should be determined by the size of the plot canvas, not the bbox.)\n\n\nx and y\nA pair of x and y represents the location of a tile. x corresponds to longitude, y to latitude. If the zoom is given, I can convert longitudes and latitudes to x and y according to the pseudo code on OpenStreetMap’s wiki:\n\nsec &lt;- function(x) {\n  1 / cos(x)\n}\n\nlonlat2xy &lt;- function(lat_deg, lon_deg, zoom) {\n  n &lt;- 2^zoom\n\n  x &lt;- (n * (lat_deg + 180)) %/% 360\n  lon_rad &lt;- lon_deg * pi / 180\n  y &lt;- (n * (1 - log(tan(lon_rad) + sec(lon_rad)) / pi)) %/% 2\n\n  list(x = x, y = y)\n}\n\nBut, how can I find the set of tiles which covers the whole bbox?\n\nlibrary(ggplot2)\n\np &lt;- ggplot(nc) +\n  geom_sf() +\n  annotate(\"rect\", xmin = b[\"xmin\"], xmax = b[\"xmax\"], ymin = b[\"ymin\"], ymax = b[\"ymax\"],\n           colour = alpha(\"red\", 0.4), fill = \"transparent\", linetype = \"dashed\", size = 1.2)\n\nsize aesthetic has been deprecated for use with lines as of ggplot2 3.4.0\nℹ Please use linewidth aesthetic instead\nThis message is displayed once every 8 hours.\n\np\n\n\n\n\nThis problem can be simplified; I can focus only two corners, the north-west and the south-east. If I calculate which tiles of x and y those two points fall in, I can find the rest of the tiles by filling the sequences of x and y between these two tiles.\n\ncorners &lt;- expand.grid(x = b[c(1, 3)], y = b[c(2, 4)])\n\np +\n  geom_point(aes(x, y), corners[2:3,], colour = \"red\", size = 5)\n\n\n\n\nHere’s the tiles:\n\nxy &lt;- lonlat2xy(b[c(\"xmin\", \"xmax\")], b[c(\"ymin\", \"ymax\")], zoom)\n\ntiles &lt;- expand.grid(x = seq(xy$x[\"xmin\"], xy$x[\"xmax\"]),\n                     y = seq(xy$y[\"ymin\"], xy$y[\"ymax\"]))\n\ntiles\n\n   x  y\n1 34 51\n2 35 51\n3 36 51\n4 37 51\n5 34 50\n6 35 50\n7 36 50\n8 37 50\n\n\n\n\nTile URLs\nFrom the results above, I can yield the URLs of the tiles:\n\nurls &lt;- sprintf(\"https://a.tile.openstreetmap.org/%d/%d/%d.png\", zoom, tiles$x, tiles$y)\nurls\n\n[1] \"https://a.tile.openstreetmap.org/7/34/51.png\"\n[2] \"https://a.tile.openstreetmap.org/7/35/51.png\"\n[3] \"https://a.tile.openstreetmap.org/7/36/51.png\"\n[4] \"https://a.tile.openstreetmap.org/7/37/51.png\"\n[5] \"https://a.tile.openstreetmap.org/7/34/50.png\"\n[6] \"https://a.tile.openstreetmap.org/7/35/50.png\"\n[7] \"https://a.tile.openstreetmap.org/7/36/50.png\"\n[8] \"https://a.tile.openstreetmap.org/7/37/50.png\"\n\n\nOK, now I can download them. But, before that, let’s confirm that the tiles really cover the expected area.\n\n\nTile positions\nTo plot these tiles, I calculate the north-west corner of a tile by the following code (the pseudo code for this is also found on the wiki):\n\nxy2lonlat &lt;- function(x, y, zoom) {\n  n &lt;- 2^zoom\n\n  lon_deg &lt;- x / n * 360.0 - 180.0\n  lat_rad &lt;- atan(sinh(pi * (1 - 2 * y / n)))\n  lat_deg &lt;- lat_rad * 180.0 / pi\n\n  list(lon_deg = lon_deg, lat_deg = lat_deg)\n}\n\nThen, south-east corners can be also calculated easily. Let’s calculate the both corners and bind them to a data.frame.\n\nlibrary(purrr)\nlibrary(dplyr, warn.conflicts = FALSE)\n\nnw_corners &lt;- pmap_dfr(tiles, xy2lonlat, zoom = zoom)\n# add 1 to x and y to get the south-east corners\nse_corners &lt;- pmap_dfr(mutate_all(tiles, `+`, 1), xy2lonlat, zoom = zoom)\n\nnames(nw_corners) &lt;- c(\"xmin\", \"ymax\")\nnames(se_corners) &lt;- c(\"xmax\", \"ymin\")\n\ntile_positions &lt;- bind_cols(nw_corners, se_corners)\ntile_positions\n\n# A tibble: 8 × 4\n   xmin  ymax  xmax  ymin\n  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 -84.4  34.3 -81.6  32.0\n2 -81.6  34.3 -78.8  32.0\n3 -78.8  34.3 -75.9  32.0\n4 -75.9  34.3 -73.1  32.0\n5 -84.4  36.6 -81.6  34.3\n6 -81.6  36.6 -78.8  34.3\n7 -78.8  36.6 -75.9  34.3\n8 -75.9  36.6 -73.1  34.3\n\n\nNow I can plot the empty tiles as below:\n\np +\n  geom_point(aes(x, y), corners[2:3,], colour = \"red\", size = 5) +\n  geom_rect(data = tile_positions,\n            aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),\n            colour = \"blue\", fill = \"transparent\")\n\n\n\n\nYay, confirmed! Let’s proceed to the next step."
-  },
-  {
-    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#get-tile-data",
-    "href": "post/2018-06-09-plot-osm-tiles/index.html#get-tile-data",
-    "title": "Plot geom_sf() On OpenStreetMap Tiles",
-    "section": "Get tile data",
-    "text": "Get tile data\nIf I just get the response from a URL, httr::GET() is handy. But, this time, for the requirement of caching, I have to save the responses to disk first. So, I use curl::curl_download() here.\nNote that PNG data can be read into R session by png::readPNG().\n\nget_tile &lt;- function(url) {\n  # build a local path\n  path &lt;- stringr::str_extract(url, \"/\\\\d+/\\\\d+/\\\\d+.png\")\n  local_png &lt;- here::here(file.path(\"data\", \"osm-tiles\", path))\n\n  if (!file.exists(local_png)) {\n    dir.create(dirname(local_png), showWarnings = FALSE, recursive = TRUE)\n    \n    # add header\n    h &lt;- curl::new_handle()\n    curl::handle_setheaders(h, `User-Agent` = \"Yutani's blog post\")\n    \n    curl::curl_download(url, destfile = local_png)\n  }\n\n  png::readPNG(local_png)\n}\n\nThen, let’s get all tiles.\n\npngs &lt;- map(urls, get_tile)"
-  },
-  {
-    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#plot-tiles",
-    "href": "post/2018-06-09-plot-osm-tiles/index.html#plot-tiles",
-    "title": "Plot geom_sf() On OpenStreetMap Tiles",
-    "section": "Plot tiles",
-    "text": "Plot tiles\nTo plot tiles, I use annotation_raster(), whose necessary arguments are:\n\nraster\nxmin\nxmax\nymin\nymax\n\nThe first one is pngs and the others are contained in tile_positions. So, let’s combine them so that I can use pmap().\n\nargs &lt;- tile_positions %&gt;%\n  mutate(raster = pngs)\n\nargs\n\n# A tibble: 8 × 5\n   xmin  ymax  xmax  ymin raster               \n  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;list&gt;               \n1 -84.4  34.3 -81.6  32.0 &lt;dbl [256 × 256 × 3]&gt;\n2 -81.6  34.3 -78.8  32.0 &lt;dbl [256 × 256 × 3]&gt;\n3 -78.8  34.3 -75.9  32.0 &lt;dbl [256 × 256 × 3]&gt;\n4 -75.9  34.3 -73.1  32.0 &lt;dbl [256 × 256 × 3]&gt;\n5 -84.4  36.6 -81.6  34.3 &lt;dbl [256 × 256 × 3]&gt;\n6 -81.6  36.6 -78.8  34.3 &lt;dbl [256 × 256 × 3]&gt;\n7 -78.8  36.6 -75.9  34.3 &lt;dbl [256 × 256 × 3]&gt;\n8 -75.9  36.6 -73.1  34.3 &lt;dbl [256 × 256 × 3]&gt;\n\n\nNow I can plot tiles at last.\n\nggplot(nc) +\n  pmap(args, annotation_raster, interpolate = TRUE) +\n  geom_sf(fill = alpha(\"red\", 0.3)) +\n  # don't forget the license notice!\n  labs(caption = \"\\U00a9 OpenStreetMap contributors\") +\n  theme_minimal()\n\n\n\n\nDone!\nBut, I didn’t expect the code would be this long… Maybe I need to create a package for this."
-  },
-  {
-    "objectID": "post/2018-06-09-plot-osm-tiles/index.html#caveats",
-    "href": "post/2018-06-09-plot-osm-tiles/index.html#caveats",
-    "title": "Plot geom_sf() On OpenStreetMap Tiles",
-    "section": "Caveats",
-    "text": "Caveats\nNote that, I didn’t care about the CRS because nc’s CRS is fortunately EPSG 3857, which OpenStreetMap uses. If the sf object I want to plot has the different CRS, there may be a bit more to consider (and I don’t understand the CRS well…).\nUpdate:\nSorry, I was wrong… nc’s CRS is EPSG 4267 and OpenStreetMap tiles use EPSG 4326. Thanks Edzer for pointing this out!\n\nsf::st_crs(nc)\n\nCoordinate Reference System:\n  User input: NAD27 \n  wkt:\nGEOGCRS[\"NAD27\",\n    DATUM[\"North American Datum 1927\",\n        ELLIPSOID[\"Clarke 1866\",6378206.4,294.978698213898,\n            LENGTHUNIT[\"metre\",1]]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433]],\n    CS[ellipsoidal,2],\n        AXIS[\"latitude\",north,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        AXIS[\"longitude\",east,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n    ID[\"EPSG\",4267]]\n\n\nSo, I should have converted nc to the CRS first.\n\nnc_4326 &lt;- sf::st_transform(nc, 4326)\n\nFortunately, the difference between EPSG 4267 and EPSG 4326 is rather negligible for this scale, so the result map should look almost same if I used nc_4326 instead of nc. Here’s the difference (can you see there’s a little red colors?):\n\nnc_4326_not_transformed &lt;- sf::`st_crs&lt;-`(nc, 4326)\n\nWarning: st_crs&lt;- : replacing crs does not reproject data; use st_transform for\nthat\n\nggplot() +\n  geom_sf(data = nc_4326_not_transformed, fill = \"transparent\", colour = \"red\") +\n  geom_sf(data = nc_4326, fill = \"transparent\", colour = \"blue\") +\n  theme_minimal()"
-  },
-  {
-    "objectID": "post/2017-11-07-ggplot-add/index.html",
-    "href": "post/2017-11-07-ggplot-add/index.html",
-    "title": "An Example Usage of ggplot_add()",
-    "section": "",
-    "text": "A generic function ggplot_add() was added to ggplot2 by this PR:\nAllow addition of custom objects by thomasp85 · Pull Request #2309 · tidyverse/ggplot2\nI think creating a custom Geom or Stat and its constructor (geom_*() or stat_*()) is enough for the most of the extension packages of ggplot2, but some people, including me, need this."
-  },
-  {
-    "objectID": "post/2017-11-07-ggplot-add/index.html#why-are-there-no-geom_highlight",
-    "href": "post/2017-11-07-ggplot-add/index.html#why-are-there-no-geom_highlight",
-    "title": "An Example Usage of ggplot_add()",
-    "section": "Why are there no geom_highlight()?",
-    "text": "Why are there no geom_highlight()?\nHere is an example code of my package gghighlight:\ngghighlight_point(d, aes(foo, bar), predicate = bar &gt; 20 & baz == \"A\")\nYou may wonder why this can’t be written like this:\nggplot(d, aes(foo, bar)) +\n  geom_highlight_point(bar &gt; 20 & baz == \"A\")\nLet me explain a bit."
-  },
-  {
-    "objectID": "post/2017-11-07-ggplot-add/index.html#geom_stat_-doesnt-know-about-the-other-layers",
-    "href": "post/2017-11-07-ggplot-add/index.html#geom_stat_-doesnt-know-about-the-other-layers",
-    "title": "An Example Usage of ggplot_add()",
-    "section": "geom_*()/stat_*() doesn’t know about the other layers",
-    "text": "geom_*()/stat_*() doesn’t know about the other layers\ngeom_highlight_point(bar &gt; 20 & baz == \"A\") is passed bar &gt; 20 & baz == \"A\" without the data d, with which the expression should be evaluated. It needs d specified in ggplot(...).\nBut, considering the structure of the above code, geom_highlight_point(...) cannot access to the result of ggplot(...) in any usual way:\n`+`(ggplot(...), geom_highlight_point(...))\nIf ggplot2 were designed pipe-friendly, this\n`%&gt;%`(ggplot(...), geom_highlight_point(...))\nwould be evaluated as this, which means geom_highlight_point(...) could take d from ggplot(...)…\ngeom_highlight_point(ggplot(...), ...)\nAnyway, let’s give up here. All I have to do is set this expression as an attribute of a custom Geom and pray that it will be evaluated with the proper data in the phase of building a plot."
-  },
-  {
-    "objectID": "post/2017-11-07-ggplot-add/index.html#geomstat-doesnt-know-about-the-original-data",
-    "href": "post/2017-11-07-ggplot-add/index.html#geomstat-doesnt-know-about-the-original-data",
-    "title": "An Example Usage of ggplot_add()",
-    "section": "Geom*/Stat* doesn’t know about the original data",
-    "text": "Geom*/Stat* doesn’t know about the original data\nTake a look at the simplest example in the vignette “Extending ggplot2”:\nStatChull &lt;- ggproto(\"StatChull\", Stat,\n  compute_group = function(data, scales) {\n    data[chull(data$x, data$y), , drop = FALSE]\n  },\n\n  required_aes = c(\"x\", \"y\")\n)\nYou may notice that compute_group() expects data has the fixed column x and y. Actually, data is not the original data but the one the mapping is already applied. So, there is no column bar and baz anymore; bar is renamed to y and baz is dropped. Oh no, I cannot evaluate bar &gt; 20 & baz == \"A\" here, too…"
-  },
-  {
-    "objectID": "post/2017-11-07-ggplot-add/index.html#ggplot_add",
-    "href": "post/2017-11-07-ggplot-add/index.html#ggplot_add",
-    "title": "An Example Usage of ggplot_add()",
-    "section": "ggplot_add()",
-    "text": "ggplot_add()\nLet’s remember this one:\n`+`(ggplot(...), geom_highlight_point(...))\nOnly + (or +.gg) can access to both ggplot(...) and geom_highlight_point(...). This means that, inside +.gg, bar &gt; 20 & baz == \"A\" can be evaluated.\nSo…, should I implement my custom +.gg by myself? No, because I will be able to use ggplot_add()!\nggplot_add() is called in +.gg() via add_ggplot() (very confusing..) and is passed both the original plot and the new object. The current implementation is this:\n\"+.gg\" &lt;- function(e1, e2) {\n  # Get the name of what was passed in as e2, and pass along so that it\n  # can be displayed in error messages\n  e2name &lt;- deparse(substitute(e2))\n\n  if      (is.theme(e1))  add_theme(e1, e2, e2name)\n  else if (is.ggplot(e1)) add_ggplot(e1, e2, e2name)\n  else if (is.ggproto(e1)) {\n    stop(\"Cannot add ggproto objects together.\",\n         \" Did you forget to add this object to a ggplot object?\",\n         call. = FALSE)\n  }\n}\n(https://github.com/tidyverse/ggplot2/blob/7d0549a03e5ea08c27c768e88d5717f18cb4a5ce/R/plot-construction.r#L40-L52)\nadd_ggplot &lt;- function(p, object, objectname) {\n  if (is.null(object)) return(p)\n\n  p &lt;- plot_clone(p)\n  p &lt;- ggplot_add(object, p, objectname)\n  set_last_plot(p)\n  p\n}\n(https://github.com/tidyverse/ggplot2/blob/7d0549a03e5ea08c27c768e88d5717f18cb4a5ce/R/plot-construction.r#L59-L66)\nBy using this, I can implement the proof-of-concept version of geom_highlight_point() as bellow:\ngeom_highlight_point &lt;- function(expr) {\n  structure(list(expr = rlang::enquo(expr)), class = \"highlight\")\n}\n\nggplot_add.highlight &lt;- function(object, plot, object_name) {\n  new_data &lt;- dplyr::filter(plot$data, !! object$expr)\n  new_layer &lt;- geom_point(data = new_data,\n                          mapping = plot$mapping,\n                          colour = alpha(\"red\", 0.5),\n                          size = 5)\n  plot$layers &lt;- append(plot$layers, new_layer)\n  plot\n}\nlibrary(ggplot2)\n\nd &lt;- data.frame(foo = 11:30, bar = 11:30, baz = rep(c(\"A\", \"B\", \"C\"), length.out = 20),\n                stringsAsFactors = FALSE)\n\nggplot(d, aes(foo, bar)) +\n  geom_highlight_point(bar &gt; 20 & baz == \"A\") +\n  geom_point()  # for comparison\n\nI’m not sure if this is the intended usage of ggplot_add(), but this seems very nice. Looking forward to the next release of ggplot2!"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "Hi! I’m Hiroaki Yutani. You can call me either Yutani or Hiroaki (I guess Yutani is easier).\nThis blog is where I struggle to learn about R (and improve my poor English)."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Wannabe Rstats-fu",
-    "section": "",
-    "text": "A Quick Note About How To Bundle Rust Crates For An R Package\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nRust 1.70 And Build Failures On Windows\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nJun 10, 2023\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nR, Rust, Protect, And Unwinding\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nMay 20, 2023\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nRust and the CRAN Repository Policy\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\n\n\n\n\n\n\n\nAug 14, 2022\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nWriting A Configure Script For An R Package Using Rust\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\nconfigure.win and configure\n\n\n\n\n\n\nSep 21, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nUnofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\nIntegrate R and Rust with extendr\n\n\n\n\n\n\nAug 1, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nUnofficial Introduction To extendr (2): Type Conversion Between R and Rust\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\nIntegrate R and Rust with extendr\n\n\n\n\n\n\nJun 14, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\ngghighlight 0.3.2\n\n\n\n\n\n\n\ngghighlight\n\n\nggplot2\n\n\nR package\n\n\n\n\n\n\n\n\n\n\n\nJun 7, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nUnofficial Introduction To extendr (1): Your First R Package With Rust\n\n\n\n\n\n\n\nRust\n\n\nextendr\n\n\n\n\nIntegrate R and Rust with extendr.\n\n\n\n\n\n\nJun 6, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nTips To Turn R Markdown Into Slidev Presentation\n\n\n\n\n\n\n\nR Markdown\n\n\nSlidev\n\n\n\n\nSlidev is a tool to create slides from Markdown. This post is about some tips to use it in combination with R Markdown.\n\n\n\n\n\n\nJun 5, 2021\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nSome more notes about using Rust code in R packages\n\n\n\n\n\n\n\nRust\n\n\n\n\n\n\n\n\n\n\n\nSep 15, 2020\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\ngghighlight 0.2.0\n\n\n\n\n\n\n\ngghighlight\n\n\nggplot2\n\n\nR package\n\n\n\n\ngghighlight 0.2.0 is released!\n\n\n\n\n\n\nFeb 17, 2020\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nEnhancing gather() and spread() by Using “Bundled” data.frames\n\n\n\n\n\n\n\ntidyr\n\n\ntidy data\n\n\n\n\n\n\n\n\n\n\n\nFeb 3, 2019\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nA Survival Guide To Install rlang From GitHub On Windows\n\n\n\n\n\n\n\nrlang\n\n\nWindows\n\n\n\n\n\n\n\n\n\n\n\nJan 25, 2019\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\ngather() and spread() Explained By gt\n\n\n\n\n\n\n\ntidyr\n\n\ntidy data\n\n\ngt\n\n\n\n\n\n\n\n\n\n\n\nJan 24, 2019\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nA Tip to Debug ggplot2\n\n\n\n\n\n\n\npackage development\n\n\n\n\n\n\n\n\n\n\n\nJan 11, 2019\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nHow To Convert A Human To Waves By Magick Package\n\n\n\n\n\n\n\nggplot2\n\n\nmagick\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nQuote While the Promise Is Hot!\n\n\n\n\n\n\n\ntidyeval\n\n\ntidyverse\n\n\n\n\n\n\n\n\n\n\n\nOct 18, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\ngeom_sf_text() and geom_sf_label() Are Coming!\n\n\n\n\n\n\n\ntidyverse\n\n\nggplot2\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nDouble dispatch of S3 method\n\n\n\n\n\n\n\nR internal\n\n\n\n\n\n\n\n\n\n\n\nSep 17, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nPlot geom_sf() On OpenStreetMap Tiles\n\n\n\n\n\n\n\nggplot2\n\n\nGIS\n\n\n\n\n\n\n\n\n\n\n\nJun 9, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nAnatomy of gghighlight\n\n\n\n\n\n\n\ngghighlight\n\n\nggplot2\n\n\n\n\n\n\n\n\n\n\n\nJun 3, 2018\n\n\nHiroaki Yutani\n\n\n\n\n\n\n  \n\n\n\n\nAn Example Usage of ggplot_add()\n\n\n\n\n\n\n\ngghighlight\n\n\nggplot2\n\n\nR package\n\n\n\n\n\n\n\n\n\n\n\nNov 7, 2017\n\n\nHiroaki Yutani\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html",
-    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html",
-    "title": "Anatomy of gghighlight",
-    "section": "",
-    "text": "I’m overhauling my gghighlight package toward the upcoming release of ggplot2 2.3.0. I think I will introduce about the new gghighlight() soon, but before that, I want to write out the ideas behind gghighlight.\nNote that what I’ll write here contains few new things, as the basic idea is already covered by this great post:\nMy post is mainly for organizing my thought, yet I hope someone find this useful :)\n# tweak for plotting\nknit_print.ggplot &lt;- function(x, ...) {\n  x &lt;- x  +\n    theme_minimal() +\n    scale_x_continuous(expand = expand_scale(mult = 0.5)) +\n    scale_y_continuous(expand = expand_scale(mult = 0.2))\n  ggplot2:::print.ggplot(x, ...)\n}"
-  },
-  {
-    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#data",
-    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#data",
-    "title": "Anatomy of gghighlight",
-    "section": "Data",
-    "text": "Data\nSuppose we have this data:\n\n\n\n\n\nx\ny\ntype\nvalue\n\n\n\n\n3\n3\na\n0\n\n\n8\n3\na\n1\n\n\n13\n3\na\n0\n\n\n2\n2\nb\n0\n\n\n7\n2\nb\n10\n\n\n12\n2\nb\n10\n\n\n1\n1\nc\n10\n\n\n6\n1\nc\n20\n\n\n11\n1\nc\n0"
-  },
-  {
-    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#simple-plot",
-    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#simple-plot",
-    "title": "Anatomy of gghighlight",
-    "section": "Simple plot",
-    "text": "Simple plot\nIf we plot the data very simply, the code would be like this:\n\nlibrary(tidyverse)\n\nggplot(d, aes(x, y, colour = type)) +\n  geom_point(size = 10)\n\nWarning: `expand_scale()` was deprecated in ggplot2 3.3.0.\nPlease use `expansion()` instead.\nThis warning is displayed once every 8 hours.\nCall `lifecycle::last_lifecycle_warnings()` to see where this warning was generated."
-  },
-  {
-    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#highlighted-plot",
-    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#highlighted-plot",
-    "title": "Anatomy of gghighlight",
-    "section": "Highlighted plot",
-    "text": "Highlighted plot\nNow, what if we want to highlight only the points of records whose type are \"b\"?\nWe need two layers:\n\nunhighlighted layer\nhighlighted layer\n\n\nCreate an unhighlighted layer\nAn unhighlighted layer is the colorless version of the above points with the same data. To create this, we can simply remove colour from aes() and specify a static colour \"grey\". I call this operation as bleach.\n\nbleached_layer &lt;- geom_point(data = d, aes(x, y),\n                             size = 10, colour = \"grey\")\n\nIf we plot this, the result would be below:\n\nggplot() +\n  bleached_layer\n\n\n\n\n\n\nCreate a highlighted layer\nA highlighted layer is the fewer-data version of the above points with (not necessarily the same) colors. To create this, we need some data manipulation. Let’s filter the data.\n\nd_sieved &lt;- filter(d, type == \"b\")\n\nThen the layer we want can be created like below. I call this operation as sieve (filter might be a better word, but I wanted to choose another word than dplyr’s verbs to avoid confusion).\n\nsieved_layer &lt;- geom_point(data = d_sieved, aes(x, y, colour = type),\n                           size = 10)\n\nIf we plot this, the result would be below:\n\nggplot() +\n  sieved_layer\n\n\n\n\n\n\nJoin the two layers\nNow we can draw the highlighted version of the plot as below:\n\nggplot() +\n  bleached_layer +\n  sieved_layer"
-  },
-  {
-    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#by-point-vs-by-group",
-    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#by-point-vs-by-group",
-    "title": "Anatomy of gghighlight",
-    "section": "“by point” vs “by group”",
-    "text": "“by point” vs “by group”\nSo far, so good. Then, let’s consider a bit about the case when the geom is not point, but line.\nWhile points can be plotted one by one, lines cannot be drawn without the relationship between points. For example, haven’t you experienced an unexpected zigzag line?\n\nggplot(d, aes(x, y)) +\n  geom_line(size = 3)\n\nsize aesthetic has been deprecated for use with lines as of ggplot2 3.4.0\nℹ Please use linewidth aesthetic instead\nThis message is displayed once every 8 hours.\n\n\n\n\n\nLines need group variable, which indicates the series of data points.\n\nggplot(d, aes(x, y, group = type)) +\n  geom_line(size = 3)\n\n\n\n\nNote that group doesn’t need to be declared explicitly, as ggplot2 infers the groups from the specified variables. More precisely, it calculates group IDs based on the combination of discrete variables here. So, usually, specifying a discrete variable on colour or fill is enough.\n\nggplot(d, aes(x, y, colour = type)) +\n  geom_line(size = 3)\n\n\n\n\nAnyway, lines need groups. Accordingly, we need to consider the group when we sieve the data. Otherwise, the lines will be incomplete as this example:\n\n# data whose values are &gt;=10\nd_sieved2 &lt;- filter(d, value &gt;= 10)\n\nggplot() +\n  geom_line(data = d, aes(x, y, group = type), size = 3, colour = \"grey\") +\n  geom_line(data = d_sieved2, aes(x, y, colour = type), size = 3)\n\n\n\n\nSo, the correct way of doing this is to use group_by() and some aggregate functions like max() so that the calculations are done by group.\n\n# data series whose max values are &gt;=10\nd_sieved3 &lt;- d %&gt;%\n  group_by(type) %&gt;% \n  filter(max(value) &gt;= 10)\n\nggplot() +\n  geom_line(data = d, aes(x, y, group = type), size = 3, colour = \"grey\") +\n  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3)"
-  },
-  {
-    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#prevent-unhighlighted-layer-from-facetted",
-    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#prevent-unhighlighted-layer-from-facetted",
-    "title": "Anatomy of gghighlight",
-    "section": "Prevent unhighlighted layer from facetted",
-    "text": "Prevent unhighlighted layer from facetted\nNext topic is facetting. Let’s naively facet the plot above.\n\nggplot() +\n  geom_line(data = d, aes(x, y, group = type), size = 3, colour = \"grey\") +\n  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3) +\n  facet_wrap(~ type)\n\n\n\n\nHmm…, unhighlighted lines are facetted. But, maybe we want the grey ones exists in all of the panels.\nfacet_*() facets all layers if the data contains the specified variable, in this case type. In other words, if the layer’s data doesn’t have the variable, it won’t get facetted. Let’s rename it.\n\nd_bleached &lt;- d\nnames(d_bleached)[3] &lt;- \"GROUP\"\n\nggplot() +\n  geom_line(data = d_bleached, aes(x, y, group = GROUP), size = 3, colour = \"grey\") +\n  geom_line(data = d_sieved3, aes(x, y, colour = type), size = 3) +\n  facet_wrap(~ type)\n\n\n\n\nYou may notice about one more good thing; the panel for \"a\" disappeared. This is because now d_sieved3 is the only data that contains type and it has only records of \"b\" and \"c\"."
-  },
-  {
-    "objectID": "post/2018-06-03-anatomy-of-gghighlight/index.html#some-spoilers",
-    "href": "post/2018-06-03-anatomy-of-gghighlight/index.html#some-spoilers",
-    "title": "Anatomy of gghighlight",
-    "section": "Some spoilers",
-    "text": "Some spoilers\nThe next version of gghighlight will do the above things almost automatically. All you have to do is just adding gghighlight().\n\nlibrary(gghighlight)\n\nggplot(d, aes(x, y, colour = type)) +\n  geom_point(size = 10) +\n  gghighlight(type == \"b\")\n\nWarning: Tried to calculate with group_by(), but the calculation failed.\nFalling back to ungrouped filter operation...\n\n\nlabel_key: type\n\n\n\n\n\n\nggplot(d, aes(x, y, colour = type)) +\n  geom_line(size = 3) +\n  gghighlight(max(value) &gt;= 10)\n\nlabel_key: type\n\n\n\n\n\nStay tuned!"
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "",
-    "text": "Slidev is a tool to create slides from Markdown. Recently, I used this with R Markdown and it was generally comfortable to use.\nThat said, there were some points I needed to google around to find solutions, so let me share these in this post.\n(You might wonder what this presentation talks about R and Rust, but the contents are all in Japanese, sorry. I’m preparing another blog post for this, so stay tuned!)"
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#getting-started",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#getting-started",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "Getting started",
-    "text": "Getting started\nFirst of all, we need to create a project that has Slidev installed. This is done by:\nnpm init slidev\nThen, you’ll be asked several questions:\n❯ npm init slidev\nnpx: installed 22 in 3.269s\n\n  ●■▲\n  Slidev Creator  v0.19.6\n\n✔ Project name: … slidev-rmarkdown-test\n  Scaffolding project in slidev-rmarkdown-test ...\n  Done.\n\n✔ Install and start it now? … yes\n✔ Choose the agent › npm\n[ .................] / fetchMetadata: sill pacote version manifest for @nodelib/fs.scandir@2.1.5 fetched in 2883ms\nProject name will be the directory name of the new project, so choose a name that doesn’t exist yet.\nAfter finishing the installation, a web browser is launched and displays the template slides. These slides are generated from slides.md by a local Node.js server. slides.md is located in the top directory of the project created right now.\n❯ tree -L 1 slidev-rmarkdown-test\nslidev-rmarkdown-test\n|-- README.md\n|-- components\n|-- netlify.toml\n|-- node_modules\n|-- package-lock.json\n|-- package.json\n|-- slides.md\n`-- vercel.json\n\n2 directories, 6 files\nSo, what we should do next is obvious; let’s place slides.Rmd in the same directory so that we can render it to overwrite slides.md. The Node.js server detects the change on slides.md and regenerates slides from it on the fly.\nWe can stop the server with Ctrl+C on console. To launch again, execute this:\nnpm run dev"
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#choose-md_document",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#choose-md_document",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "Choose md_document",
-    "text": "Choose md_document\nFirst of all, the target we want to generate is a Markdown file, so let’s specify md_document as the output.\n---\n# R Markdown metadata\ntitle: R Markdown to Slidev\noutput:\n  md_document:\n    variant: \"markdown_github\"\n---"
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#preserve-yaml-front-matter",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#preserve-yaml-front-matter",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "Preserve YAML front-matter",
-    "text": "Preserve YAML front-matter\nWhat’s a bit tricky here is that Slidev also uses YAML front-matter for defining metadata. So, we need to put both items for R Markdown and those for Slidev together, and preserve it after rendering. Let’s specify preserve_yaml: true.\n---\n...\n  md_document:\n    variant: \"markdown_github\"\n    preserve_yaml: true\n---\nThen, put settings for Slidev. There might be some name collision between R Markdown and Slidev, but I don’t find it yet, fortunately. The full YAML would be like this:\n---\n# R Markdown metadata\ntitle: R Markdown to Slidev\noutput:\n  md_document:\n    variant: \"markdown_github\"\n    preserve_yaml: true\n\n# Slidev metadata\ntheme: seriph\nbackground: ./images/top.gif\nclass: 'text-center'\nhighlighter: shiki\ninfo: |\n  ## Use Slidev with R Markdown\n  \n  Source code can be found on &lt;https://github.com/yutannihilation/slidev-rmarkdown&gt;.\n---"
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#per-slide-yaml-front-matter",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#per-slide-yaml-front-matter",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "Per-slide YAML Front-matter",
-    "text": "Per-slide YAML Front-matter\nOne of the great things with Slidev is that it’s very customizable. Per-slide YAML Front-matter is a good example of this; for example, we can specify layout per slide like this (image is a specific parameter for image-right layout):\n---\nlayout: image-right\nimage: './images/image.png'\n---\nThis will generate a slide like this:\n\n\n\nslides\n\n\nBut, the problem is, R Markdown (or probably underlying Pandoc?) seems to allow only one YAML front-matter. So, if we simply write\n---\nlayout: image-right\nimage: './images/image.png'\n---\nit will just disappear, alas… What can we do??\nWell, we can use Pandoc’s raw attribute to bypass the unnecessary conversion.\n```{=html}\n---\nlayout: image-right\nimage: './images/image.png'\n---\n```"
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#setting-base-url",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#setting-base-url",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "Setting Base URL",
-    "text": "Setting Base URL\nThe base.url chunk option must be specified, otherwise the generated images will be broken. If the slides will be served on the root path (/), the setting should be like this:\n::: {.cell}\n\n```{.r .cell-code}\nknitr::opts_knit$set(base.url = \"/\")\n```\n:::\nFor another example, if the presentation is served under some path like /slides/presentation1, then the base.url should be like this:\n::: {.cell}\n\n```{.r .cell-code}\nknitr::opts_knit$set(base.url = \"/slides/presentation1/\")\n```\n:::"
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#add-blank-lines-between-custom-tags",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#add-blank-lines-between-custom-tags",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "Add blank lines between custom tags",
-    "text": "Add blank lines between custom tags\nSlidev provides some custome tags. For example, &lt;v-click&gt; is a tag to apply annimations (c.f. https://sli.dev/guide/animations.html). But, for unknown reason, this won’t work (I don’t find the reason yet, but I think something is happening in conversions by Pandoc):\n&lt;v-click&gt;\n* item1\n&lt;/v-click&gt;\n&lt;v-click&gt;\n* item2\n&lt;/v-click&gt;\nIt seems we need to insert blank lines between the tags.\n&lt;v-click&gt;\n\n* item1\n\n&lt;/v-click&gt;\n\n&lt;v-click&gt;\n\n* item2\n\n&lt;/v-click&gt;"
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#deploy-to-github-pages",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#deploy-to-github-pages",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "Deploy to GitHub Pages",
-    "text": "Deploy to GitHub Pages\nSlidev needs Node.js server to serve the slides, but it can also be exported as an standalone single-page application by the following command:\nnpm run build\nThe generated result goes to dist/, which can be deployed to GitHub Pages.\nSlidev also provides PDF export. For more details, please refer to the official document."
-  },
-  {
-    "objectID": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#limitations",
-    "href": "post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html#limitations",
-    "title": "Tips To Turn R Markdown Into Slidev Presentation",
-    "section": "Limitations",
-    "text": "Limitations\nWhile Slidev has many cool features, I doubt it can be an R package like revealjs or xaringan, as Slidev requires Node.js to build or run, which is not very portable. So, I’m not sure how useful this post is to R users, but hope you enjoy!"
-  },
-  {
-    "objectID": "post/2021-06-07-gghighlight-032/index.html",
-    "href": "post/2021-06-07-gghighlight-032/index.html",
-    "title": "gghighlight 0.3.2",
-    "section": "",
-    "text": "gghighlight 0.3.2 is on CRAN now!\nThis release is mainly for fixing the potential test failures with upcoming version of ggplot2, but this version contains two new features."
-  },
-  {
-    "objectID": "post/2021-06-07-gghighlight-032/index.html#n",
-    "href": "post/2021-06-07-gghighlight-032/index.html#n",
-    "title": "gghighlight 0.3.2",
-    "section": "n()",
-    "text": "n()\nSince gghighlight uses dplyr inside, you can now use dplyr’s expression, n(). This is useful to highlight based on the size of the group.\nSuppose we have this data:\n\nlibrary(gghighlight)\n\nLoading required package: ggplot2\n\nlibrary(dplyr, warn.conflicts = FALSE)\n\nset.seed(1098)\ncenters &lt;- tibble(\n  id = sample(letters, 11),\n  x = c(-1, -2, -3,   0,  1,  4,  2,  5,  7,  1, -1),\n  y = c( 4, -3, -7, -10, -8, -3,  9,  5, -1,  1, -1),\n  n = c(50, 50, 100, 50, 50, 120, 40, 10, 20, 5, 8)\n)\n\nd &lt;- centers %&gt;% \n  rowwise() %&gt;% \n  summarise(id = id, x = x + rnorm(n, sd = 3), y = y + rnorm(n, sd = 3))\n\np &lt;- ggplot(d, aes(x, y, colour = id)) + geom_point()\np\n\n\n\n\nBy using n(), we can focus on the large groups.\n\np +\n  gghighlight(n() &gt;= 100, use_direct_label = FALSE)\n\n\n\n\nOr small groups.\n\np +\n  gghighlight(n() &lt; 10, use_direct_label = FALSE)\n\n\n\n\nYou can also use n() as a non-logical predicate, whose values are used for sorting data and the top max_highlight of rows/groups are highlighted.\n\n# Same result as above\np +\n  gghighlight(-n(), max_highlight = 2, use_direct_label = FALSE)"
-  },
-  {
-    "objectID": "post/2021-06-07-gghighlight-032/index.html#to-unhighlight-or-not-to-unhighlight",
-    "href": "post/2021-06-07-gghighlight-032/index.html#to-unhighlight-or-not-to-unhighlight",
-    "title": "gghighlight 0.3.2",
-    "section": "To unhighlight or not to unhighlight…",
-    "text": "To unhighlight or not to unhighlight…\nBy default, unhighlighted data are grayed out. unhighlighted_params is the option to override this. Now, you can even choose not to unhighlight at all by specifying explicit NULL to colour or fill!\n\np +\n  gghighlight(n() &lt; 10, use_direct_label = FALSE,\n              unhighlighted_params = list(colour = NULL))\n\n\n\n\nHmm…, but this is the very same plot as the original one. How can this be useful? Well, remember we still can tweak other parameters like alpha.\n\np +\n  gghighlight(n() &lt; 10, use_direct_label = FALSE,\n              unhighlighted_params = list(colour = NULL, alpha = 0.2))\n\n\n\n\nThis plot doesn’t look very nice in that the colors are a bit difficult to distinguish. This is mainly because I didn’t come up with some nice data, but it’s generally a tough job to tweak colors by alpha properly, so I don’t recommend this much. But, hope you can find some good use case for this!"
-  },
-  {
-    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html",
-    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html",
-    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
-    "section": "",
-    "text": "extendr is a project that provides an interface between R and Rust. In the series of posts, I explained how to use extendr, but, this time, let me pick a complementary topic. The CI setup is important to develop a package and it’s not difficult to tweak the existing GitHub Actions (GHA) settings to compile Rust code. By using GHA, you can even provide precompiled binaries via GitHub releases."
-  },
-  {
-    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#setup-rust-toolchain",
-    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#setup-rust-toolchain",
-    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
-    "section": "Setup Rust toolchain",
-    "text": "Setup Rust toolchain\nA GitHub repository for R package development typically has such a YAML for testing:\nhttps://github.com/r-lib/actions/blob/master/examples/check-standard.yaml\nTo test a package using extendr, it’s as easy as to just add the steps to setup Rust toolchain. Note that the runners might already have Rust toolchain installed, but these steps ensure the intended toolchain is used.\n- name: Set up Rust\n  uses: actions-rs/toolchain@v1\n  with:\n    toolchain: stable\n    default: true\n\n- name: Additional Rust set up for Windows\n  if: runner.os == 'Windows'\n  run: |\n    rustup target add i686-pc-windows-gnu\n    rustup target add x86_64-pc-windows-gnu\nIf you want to run tests also on the nightly toolchain, you can include the channel in the build matrix like this1:\n- {os: windows-latest, r: 'release', rust: 'stable'}\n- {os: macOS-latest,   r: 'release', rust: 'stable'}\n- {os: ubuntu-20.04,   r: 'release', rust: 'stable',  rspm: \"...\"}\n- {os: ubuntu-20.04,   r: 'devel',   rust: 'stable',  rspm: \"...\"}\n- {os: ubuntu-20.04,   r: 'release', rust: 'nightly', rspm: \"...\"}\nand specify the channel in the actions-rs/toolchain@v1 step:\n- name: Set up Rust\n  uses: actions-rs/toolchain@v1\n  with:\n    toolchain: ${{ matrix.config.rust }}\n    default: true\nYou might need more setups depending on the crates you use, but basically that’s all you need to do."
-  },
-  {
-    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#provide-precompiled-binaries-for-windows",
-    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#provide-precompiled-binaries-for-windows",
-    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
-    "section": "Provide precompiled binaries for Windows",
-    "text": "Provide precompiled binaries for Windows\nAs you might have already noticed, the setup instruction for Windows is a bit complex compared to other OSes (i.e., Linux and macOS). So, it might be worth considering providing the precompiled static libraries, just like rwinlib does for many C++ libraries.\nOther motivation is that some of CRAN machines don’t have Rust toolchain. If the package author wants to submit their package to CRAN, such a mechanism is needed.\n(edit: it seems macOS is also the case, but I don’t find what’s the best way to solve this. I’ll probably write another post for this.)\nThere probably isn’t a single standard way to achieve this, but let me share what I did for my package, string2path here. YMMV, of course.\nI used softprops/action-gh-release action to publish the binaries as a GitHub release. The setting would be like this:\n# rename the binaries before uploading so that we can distinguish them easily.\n- name: Tweak staticlib\n  if: runner.os == 'Windows'\n  run: |\n    mv ./check/string2path.Rcheck/00_pkg_src/string2path/src-i386/rust/target/i686-pc-windows-gnu/release/libstring2path.a \\\n      i686-pc-windows-gnu-libstring2path.a\n    mv ./check/string2path.Rcheck/00_pkg_src/string2path/src-x64/rust/target/x86_64-pc-windows-gnu/release/libstring2path.a \\\n      x86_64-pc-windows-gnu-libstring2path.a\n\n- name: Release\n  uses: softprops/action-gh-release@v1\n  # only run this on a tag event\n  if: runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/')\n  with:\n    fail_on_unmatched_files: true\n    files: |\n      i686-pc-windows-gnu-libstring2path.a\n      x86_64-pc-windows-gnu-libstring2path.a\nWith this setup, you can publish the binaries by pushing tags. For example, let’s create windows_20210801-3 tag and push it.\ngit tag windows_20210801-3\ngit push origin windows_20210801-3\nThen, the GHA will publish the corresponding release like this:\n\nNext, tweak src/Makefile.win as follows to allow users to download the binaries when cargo is not available. There might be more nicer code to choose the latest release automatically, but I think it’s safe to specify a fixed tag name, though it’s a bit tiresome to update this manually every time you update Rust code.\n(edit: I found this violates the CRAN policy. A package is not allowed to write “anywhere else on the file system apart from the R session’s temporary directory. You need to set CARGO_HOME envvar to some temporary directory to avoid this.)\nCRATE = foo   # your crate name\nBASE_TAG = windows_20210801-3  # the tag you want to use\n\n# c.f. https://stackoverflow.com/a/34756868\n# Note that this assignment (`:=`) is not available on Solaris, so you need to\n# add \"GNU make\" to SystemRequirements field on DESCRIPTION, even though this\n# can never compile on Solaris anyway...\nCARGO_EXISTS := $(shell cargo --version 2&gt; /dev/null)\n\n# ..snip...\n\n$(STATLIB):\nifdef CARGO_EXISTS\n    cargo build --target=$(TARGET) --lib --release --manifest-path=./rust/Cargo.toml\nelse\n    mkdir -p $(LIBDIR)\n    curl -L -o $(STATLIB) https://github.com/yutannihilation/$(CRATE)/releases/download/$(BASE_TAG)/$(TARGET)-lib$(CRATE).a\nendif\nOne caveat is that this won’t work when cargo is installed but with the GNU toolchain (extendr requires the MSVC toolchain on Windows). I guess some friendlier check can be done in configure.win, but this post won’t look into the details."
-  },
-  {
-    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#other-topics-i-couldnt-cover",
-    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#other-topics-i-couldnt-cover",
-    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
-    "section": "Other topics I couldn’t cover",
-    "text": "Other topics I couldn’t cover\n\nsccache: Builds can be faster by using sccache, a ccache-like compiler caching tool for Rust. A blog post describes how to use this on GHA, but I don’t think I understand it to the extent where I can explain it here in clear words, sorry…\nHow to run tests on Rust’s side?: This post doesn’t explain how to run Rust tests (i.e., cargo test) or lints (i.e., cargo fmt, and cargo clippy). I even don’t figure out what tests should live in R or in Rust."
-  },
-  {
-    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#example",
-    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#example",
-    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
-    "section": "Example",
-    "text": "Example\nHere’s the real example of the settings on my repo:\nhttps://github.com/yutannihilation/string2path/blob/main/.github/workflows/check-pak.yaml"
-  },
-  {
-    "objectID": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#footnotes",
-    "href": "post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html#footnotes",
-    "title": "Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI",
-    "section": "Footnotes",
-    "text": "Footnotes\n\n\nOn Windows, you need to use 'stalble-msvc', not 'stable-gnu', but msvc should be the default so you can just specify 'stable'↩︎"
-  },
-  {
-    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html",
-    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html",
-    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
-    "section": "",
-    "text": "Recently, CRAN published a document titled “Using Rust in CRAN packages” and it refers to my R package, string2path, as an example of bundling all the source codes of the dependency Rust crates (I’m not sure if my name is still there at the point when you’re reading this). As I didn’t intend to develope the package as such a good example, let me explain about two possible pitfalls that you might not find easily just by reading the code.\nNote that, I don’t talk about the case that requires downloading here."
-  },
-  {
-    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#my-stance",
-    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html#my-stance",
-    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
-    "section": "My stance",
-    "text": "My stance\nFirst of all, while I’m hoping CRAN will success with Rust (so I sent some feedback about unclear points that everyone would wonder), I’d say, ultimately, CRAN is not a suitable place for using Rust. You should first consider R-universe to distribute your R pacakge using Rust. I believe R community needs a strong alternative to CRAN and R-univese can be. If you are interested in why I insist so, please read my blog post I wrote last year."
-  },
-  {
-    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#cargo-vendor",
-    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html#cargo-vendor",
-    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
-    "section": "cargo vendor",
-    "text": "cargo vendor\nBundling, or “vendoring,” all dependency crates for your package can be easily done by cargo vendor. More specifically,\n\nrun cargo vendor and\ncopy the configuration shown in the output of cargo vendor to .cargo/config.toml to use that vendored dependency\n\nYou can try adding --offline option to cargo build to check if the build really uses the vendored ones.\nWhile this mechanism is very simple, you can hit the following problems."
-  },
-  {
-    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#path-length-limit-on-windows",
-    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html#path-length-limit-on-windows",
-    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
-    "section": "Path length limit on Windows",
-    "text": "Path length limit on Windows\nVendored directories are so deep that you can easily hit with the path length limit on Windows. So, you probably cannot package the vendor directory as it is.\nThere can be some better solution, but I use tar command to avoid this failure; create a tar archive file and expand it in Makevars before cargo build. Here’s the command line that I actually use (ref):\n# c.f. https://reproducible-builds.org/docs/archives/\ntar \\\n  --sort=name \\\n  --mtime='1970-01-01 00:00:00Z' \\\n  --owner=0 \\\n  --group=0 \\\n  --numeric-owner \\\n  --xz \\\n  --create \\\n  --file=vendor.tar.xz \\\n  vendor\nAnother reason to use tar is that the size of these source codes. R package itself is compressed, but I found it’s more compact if I create another .xz file."
-  },
-  {
-    "objectID": "post/a-quick-note-about-how-to-bundle-rust/index.html#r-cmd-check-considers-.cargo-as-a-hidden-directory",
-    "href": "post/a-quick-note-about-how-to-bundle-rust/index.html#r-cmd-check-considers-.cargo-as-a-hidden-directory",
-    "title": "A Quick Note About How To Bundle Rust Crates For An R Package",
-    "section": "R CMD check considers .cargo as a “hidden directory”",
-    "text": "R CMD check considers .cargo as a “hidden directory”\nAs I described above, you have to configure .cargo/config.toml to use the vendored sources. But, if you include it naively, you’ll see this NOTE on R CMD check because .cargo starts with .:\nFound the following hidden files and directories\nSo, you have to include .cargo/config.toml as a different name, and put it to the right place before cargo build. I do this like this (the file is named cargo_vendor_config.toml):\n    # vendoring (Note: to avoid NOTE of \"Found the following hidden files and\n    # directories\", .cargo needs to be created here)\n    if [ \"$(VENDORING)\" = \"yes\" ]; then \\\n        $(TAR) --extract --xz -f ./rust/vendor.tar.xz -C ./rust && \\\n        mkdir -p ./rust/.cargo && \\\n        cp ./cargo_vendor_config.toml ./rust/.cargo/config.toml; \\\n    fi\n\n    @BEFORE_CARGO_BUILD@ cd ./rust && cargo build --target=$(TARGET) --lib --release --offline\nThe full Makevars can be found here."
-  },
-  {
-    "objectID": "post/a-tip-to-debug-ggplot2/index.html",
-    "href": "post/a-tip-to-debug-ggplot2/index.html",
-    "title": "A Tip to Debug ggplot2",
-    "section": "",
-    "text": "Since the tidyverse developer day is near, I share my very very secret technique to debug ggplot2. Though this is a very small thing, hope this helps someone a bit."
-  },
-  {
-    "objectID": "post/a-tip-to-debug-ggplot2/index.html#ggplot2-is-unbreakable",
-    "href": "post/a-tip-to-debug-ggplot2/index.html#ggplot2-is-unbreakable",
-    "title": "A Tip to Debug ggplot2",
-    "section": "ggplot2 is unbreakable!",
-    "text": "ggplot2 is unbreakable!\nYou might want to debug() the methods of Geoms or Stats.\ndebug(GeomPoint$draw_panel)\nBut, this is not effective because the geom_point() generates different instances, so their draw_panel are all different objects (c.f. R6 classes have debug method for this). (edit: @BrodieGaslamtold me I’m wrong. The reason we can’t do debug(GeomPoint$draw_panel) s because $ is overridden and debug(get(\"draw_panel\", GeomPoint)) definitely works.)\nThen what about RStudio’s nice breakpoint features?\n\nUsually, this is enough. But, ggplot2’s ggprotos are not the case. You cannot use breakpoints to dig into them.\n\nHmm… But, no, you don’t need to scratch your head. The solution is pretty simple."
-  },
-  {
-    "objectID": "post/a-tip-to-debug-ggplot2/index.html#use-browser",
-    "href": "post/a-tip-to-debug-ggplot2/index.html#use-browser",
-    "title": "A Tip to Debug ggplot2",
-    "section": "Use browser()",
-    "text": "Use browser()\nYou just need to\n\nadd browser() on the line where you want to debug, and\nload all (Cmd+Shift+L for Mac, Ctrl+Shift+L for Windows, and C-c C-w l for Emacs/ESS).\n\n\nThen, you’ll be on debug mode at last!"
-  },
-  {
-    "objectID": "post/a-tip-to-debug-ggplot2/index.html#ymmv",
-    "href": "post/a-tip-to-debug-ggplot2/index.html#ymmv",
-    "title": "A Tip to Debug ggplot2",
-    "section": "YMMV",
-    "text": "YMMV\nThat’s all for this posts. But, I guess there are many alternative ways to achieve this, and I’m almost sure, at the end of the developer day, I will feel shame to have published this post, which just describes my debug skill is so poor… I’m really looking forward to learning from others. See you there!"
+    "objectID": "post/dont-panic-we-can-unwind/index.html#implementation",
+    "href": "post/dont-panic-we-can-unwind/index.html#implementation",
+    "title": "Don’t panic!, We Can Unwind On Rust",
+    "section": "Implementation",
+    "text": "Implementation\n\nC function to be called from Rust\nFirst, write a wrapper function of R_UnwindProtect(). The most of the code is derived from cpp11, so you can read cpp11 for the details.\n#include &lt;setjmp.h&gt;\n#include &lt;stdint.h&gt;\n\n#include &lt;Rinternals.h&gt;\n\nvoid not_so_long_jump(void *jmpbuf, Rboolean jump) {\n    if (jump == TRUE) {\n        longjmp(*(jmp_buf *)jmpbuf, 1);\n    }\n}\n\nSEXP unwind_protect_impl(SEXP (*fun)(void *data), void *data) {\n    SEXP token = R_MakeUnwindCont();\n    R_PreserveObject(token);\n\n    jmp_buf jmpbuf;\n    if (setjmp(jmpbuf)) {\n        // Tag the pointer\n        return (SEXP)((uintptr_t)token | 1);\n    }\n\n    SEXP res = R_UnwindProtect(fun, data, not_so_long_jump, &jmpbuf, token);\n\n    // Note: cpp11 says we need SETCAR(token, R_NilValue) here, but \n    // let's ignore it for now for simplicity.\n\n    return res;\n}\n\nbuild.rs\nThis C function needs to be compiled before the Rust code compiles because it’s needed at the linking stage. We can use cc crate to compile it in the build script like this:\nuse std::path::Path;\n\nfn main() {\n    let r_include_dir =\n        std::env::var(\"R_INCLUDE_DIR\").expect(\"R_INCLUDE_DIR envvar must be provided.\");\n\n    cc::Build::new()\n        .file(\"src/unwind_protect_wrapper.c\")\n        .include(Path::new(&r_include_dir))\n        .compile(\"unwind_protect\");\n\n    println!(\"cargo:rerun-if-changed=src/unwind_protect_wrapper.c\");\n}\n\n\nTagged pointer\nYou might wonder what | 1 does. This is a trick called “tagged pointer”, using a few of the least significant bits to store additional information. This time, the implementation uses the lowest bit as an error flag. tagged pointer: https://en.wikipedia.org/wiki/Tagged_pointer\nOf course, tagged pointer is not the only answer. For example, you can probably define a struct or enum to share the definition between Rust and C. But, I use tagged SEXP because it’s simpler in the sense it doesn’t require additional allocation.\nAlso note that I could just return Result here and create the tagged SEXP later. It’s just a matter of preferences.\n\n\n\nExtern function definiton on Rust’s side\nTo let Rust call the function, we need an extern \"C\" function definiton on Rust’s side. Note that I’m not sure why the signature is this complex, but I just use the result of bindgen as it is.\nuse libR_sys::SEXP;\n\nextern \"C\" {\n    fn unwind_protect_impl(\n        fun: ::std::option::Option&lt;unsafe extern \"C\" fn(data: *mut ::std::os::raw::c_void) -&gt; SEXP&gt;,\n        data: *mut ::std::os::raw::c_void,\n    ) -&gt; SEXP;\n}\n\n\nRust function to call the C function\nTo actually call the above function from Rust code, we need an implementation like below to call unwind_protect(|| ...). This code is derived from extendr’s catch_r_error().\nuse libR_sys::SEXP;\n\n#[derive(Debug)]\npub enum Error {\n    UnexpectedType(String),\n    Aborted(SEXP),\n    Unknown,\n}\n\npub type Result&lt;T&gt; = std::result::Result&lt;T, Error&gt;;\n\npub unsafe fn unwind_protect&lt;F&gt;(f: F) -&gt; Result&lt;SEXP&gt;\nwhere\n    F: FnOnce() -&gt; SEXP + Copy,\n{\n    unsafe extern \"C\" fn do_call&lt;F&gt;(data: *mut std::os::raw::c_void) -&gt; SEXP\n    where\n        F: FnOnce() -&gt; SEXP + Copy,\n    {\n        let data = data as *const ();\n        let f: &F = &*(data as *const F);\n        f()\n    }\n\n    let fun_ptr = do_call::&lt;F&gt; as *const ();\n    let fun = std::mem::transmute(fun_ptr);\n    let data = std::mem::transmute(&f as *const F);\n    let res: SEXP = unwind_protect_impl(fun, data);\n\n    if (res as usize & 1) == 1 {\n        return Err(Error::Aborted(res));\n    }\n\n    Ok(res)\n}\n\n\nRust function to handle the result\nI use this function to handle various types of errors. But, in this post, we only need to handle Aborted error, so this might be a bit overkill. Anyway, the important point is that we must return the same type of result (in this case, SEXP) to C’s side. Even when the actual function doesn’t have any return values, we have to return some value like the one filled with R_NilValue.\nThis is because the final error handling (e.g., raising an error by Rf_error(), and resuming the aborted unwinding by R_ContinueUnwind()) is done on C’s side in this design. No return value means there’s no way to know whether calling the Rust function succeeded or not.\npub fn handle_result(result: Result&lt;SEXP&gt;) -&gt; SEXP {\n    match result {\n        Ok(res) =&gt; res,\n\n        Err(e) =&gt; match e {\n            // The token is already tagged, so pass it as it is.\n            Error::Aborted(token) =&gt; token,\n\n            // In other cases, return the error string with the tag\n            e =&gt; unsafe {\n                let msg = e.to_string();\n                let r_error = Rf_mkCharLenCE(\n                    msg.as_ptr() as *const i8,\n                    msg.len() as i32,\n                    cetype_t_CE_UTF8,\n                );\n\n                // set the error flag\n                (r_error as usize | 1) as SEXP\n            },\n        },\n    }\n}\n\n\nC function to handle the result\nLet’s look at the C’s side then. Again, as I described above, I use a tagged SEXP to indicate the error, but you can use any data structure. The point here is that a wrapper function like this must be implemented to handle unwinding. To handle errors from Rust code, you can raise an error in the R wrapper function instead of C. But, R_ContinueUnwind() cannot be called from R code, so this has to be done at C-level.\nstatic uintptr_t TAGGED_POINTER_MASK = (uintptr_t)1;\n\nSEXP handle_result(SEXP res_) {\n    uintptr_t res = (uintptr_t)res_;\n\n    // An error is indicated by tag.\n    if ((res & TAGGED_POINTER_MASK) == 1) {\n        // Remove tag\n        SEXP res_aligned = (SEXP)(res & ~TAGGED_POINTER_MASK);\n\n        // Currently, there are two types of error cases:\n        //\n        //   1. Error from Rust code\n        //   2. Error from R's C API, which is caught by R_UnwindProtect()\n        //\n        if (TYPEOF(res_aligned) == CHARSXP) {\n            // In case 1, the result is an error message that can be passed to\n            // Rf_error() directly.\n            Rf_error(\"%s\", CHAR(res_aligned));\n        } else {\n            // In case 2, the result is the token to restart the\n            // cleanup process on R's side.\n            R_ContinueUnwind(res_aligned);\n        }\n    }\n\n    return (SEXP)res;\n}\n\n\nExample implementation\nAn example implementation can be found here:\nhttps://github.com/yutannihilation/unextendr"
   },
   {
     "objectID": "post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html",
@@ -788,7 +816,7 @@
     "href": "post/r-rust-protect-and-unwinding/index.html#unwinding-and-longjmp",
     "title": "R, Rust, Protect, And Unwinding",
     "section": "Unwinding and longjmp",
-    "text": "Unwinding and longjmp\nWhat is unwinding? Honestly, I’m not confident what exactly this term refers to, but it seems it’s a cleanup process when some exception happens. For example, Wikipedia says:\n\nReturning from the called function will pop the top frame off the stack, perhaps leaving a return value. The more general act of popping one or more frames off the stack to resume execution elsewhere in the program is called stack unwinding and must be performed when non-local control structures are used, such as those used for exception handling.\n\nUsually, this explanation should be satisfying. But, as I’m talking about Rust, things are a bit more complicated. “non-local control structures” means panic!() to Rust, which we don’t try to catch in usual cases. Yes…, this is the core of the problem I’m writing. Let’s revisit later.\n\nDifferent languages have different unwinding mechanism\nLet’s forget about Rust. Suppose we want to use C++.\nC++ and Rust are the same in that it has difficulty to handle longjmp. C++’s class has destructor, which is called when the object is deleted. So, in theory, a C++ class of a wrapper of an R object can manage the protection with including the unprotecting operation in its destructor.\nHowever, the problem is that, the destructor can be called only in C++’s exception handling. If some R error, which is implemented using longjmp, happens on calling R’s C APIs, the destructor is not called. More details can be found the following blog post by the R core member:\nUse of C++ in Packages - The R Blog\n\nUnfortunately, RAII does not work with setjmp/longjmp functions provided by the C runtime for exception handling.\n\n\n\nR_UnwindProtect()\nFortunately, R’s C API provides a function for this, R_UnwindProtect(). This is something like tryCatch() at the C-level. The signature is:\nSEXP R_UnwindProtect(SEXP (*fun)(void *data), void *data,\n                     void (*clean)(void *data, Rboolean jump), void *cdata,\n                     SEXP cont);\nBasically, this is to wrap fun(data). If a longjmp error happens during the execution of fun(data), clean(cdata, TRUE) will be called before actually doing longjmp.\nIn the C++’s case, it is intended to throw C++ exception in clean() to let C++’s stack unwinding happen first. Then, R_ContinueUnwind(cont) can be used for moving back to C’s (or R’s) exception handling. cont is an R object created by R_MakeUnwindCont().\nFor a real example, cpp11’s implemntation is (code):\n  static SEXP token = [] {\n    SEXP res = R_MakeUnwindCont();\n    R_PreserveObject(res);\n    return res;\n  }();\n\n  std::jmp_buf jmpbuf;\n  if (setjmp(jmpbuf)) {\n    should_unwind_protect = TRUE;\n    throw unwind_exception(token);\n  }\n\n  SEXP res = R_UnwindProtect(\n      [](void* data) -&gt; SEXP {\n        auto callback = static_cast&lt;decltype(&code)&gt;(data);\n        return static_cast&lt;Fun&&&gt;(*callback)();\n      },\n      &code,\n      [](void* jmpbuf, Rboolean jump) {\n        if (jump == TRUE) {\n          // We need to first jump back into the C++ stacks because you can't safely\n          // throw exceptions from C stack frames.\n          longjmp(*static_cast&lt;std::jmp_buf*&gt;(jmpbuf), 1);\n        }\n      },\n      &jmpbuf, token);\nNote that this is a bit more complex than what WRE describes. As the comment says, this first jumps into the C++ stack by longjmp(), and throws the C++ exception there (the if branch with setjmp()). The error is caught by a try-catch block like this (a simplefied version of this original code):\nSEXP err = R_NilValue\ntry {\n\n  // ...snip...\n\n}\ncatch (cpp11::unwind_exception & e) {\n  err = e.token\n  R_ContinueUnwind(err);\n}\n\n\nSo, what about Rust?\nOkay, let’s come back to Rust. Rust also has destructor (i.e., Drop trait), so we’ll face the same problem. Can we survive with the same approach as C++?\nYes and no. Rust has a kind of try-catch, std::panic::catch_unwind() while its document says:\n\nIt is not recommended to use this function for a general try/catch mechanism.\n\nSo…, it’s kind of possible. Actually, extendr uses catch_unwind() (code). In the code below, the cleanup function do_cleanup() calls panic!(), which is caught by catch_unwind().\npub fn catch_r_error&lt;F&gt;(f: F) -&gt; Result&lt;SEXP&gt;\nwhere\n    F: FnOnce() -&gt; SEXP + Copy,\n    F: std::panic::UnwindSafe,\n{\n    // ...snip...\n\n    unsafe extern \"C\" fn do_cleanup(_: *mut raw::c_void, jump: Rboolean) {\n        if jump != 0 {\n            panic!(\"R has thrown an error.\");\n        }\n    }\n\n    unsafe {\n        let fun_ptr = do_call::&lt;F&gt; as *const ();\n        let clean_ptr = do_cleanup as *const ();\n        let x = false;\n        let fun = std::mem::transmute(fun_ptr);\n        let cleanfun = std::mem::transmute(clean_ptr);\n        let data = std::mem::transmute(&f);\n        let cleandata = std::mem::transmute(&x);\n        let cont = R_MakeUnwindCont();\n        Rf_protect(cont);\n\n        // Note that catch_unwind does not work for 32 bit windows targets.\n        let res = match std::panic::catch_unwind(|| {\n            R_UnwindProtect(fun, data, cleanfun, cleandata, cont)\n        }) {\n            Ok(res) =&gt; Ok(res),\n            Err(_) =&gt; Err(\"Error in protected R code\".into()),\n        };\n        Rf_unprotect(1);\n        res\n    }\n}\nIn general, panic!() should be avoided when the Rust function is called over FFI. panic!() causes unwinding, and cross-language unwinding is considered as undefined behavior (cf., Rust “ffi-unwind” project - FAQ).\nHowever, the problem is, we have to jump. We must escape from the cleanup function. Otherwise, R_ContinueUnwind(cont) will be called (code) automatically.\n    cleanfun(cleandata, jump);\n\n    if (jump)\n        R_ContinueUnwind(cont); \nRust doesn’t have longjmp / setjmp (rust-lang/rfcs#2625), so the last resort is panic!(). While we know it’s not good, there’s no option left as far as I know.\nI’m honestly not sure the current extendr’s implementation is really safe, but it seems we anyway need a similar implementation to get things work. (However, I think it’s probably a mistake that it doesn’t call R_ContinueUnwind(cont) to resume the unwinding process on C’s side.)"
+    "text": "Unwinding and longjmp\nWhat is unwinding? Honestly, I’m not confident what exactly this term refers to, but it seems it’s a cleanup process when some exception happens. For example, Wikipedia says:\n\nReturning from the called function will pop the top frame off the stack, perhaps leaving a return value. The more general act of popping one or more frames off the stack to resume execution elsewhere in the program is called stack unwinding and must be performed when non-local control structures are used, such as those used for exception handling.\n\nUsually, this explanation should be satisfying. But, as I’m talking about Rust, things are a bit more complicated. “non-local control structures” means panic!() to Rust, which we don’t try to catch in usual cases. Yes…, this is the core of the problem I’m writing. Let’s revisit later.\n\nDifferent languages have different unwinding mechanism\nLet’s forget about Rust. Suppose we want to use C++.\nC++ and Rust are the same in that it has difficulty to handle longjmp. C++’s class has destructor, which is called when the object is deleted. So, in theory, a C++ class of a wrapper of an R object can manage the protection with including the unprotecting operation in its destructor.\nHowever, the problem is that, the destructor can be called only in C++’s exception handling. If some R error, which is implemented using longjmp, happens on calling R’s C APIs, the destructor is not called. More details can be found the following blog post by the R core member:\nUse of C++ in Packages - The R Blog\n\nUnfortunately, RAII does not work with setjmp/longjmp functions provided by the C runtime for exception handling.\n\n\n\nR_UnwindProtect()\nFortunately, R’s C API provides a function for this, R_UnwindProtect(). This is something like tryCatch() at the C-level. The signature is:\nSEXP R_UnwindProtect(SEXP (*fun)(void *data), void *data,\n                     void (*clean)(void *data, Rboolean jump), void *cdata,\n                     SEXP cont);\nBasically, this is to wrap fun(data). If a longjmp error happens during the execution of fun(data), clean(cdata, TRUE) will be called before actually doing longjmp.\nIn the C++’s case, it is intended to throw C++ exception in clean() to let C++’s stack unwinding happen first. Then, R_ContinueUnwind(cont) can be used for moving back to C’s (or R’s) exception handling. cont is an R object created by R_MakeUnwindCont().\nFor a real example, cpp11’s implemntation is (code):\n  static SEXP token = [] {\n    SEXP res = R_MakeUnwindCont();\n    R_PreserveObject(res);\n    return res;\n  }();\n\n  std::jmp_buf jmpbuf;\n  if (setjmp(jmpbuf)) {\n    should_unwind_protect = TRUE;\n    throw unwind_exception(token);\n  }\n\n  SEXP res = R_UnwindProtect(\n      [](void* data) -&gt; SEXP {\n        auto callback = static_cast&lt;decltype(&code)&gt;(data);\n        return static_cast&lt;Fun&&&gt;(*callback)();\n      },\n      &code,\n      [](void* jmpbuf, Rboolean jump) {\n        if (jump == TRUE) {\n          // We need to first jump back into the C++ stacks because you can't safely\n          // throw exceptions from C stack frames.\n          longjmp(*static_cast&lt;std::jmp_buf*&gt;(jmpbuf), 1);\n        }\n      },\n      &jmpbuf, token);\nNote that this is a bit more complex than what WRE describes. As the comment says, this first jumps into the C++ stack by longjmp(), and throws the C++ exception there (the if branch with setjmp()). The error is caught by a try-catch block like this (a simplefied version of this original code):\nSEXP err = R_NilValue\ntry {\n\n  // ...snip...\n\n}\ncatch (cpp11::unwind_exception & e) {\n  err = e.token\n  R_ContinueUnwind(err);\n}\n\n\nSo, what about Rust?\nOkay, let’s come back to Rust. Rust also has destructor (i.e., Drop trait), so we’ll face the same problem. Can we survive with the same approach as C++?\nYes and no. Rust has a kind of try-catch, std::panic::catch_unwind() while its document says:\n\nIt is not recommended to use this function for a general try/catch mechanism.\n\nSo…, it’s kind of possible. Actually, extendr uses catch_unwind() (code). In the code below, the cleanup function do_cleanup() calls panic!(), which is caught by catch_unwind().\npub fn catch_r_error&lt;F&gt;(f: F) -&gt; Result&lt;SEXP&gt;\nwhere\n    F: FnOnce() -&gt; SEXP + Copy,\n    F: std::panic::UnwindSafe,\n{\n    // ...snip...\n\n    unsafe extern \"C\" fn do_cleanup(_: *mut raw::c_void, jump: Rboolean) {\n        if jump != 0 {\n            panic!(\"R has thrown an error.\");\n        }\n    }\n\n    unsafe {\n        let fun_ptr = do_call::&lt;F&gt; as *const ();\n        let clean_ptr = do_cleanup as *const ();\n        let x = false;\n        let fun = std::mem::transmute(fun_ptr);\n        let cleanfun = std::mem::transmute(clean_ptr);\n        let data = std::mem::transmute(&f);\n        let cleandata = std::mem::transmute(&x);\n        let cont = R_MakeUnwindCont();\n        Rf_protect(cont);\n\n        // Note that catch_unwind does not work for 32 bit windows targets.\n        let res = match std::panic::catch_unwind(|| {\n            R_UnwindProtect(fun, data, cleanfun, cleandata, cont)\n        }) {\n            Ok(res) =&gt; Ok(res),\n            Err(_) =&gt; Err(\"Error in protected R code\".into()),\n        };\n        Rf_unprotect(1);\n        res\n    }\n}\nIn general, panic!() should be avoided when the Rust function is called over FFI. panic!() causes unwinding, and cross-language unwinding is considered as undefined behavior (cf., Rust “ffi-unwind” project - FAQ).\nHowever, the problem is, we have to jump. We must escape from the cleanup function. Otherwise, R_ContinueUnwind(cont) will be called (code) automatically.\n    cleanfun(cleandata, jump);\n\n    if (jump)\n        R_ContinueUnwind(cont); \nRust doesn’t have longjmp / setjmp (rust-lang/rfcs#2625), so the last resort is panic!(). While we know it’s not good, there’s no option left as far as I know.\n(Update: I found I was wrong. We can get rid of panic!())\nI’m honestly not sure the current extendr’s implementation is really safe, but it seems we anyway need a similar implementation to get things work. (However, I think it’s probably a mistake that it doesn’t call R_ContinueUnwind(cont) to resume the unwinding process on C’s side.)"
   },
   {
     "objectID": "post/r-rust-protect-and-unwinding/index.html#my-take",

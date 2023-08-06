@@ -379,6 +379,8 @@ as I know.
 
 [rfc]: https://github.com/rust-lang/rfcs/issues/2625
 
+**(Update: [I found I was wrong. We can get rid of `panic!()`](https://yutani.rbind.io/post/dont-panic-we-can-unwind/))**
+
 I'm honestly not sure the current extendr's implementation is really safe, but
 it seems we anyway need a similar implementation to get things work. (However, I
 think it's probably a mistake that it doesn't call `R_ContinueUnwind(cont)` to

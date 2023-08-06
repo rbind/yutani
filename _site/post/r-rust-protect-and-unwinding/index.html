@@ -425,6 +425,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>jump<span class="op">)</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        R_ContinueUnwind<span class="op">(</span>cont<span class="op">);</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Rust doesn’t have <code>longjmp</code> / <code>setjmp</code> (<a href="https://github.com/rust-lang/rfcs/issues/2625">rust-lang/rfcs#2625</a>), so the last resort is <code>panic!()</code>. While we know it’s not good, there’s no option left as far as I know.</p>
+<p><strong>(Update: <a href="https://yutani.rbind.io/post/dont-panic-we-can-unwind/">I found I was wrong. We can get rid of <code>panic!()</code></a>)</strong></p>
 <p>I’m honestly not sure the current extendr’s implementation is really safe, but it seems we anyway need a similar implementation to get things work. (However, I think it’s probably a mistake that it doesn’t call <code>R_ContinueUnwind(cont)</code> to resume the unwinding process on C’s side.)</p>
 </section>
 </section>
