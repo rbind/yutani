@@ -1,0 +1,155 @@
+---
+title: "Introduction of Savvy, (Not Really) an Alternative to Extendr: Part 1"
+author: "Hiroaki Yutani"
+date: "2023-09-17"
+categories: ["Rust", "savvy", "extendr"]
+editor: visual
+---
+
+For this half a year, I've been working on re-inventing the wheel of extendr. Now, I'm happy to announce it reached a usable state at last\!🎉
+
+<https://github.com/yutannihilation/savvy/>
+
+But, wait, I'm not writing this blog post to advertise my framework, savvy. ***This is not really an alternative to extendr, but just an explanatory material about the current and possible mechanism of extendr.*** Since extendr is so feature-rich that I cannot figure out the whole picture, I seriously needed a simple one to experiment.
+
+## What's "savvy"?
+
+As you can guess from above, you can consider savvy as something like a degraded copy of extendr. It's inconvenient and unfriendly. The name "savvy" comes from the fact that the pronunciation is similar to a Japanese word "錆," which means "rust". The name fits also because this is intended to be used by R-API-savvy people.
+
+## "Part 1"?
+
+While I added "part 1" in the title of this post, I'm not sure if there will be part 2 and so on. But, there are at least three topics I wanted to experiment with savvy:
+
+1.  Error handling
+2.  External SEXP and owned SEXP
+3.  No embedded usage
+
+First one is already covered in the previous posts, so I have little to add. One small update is that savvy now has CLI to generate C and R code automatically. I might write about it in future.
+
+-   [R, Rust, Protect, And Unwinding](https://yutani.rbind.io/post/r-rust-protect-and-unwinding/)
+
+-   [Don't `panic!`, We Can Unwind On Rust](https://yutani.rbind.io/post/dont-panic-we-can-unwind/)
+
+Third one is a boring topic to the ordinary users, and I don't find a solution to the inconvenience it brings yet. So let's skip it for now. If you are interested, you can join [the discussion](https://github.com/extendr/extendr/issues/583).
+
+So, let's focus on the second topic today.
+
+## External SEXP and owned SEXP
+
+The below functions are both identity function for a character vector.
+
+### extendr version
+
+``` rust
+#[extendr]
+fn identity_string(x: Vec<String>) -> Vec<String> {
+    x
+}
+```
+
+### savvy version
+
+``` rust
+#[savvy]
+fn identity_string(x: StringSxp) -> Result<SEXP> {
+    let mut out = OwnedStringSxp::new(x.len());
+
+    for (i, e) in x.iter().enumerate() {
+        out.set_elt(i, e);
+    }
+
+    Ok(out.into())
+}
+```
+
+As you see, the savvy version is more redundant and esoteric. There are two types for wrapping a character vector in the code. The difference is:
+
+-   `StringSxp` : a read-only SEXP wrapper for objects passed to the function from outside.
+
+-   `OwnedStringSxp` a writable SEXP wrapper for objects created on Rust's side.
+
+But, why do they need separate types? I have two main reasons. Let me explain one by one.
+
+## Reason 1: Avoid unnecessary protection
+
+I explained the basic concept of R's protection mechanism in [R, Rust, Protect, And Unwinding](https://yutani.rbind.io/post/r-rust-protect-and-unwinding/). So, if you are not familiar with these, it might be better to read it first.
+
+Yeah, protection is important. But, we don't need to protect what's already protected. Actually, [WRE](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Garbage-Collection) says:
+
+> For functions from packages as well as R to safely co-operate in protecting objects, certain rules have to be followed:
+>
+> -   Caller protection. It is the responsibility of the caller that all arguments passed to a function are protected and will stay protected for the whole execution of the callee. (...snip...)
+>
+> -   Protecting return values. Any R objects returned from a function are unprotected (the callee must maintain pointer-protection balance), and hence should be protected immediately by the caller. (...snip...)
+>
+> (...snip...)
+
+So, this means,
+
+-   R objects passed from the caller should be already protected because it's the caller's responsibility. Actually, if the input comes from the R session, the R objects are what belongs to some environment (e.g., global environment), which manes it never gets GCed accidentally.
+
+-   On the other hand, R objects returned from R API functions like `Rf_allocVector()` are unprotected. It's us who have to protect.
+
+If we protect, we have to unprotect later. Since the object might outlive the Rust function call, unprotection is typically done in `Drop` trait like this. If we want to enable this destructor only on the R objects that we protected, i.e. the "owned" version, we need a separate type for each.
+
+``` rust
+impl Drop for OwnedStringSxp {
+    fn drop(&mut self) {
+        protect::release_from_preserved_list(self.token);
+    }
+}
+```
+
+## Reason 2: Avoid unnecessary ALTREP checks
+
+For `INTSXP` and `REALSXP`, we might be able to skip calling `INTEGER_ELT()` and `REAL_ELT()` by accessing the underlying C array of `int` (`i32`) or `double` (`f64`) directly. But, it's not always the case that the `SEXP` has the underlying C array; it can be ALTREP. So, we typically need `if` branches for `ALTREP` case and other cases. For example, [cpp11's code](https://github.com/r-lib/cpp11/blob/main/inst/include/cpp11/integers.hpp):
+
+``` cpp
+  return is_altrep_ ? INTEGER_ELT(data_, pos) : data_p_[pos];
+```
+
+``` cpp
+  if (is_altrep_) {
+    SET_INTEGER_ELT(data_, length_, value);
+  } else {
+    data_p_[length_] = value;
+  }
+```
+
+But, if the object is created by calling `Rf_allocVector()` by ourselves, it's probably reasonable to assume it's not `ALTREP` (I'm not sure if it's guaranteed that `Rf_allocVector()` does and will always return non-ALTREP `SEXP`, though. Use this at your own risk!). Under the assumption, I can write a bit simpler code like this:
+
+``` rust
+impl OwnedRealSxp {
+    pub fn new(len: usize) -> Self {
+        let inner = unsafe { Rf_allocVector(REALSXP, len as _) };
+        let token = protect::insert_to_preserved_list(inner);
+        
+        // store the raw pointer
+        let raw = unsafe { REAL(inner) };
+
+
+        Self {
+            inner,
+            token,
+            len,
+            raw,
+        }
+    }
+    
+    pub fn elt(&mut self, i: usize) -> f64 {
+        unsafe { *(self.raw.add(index)) }
+    }
+
+    pub fn set_elt(&mut self, i: usize, v: f64) {
+        unsafe { (self.raw.add(index)) = v }
+    }
+}
+```
+
+That said, if such a variable like `is_altrep_` is stored on creation, it's probably not very costly to check it every time. Also, this only matters on `INTSXP` and `REALSXP` (the internal representation of `LGLSXP` is int, not bool. `STRSXP` is a vector of `CHARSXP`). So, my direction might not be very clever. I'm yet to figure out.
+
+## Caveats
+
+At the moment, I'm not sure whether this approach is better or worse than the current extendr's implementation. Also, even if it's confirmed as good, I have no idea how these ideas can be applied to extendr. Especially, I'm feeling this design works in exchange for allowing users to access raw SEXPs. At least, this requires users decent amount of knowledge about R's C API (e.g., the protection mechanism). I'm afraid only "savvy" people can know how to use this.
+
+I'll keep experimenting for a while and try to write more blog posts like this. I already ported my R package [string2path](https://github.com/yutannihilation/string2path/) from extendr to savvy. Please stay tuned.
