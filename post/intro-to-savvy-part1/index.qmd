@@ -6,7 +6,7 @@ categories: ["Rust", "savvy", "extendr"]
 editor: visual
 ---
 
-For this half a year, I've been working on re-inventing the wheel of extendr. Now, I'm happy to announce it reached a usable state at last\!🎉
+For this half a year, I've been working on re-inventing the wheel of extendr. Now, I'm happy to announce it reached a usable state at last!🎉
 
 <https://github.com/yutannihilation/savvy/>
 
@@ -127,7 +127,6 @@ impl OwnedRealSxp {
         // store the raw pointer
         let raw = unsafe { REAL(inner) };
 
-
         Self {
             inner,
             token,
@@ -147,6 +146,16 @@ impl OwnedRealSxp {
 ```
 
 That said, if such a variable like `is_altrep_` is stored on creation, it's probably not very costly to check it every time. Also, this only matters on `INTSXP` and `REALSXP` (the internal representation of `LGLSXP` is int, not bool. `STRSXP` is a vector of `CHARSXP`). So, my direction might not be very clever. I'm yet to figure out.
+
+## {cpp11}'s `writable`
+
+This design is very much inspired by the concept of [cpp11's `writable`](https://cpp11.r-lib.org/articles/cpp11.html#vector-input-vector-output). You know, unlike C/C++, Rust's variable is immutable by default. So, we don't need a separate type to represent the difference of mutability. Actually, extendr treats input as immutable without a separate type. But, above reasons, especially the first one, are still true .
+
+One notable difference from cpp11's `writable` is that a savvy vector doesn't have the [copy-on-write](https://cpp11.r-lib.org/articles/cpp11.html#vector-input-vector-output) semantics (i.e., cannot be used for a function argument). This mainly is because `=` is not what you can overload in Rust. Here's the list of overloadable operators. As you can see, there are traits like `AddAssign` and `BitOrAssign`, but no `Assign` or `IndexAssign`.
+
+<https://doc.rust-lang.org/std/ops/index.html#traits>
+
+But, even if it were possible, I would avoid copy-on-write. I should avoid hidden memory allocation because allocation requires extreme carefulness during handling R objects in Rust.
 
 ## Caveats
 

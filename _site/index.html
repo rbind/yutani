@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.5.47">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -48,7 +48,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -57,6 +63,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -92,51 +99,76 @@ ul.task-list li input[type="checkbox"] {
   })
   </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 <meta name="twitter:title" content="Wannabe Rstats-fu">
-<meta name="twitter:image" content="https://yutani.rbind.io/post/2021-06-07-gghighlight-032/thumbnail.png">
-<meta name="twitter:image-height" content="768">
-<meta name="twitter:image-width" content="1248">
+<meta name="twitter:image" content="./post/2021-06-07-gghighlight-032/thumbnail.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Wannabe Rstats-fu</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/yutannihilat_en" rel="" target=""><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/yutannihilat_en"> <i class="bi bi-twitter" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/yutannihilation" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/yutannihilation"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -149,7 +181,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-left">
 
       
     
@@ -160,7 +192,7 @@ ul.task-list li input[type="checkbox"] {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
   
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(25)</span></div><div class="category" data-category="GIS">GIS <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R Markdown">R Markdown <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R internal">R internal <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R package">R package <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Rust">Rust <span class="quarto-category-count">(11)</span></div><div class="category" data-category="Slidev">Slidev <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Windows">Windows <span class="quarto-category-count">(1)</span></div><div class="category" data-category="extendr">extendr <span class="quarto-category-count">(10)</span></div><div class="category" data-category="gghighlight">gghighlight <span class="quarto-category-count">(4)</span></div><div class="category" data-category="ggplot2">ggplot2 <span class="quarto-category-count">(7)</span></div><div class="category" data-category="gt">gt <span class="quarto-category-count">(1)</span></div><div class="category" data-category="magick">magick <span class="quarto-category-count">(1)</span></div><div class="category" data-category="package development">package development <span class="quarto-category-count">(1)</span></div><div class="category" data-category="rlang">rlang <span class="quarto-category-count">(1)</span></div><div class="category" data-category="savvy">savvy <span class="quarto-category-count">(1)</span></div><div class="category" data-category="tidy data">tidy data <span class="quarto-category-count">(2)</span></div><div class="category" data-category="tidyeval">tidyeval <span class="quarto-category-count">(1)</span></div><div class="category" data-category="tidyr">tidyr <span class="quarto-category-count">(2)</span></div><div class="category" data-category="tidyverse">tidyverse <span class="quarto-category-count">(2)</span></div></div></div>
@@ -174,21 +206,22 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Rust,savvy,extendr" data-listing-date-sort="1694876400000" data-listing-file-modified-sort="1694933429381" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
+<div class="quarto-post image-right" data-index="0" data-categories="Rust,savvy,extendr" data-listing-date-sort="1694876400000" data-listing-file-modified-sort="1694996578566" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1361">
 <div class="thumbnail">
-<p><a href="./post/intro-to-savvy-part1/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/intro-to-savvy-part1/index.html" class="no-external"></a></p><a href="./post/intro-to-savvy-part1/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/intro-to-savvy-part1/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/intro-to-savvy-part1/index.html">
 <h3 class="no-anchor listing-title">
-Introduction of Savvy, (Not Really) an Alternative to Extendr: Part 1
+<a href="./post/intro-to-savvy-part1/index.html" class="no-external">Introduction of Savvy, (Not Really) an Alternative to Extendr: Part 1</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/intro-to-savvy-part1/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -200,14 +233,12 @@ savvy
 extendr
 </div>
 </div>
-<a href="./post/intro-to-savvy-part1/index.html">
 <div class="listing-description">
-For this half a year, I’ve been working on re-inventing the wheel of extendr. Now, I’m happy to announce it reached a usable state at last!🎉
+<a href="./post/intro-to-savvy-part1/index.html" class="no-external">For this half a year, I’ve been working on re-inventing the wheel of extendr. Now, I’m happy to announce it reached a usable state at last!🎉</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/intro-to-savvy-part1/index.html">
+<a href="./post/intro-to-savvy-part1/index.html" class="no-external">
 <div class="listing-date">
 Sep 17, 2023
 </div>
@@ -217,19 +248,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="Rust,extendr" data-listing-date-sort="1691247600000" data-listing-file-modified-sort="1691319630903" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9">
+<div class="quarto-post image-right" data-index="1" data-categories="Rust,extendr" data-listing-date-sort="1691247600000" data-listing-file-modified-sort="1691319630903" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1742">
 <div class="thumbnail">
-<p><a href="./post/dont-panic-we-can-unwind/index.html"> <p class="card-img-top"><img src="post\dont-panic-we-can-unwind\wrapper-c-function.png"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/dont-panic-we-can-unwind/index.html" class="no-external"></a></p><a href="./post/dont-panic-we-can-unwind/index.html" class="no-external">
+<p class="card-img-top"><img src="post\dont-panic-we-can-unwind\wrapper-c-function.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/dont-panic-we-can-unwind/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/dont-panic-we-can-unwind/index.html">
 <h3 class="no-anchor listing-title">
-Don’t <code>panic!</code>, We Can Unwind On Rust
+<a href="./post/dont-panic-we-can-unwind/index.html" class="no-external">Don’t <code>panic!</code>, We Can Unwind On Rust</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/dont-panic-we-can-unwind/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -238,14 +269,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/dont-panic-we-can-unwind/index.html">
 <div class="listing-description">
-Three months ago, I wrote a blog post about R’s protection mechanism and stack unwinding. In the post, I said:
+<a href="./post/dont-panic-we-can-unwind/index.html" class="no-external">Three months ago, I wrote a blog post about R’s protection mechanism and stack unwinding. In the post, I said:</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/dont-panic-we-can-unwind/index.html">
+<a href="./post/dont-panic-we-can-unwind/index.html" class="no-external">
 <div class="listing-date">
 Aug 6, 2023
 </div>
@@ -255,19 +284,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="Rust,extendr" data-listing-date-sort="1689433200000" data-listing-file-modified-sort="1689476297435" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<div class="quarto-post image-right" data-index="2" data-categories="Rust,extendr" data-listing-date-sort="1689433200000" data-listing-file-modified-sort="1689476297435" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="530">
 <div class="thumbnail">
-<p><a href="./post/a-quick-note-about-how-to-bundle-rust/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/a-quick-note-about-how-to-bundle-rust/index.html" class="no-external"></a></p><a href="./post/a-quick-note-about-how-to-bundle-rust/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/a-quick-note-about-how-to-bundle-rust/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/a-quick-note-about-how-to-bundle-rust/index.html">
 <h3 class="no-anchor listing-title">
-A Quick Note About How To Bundle Rust Crates For An R Package
+<a href="./post/a-quick-note-about-how-to-bundle-rust/index.html" class="no-external">A Quick Note About How To Bundle Rust Crates For An R Package</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/a-quick-note-about-how-to-bundle-rust/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -276,14 +305,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/a-quick-note-about-how-to-bundle-rust/index.html">
 <div class="listing-description">
-Recently, CRAN published a document titled “Using Rust in CRAN packages” and it refers to my R package, string2path, as an example of bundling all the source codes of the dependency Rust crates (I’m not sure if my name is still there at the point when you’re reading this). As I didn’t…
+<a href="./post/a-quick-note-about-how-to-bundle-rust/index.html" class="no-external">Recently, CRAN published a document titled “Using Rust in CRAN packages” and it refers to my R package, string2path, as an example of bundling all the source codes of the…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/a-quick-note-about-how-to-bundle-rust/index.html">
+<a href="./post/a-quick-note-about-how-to-bundle-rust/index.html" class="no-external">
 <div class="listing-date">
 Jul 16, 2023
 </div>
@@ -293,19 +320,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="Rust,extendr" data-listing-date-sort="1686322800000" data-listing-file-modified-sort="1686359570779" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<div class="quarto-post image-right" data-index="3" data-categories="Rust,extendr" data-listing-date-sort="1686322800000" data-listing-file-modified-sort="1686359570779" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="458">
 <div class="thumbnail">
-<p><a href="./post/rust-1.70-and-build-failure-on-windows/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/rust-1.70-and-build-failure-on-windows/index.html" class="no-external"></a></p><a href="./post/rust-1.70-and-build-failure-on-windows/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/rust-1.70-and-build-failure-on-windows/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/rust-1.70-and-build-failure-on-windows/index.html">
 <h3 class="no-anchor listing-title">
-Rust 1.70 And Build Failures On Windows
+<a href="./post/rust-1.70-and-build-failure-on-windows/index.html" class="no-external">Rust 1.70 And Build Failures On Windows</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/rust-1.70-and-build-failure-on-windows/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -314,14 +341,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/rust-1.70-and-build-failure-on-windows/index.html">
 <div class="listing-description">
-This is a quick notice for developers of R packages using Rust. I posted the same thing on the R-devel-package mailing list, so if…
+<a href="./post/rust-1.70-and-build-failure-on-windows/index.html" class="no-external">This is a quick notice for developers of R packages using Rust. I posted the same thing on the R-devel-package mailing list, so if you already read it, you don’t need to…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/rust-1.70-and-build-failure-on-windows/index.html">
+<a href="./post/rust-1.70-and-build-failure-on-windows/index.html" class="no-external">
 <div class="listing-date">
 Jun 10, 2023
 </div>
@@ -331,19 +356,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="Rust,extendr" data-listing-date-sort="1684508400000" data-listing-file-modified-sort="1691319155261" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12">
+<div class="quarto-post image-right" data-index="4" data-categories="Rust,extendr" data-listing-date-sort="1684508400000" data-listing-file-modified-sort="1691319155261" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2361">
 <div class="thumbnail">
-<p><a href="./post/r-rust-protect-and-unwinding/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/r-rust-protect-and-unwinding/index.html" class="no-external"></a></p><a href="./post/r-rust-protect-and-unwinding/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/r-rust-protect-and-unwinding/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/r-rust-protect-and-unwinding/index.html">
 <h3 class="no-anchor listing-title">
-R, Rust, Protect, And Unwinding
+<a href="./post/r-rust-protect-and-unwinding/index.html" class="no-external">R, Rust, Protect, And Unwinding</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/r-rust-protect-and-unwinding/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -352,14 +377,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/r-rust-protect-and-unwinding/index.html">
 <div class="listing-description">
-In the recent half a year, I’ve been struggling to understand how the extendr framework works. One of the things I found is that it’s extremely hard to protect and…
+<a href="./post/r-rust-protect-and-unwinding/index.html" class="no-external">In the recent half a year, I’ve been struggling to understand how the extendr framework works. One of the things I found is that it’s extremely hard to protect and unprotect…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/r-rust-protect-and-unwinding/index.html">
+<a href="./post/r-rust-protect-and-unwinding/index.html" class="no-external">
 <div class="listing-date">
 May 20, 2023
 </div>
@@ -369,19 +392,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="Rust,extendr" data-listing-date-sort="1660402800000" data-listing-file-modified-sort="1684552183286" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8">
+<div class="quarto-post image-right" data-index="5" data-categories="Rust,extendr" data-listing-date-sort="1660402800000" data-listing-file-modified-sort="1684552183286" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1486">
 <div class="thumbnail">
-<p><a href="./post/rust-and-cran-repository-policy/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/rust-and-cran-repository-policy/index.html" class="no-external"></a></p><a href="./post/rust-and-cran-repository-policy/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/rust-and-cran-repository-policy/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/rust-and-cran-repository-policy/index.html">
 <h3 class="no-anchor listing-title">
-Rust and the CRAN Repository Policy
+<a href="./post/rust-and-cran-repository-policy/index.html" class="no-external">Rust and the CRAN Repository Policy</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/rust-and-cran-repository-policy/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -390,14 +413,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/rust-and-cran-repository-policy/index.html">
 <div class="listing-description">
-One year ago, I succeeded to release an R package using Rust (string2path) on CRAN. After that, I wrote a blog post about how to use Rust in an R package, and I said
+<a href="./post/rust-and-cran-repository-policy/index.html" class="no-external">One year ago, I succeeded to release an R package using Rust (string2path) on CRAN. After that, I wrote a blog post about how to use Rust in an R package, and I said</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/rust-and-cran-repository-policy/index.html">
+<a href="./post/rust-and-cran-repository-policy/index.html" class="no-external">
 <div class="listing-date">
 Aug 14, 2022
 </div>
@@ -407,19 +428,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="Rust,extendr" data-listing-date-sort="1632150000000" data-listing-file-modified-sort="1660377643811" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10">
+<div class="quarto-post image-right" data-index="6" data-categories="Rust,extendr" data-listing-date-sort="1632150000000" data-listing-file-modified-sort="1660377643811" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1914">
 <div class="thumbnail">
-<p><a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html" class="no-external"></a></p><a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html">
 <h3 class="no-anchor listing-title">
-Writing A Configure Script For An R Package Using Rust
+<a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html" class="no-external">Writing A Configure Script For An R Package Using Rust</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -428,14 +449,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html">
 <div class="listing-description">
-<p><code>configure.win</code> and <code>configure</code></p>
+<a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html" class="no-external"><code>configure.win</code> and <code>configure</code> </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html">
+<a href="./post/2021-09-21-writing-a-configure-script-for-an-r-package-using-rust/index.html" class="no-external">
 <div class="listing-date">
 Sep 21, 2021
 </div>
@@ -445,19 +464,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="Rust,extendr" data-listing-date-sort="1627743600000" data-listing-file-modified-sort="1660377639823" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
+<div class="quarto-post image-right" data-index="7" data-categories="Rust,extendr" data-listing-date-sort="1627743600000" data-listing-file-modified-sort="1660377639823" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="895">
 <div class="thumbnail">
-<p><a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html"> <img src="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/screenshot_github_release.png" class="thumbnail-image"> </a></p>
+<p><a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html" class="no-external"></a></p><a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html" class="no-external">
+<p><img loading="lazy" src="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/screenshot_github_release.png" class="thumbnail-image"></p>
+</a><p><a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html">
 <h3 class="no-anchor listing-title">
-Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI
+<a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html" class="no-external">Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -466,14 +485,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html">
 <div class="listing-description">
-<p>Integrate R and Rust with extendr</p>
+<a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html" class="no-external">Integrate R and Rust with extendr </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html">
+<a href="./post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/index.html" class="no-external">
 <div class="listing-date">
 Aug 1, 2021
 </div>
@@ -483,19 +500,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="Rust,extendr" data-listing-date-sort="1623596400000" data-listing-file-modified-sort="1660377636077" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
+<div class="quarto-post image-right" data-index="8" data-categories="Rust,extendr" data-listing-date-sort="1623596400000" data-listing-file-modified-sort="1660377636077" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1203">
 <div class="thumbnail">
-<p><a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html" class="no-external"></a></p><a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html">
 <h3 class="no-anchor listing-title">
-Unofficial Introduction To extendr (2): Type Conversion Between R and Rust
+<a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html" class="no-external">Unofficial Introduction To extendr (2): Type Conversion Between R and Rust</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -504,14 +521,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html">
 <div class="listing-description">
-<p>Integrate R and Rust with extendr</p>
+<a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html" class="no-external">Integrate R and Rust with extendr </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html">
+<a href="./post/2021-06-14-unofficial-introduction-to-extendr-2-type-conversion-between-r-and-rust/index.html" class="no-external">
 <div class="listing-date">
 Jun 14, 2021
 </div>
@@ -521,19 +536,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="gghighlight,ggplot2,R package" data-listing-date-sort="1622991600000" data-listing-file-modified-sort="1660377632202" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<div class="quarto-post image-right" data-index="9" data-categories="gghighlight,ggplot2,R package" data-listing-date-sort="1622991600000" data-listing-file-modified-sort="1660377632202" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="403">
 <div class="thumbnail">
-<p><a href="./post/2021-06-07-gghighlight-032/index.html"> <img src="./post/2021-06-07-gghighlight-032/thumbnail.png" class="thumbnail-image"> </a></p>
+<p><a href="./post/2021-06-07-gghighlight-032/index.html" class="no-external"></a></p><a href="./post/2021-06-07-gghighlight-032/index.html" class="no-external">
+<p><img loading="lazy" src="./post/2021-06-07-gghighlight-032/thumbnail.png" class="thumbnail-image"></p>
+</a><p><a href="./post/2021-06-07-gghighlight-032/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2021-06-07-gghighlight-032/index.html">
 <h3 class="no-anchor listing-title">
-gghighlight 0.3.2
+<a href="./post/2021-06-07-gghighlight-032/index.html" class="no-external">gghighlight 0.3.2</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2021-06-07-gghighlight-032/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('gghighlight'); return false;">
 gghighlight
@@ -545,14 +560,12 @@ ggplot2
 R package
 </div>
 </div>
-<a href="./post/2021-06-07-gghighlight-032/index.html">
 <div class="listing-description">
-gghighlight 0.3.2 is on CRAN now!
+<a href="./post/2021-06-07-gghighlight-032/index.html" class="no-external">gghighlight 0.3.2 is on CRAN now!</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2021-06-07-gghighlight-032/index.html">
+<a href="./post/2021-06-07-gghighlight-032/index.html" class="no-external">
 <div class="listing-date">
 Jun 7, 2021
 </div>
@@ -562,19 +575,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-categories="Rust,extendr" data-listing-date-sort="1622905200000" data-listing-file-modified-sort="1660377625952" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-right" data-index="10" data-categories="Rust,extendr" data-listing-date-sort="1622905200000" data-listing-file-modified-sort="1660377625952" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
 <div class="thumbnail">
-<p><a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html" class="no-external"></a></p><a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html">
 <h3 class="no-anchor listing-title">
-Unofficial Introduction To extendr (1): Your First R Package With Rust
+<a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html" class="no-external">Unofficial Introduction To extendr (1): Your First R Package With Rust</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
@@ -583,14 +596,12 @@ Rust
 extendr
 </div>
 </div>
-<a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html">
 <div class="listing-description">
-<p>Integrate R and Rust with extendr.</p>
+<a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html" class="no-external">Integrate R and Rust with extendr. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html">
+<a href="./post/2021-06-06-unofficial-introduction-to-extendr-1-your-first-r-package-with-rust/index.html" class="no-external">
 <div class="listing-date">
 Jun 6, 2021
 </div>
@@ -600,19 +611,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="11" data-categories="R Markdown,Slidev" data-listing-date-sort="1622818800000" data-listing-file-modified-sort="1660377618785" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
+<div class="quarto-post image-right" data-index="11" data-categories="R Markdown,Slidev" data-listing-date-sort="1622818800000" data-listing-file-modified-sort="1660377618785" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="752">
 <div class="thumbnail">
-<p><a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html"> <img src="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/images/slide.jpeg" class="thumbnail-image"> </a></p>
+<p><a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html" class="no-external"></a></p><a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html" class="no-external">
+<p><img loading="lazy" src="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/images/slide.jpeg" class="thumbnail-image"></p>
+</a><p><a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html">
 <h3 class="no-anchor listing-title">
-Tips To Turn R Markdown Into Slidev Presentation
+<a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html" class="no-external">Tips To Turn R Markdown Into Slidev Presentation</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R Markdown'); return false;">
 R Markdown
@@ -621,14 +632,12 @@ R Markdown
 Slidev
 </div>
 </div>
-<a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html">
 <div class="listing-description">
-<p>Slidev is a tool to create slides from Markdown. This post is about some tips to use it in combination with R Markdown.</p>
+<a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html" class="no-external">Slidev is a tool to create slides from Markdown. This post is about some tips to use it in combination with R Markdown. </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html">
+<a href="./post/2021-06-05-tips-to-turn-r-markdown-into-slidev-presentation/index.html" class="no-external">
 <div class="listing-date">
 Jun 5, 2021
 </div>
@@ -638,32 +647,30 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="12" data-categories="Rust" data-listing-date-sort="1600095600000" data-listing-file-modified-sort="1660377722580" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10">
+<div class="quarto-post image-right" data-index="12" data-categories="Rust" data-listing-date-sort="1600095600000" data-listing-file-modified-sort="1660377722580" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1870">
 <div class="thumbnail">
-<p><a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html" class="no-external"></a></p><a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html">
 <h3 class="no-anchor listing-title">
-Some more notes about using Rust code in R packages
+<a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html" class="no-external">Some more notes about using Rust code in R packages</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('Rust'); return false;">
 Rust
 </div>
 </div>
-<a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html">
 <div class="listing-description">
-When I first tried to use Rust code within R package five years ago, it was…
+<a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html" class="no-external">When I first tried to use Rust code within R package five years ago, it was like crawling in the dark and I wasted several days just to find I didn’t understand anything.…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html">
+<a href="./post/some-more-notes-about-using-rust-code-in-r-packages/index.html" class="no-external">
 <div class="listing-date">
 Sep 15, 2020
 </div>
@@ -673,19 +680,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="13" data-categories="gghighlight,ggplot2,R package" data-listing-date-sort="1581865200000" data-listing-file-modified-sort="1660377701439" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
+<div class="quarto-post image-right" data-index="13" data-categories="gghighlight,ggplot2,R package" data-listing-date-sort="1581865200000" data-listing-file-modified-sort="1660377701439" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="940">
 <div class="thumbnail">
-<p><a href="./post/gghighlight-0-2-0/index.html"> <p class="card-img-top"><img src="post\gghighlight-0-2-0\index_files\figure-html\keep_scale-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/gghighlight-0-2-0/index.html" class="no-external"></a></p><a href="./post/gghighlight-0-2-0/index.html" class="no-external">
+<p class="card-img-top"><img src="post\gghighlight-0-2-0\index_files\figure-html\keep_scale-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/gghighlight-0-2-0/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/gghighlight-0-2-0/index.html">
 <h3 class="no-anchor listing-title">
-gghighlight 0.2.0
+<a href="./post/gghighlight-0-2-0/index.html" class="no-external">gghighlight 0.2.0</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/gghighlight-0-2-0/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('gghighlight'); return false;">
 gghighlight
@@ -697,14 +704,12 @@ ggplot2
 R package
 </div>
 </div>
-<a href="./post/gghighlight-0-2-0/index.html">
 <div class="listing-description">
-<p>gghighlight 0.2.0 is released!</p>
+<a href="./post/gghighlight-0-2-0/index.html" class="no-external">gghighlight 0.2.0 is released! </a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/gghighlight-0-2-0/index.html">
+<a href="./post/gghighlight-0-2-0/index.html" class="no-external">
 <div class="listing-date">
 Feb 17, 2020
 </div>
@@ -714,19 +719,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="14" data-categories="tidyr,tidy data" data-listing-date-sort="1549119600000" data-listing-file-modified-sort="1660377667370" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
+<div class="quarto-post image-right" data-index="14" data-categories="tidyr,tidy data" data-listing-date-sort="1549119600000" data-listing-file-modified-sort="1660377667370" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1331">
 <div class="thumbnail">
-<p><a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html"> <p class="card-img-top"><img src="post\enhancing-gather-and-spread-by-using-bundled-data-frames\images\2019-02-03-multi-gather.jpg"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html" class="no-external"></a></p><a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html" class="no-external">
+<p class="card-img-top"><img src="post\enhancing-gather-and-spread-by-using-bundled-data-frames\images\2019-02-03-multi-gather.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html">
 <h3 class="no-anchor listing-title">
-Enhancing gather() and spread() by Using “Bundled” data.frames
+<a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html" class="no-external">Enhancing gather() and spread() by Using “Bundled” data.frames</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('tidyr'); return false;">
 tidyr
@@ -735,14 +740,12 @@ tidyr
 tidy data
 </div>
 </div>
-<a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html">
 <div class="listing-description">
-Last month, I tried to explain <code>gather()</code> and <code>spread()</code> by gt package (https://yutani.rbind.io/post/gather-and-spread-explained-by-gt/).…<code></code><code></code>
+<a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html" class="no-external">Last month, I tried to explain <code>gather()</code> and <code>spread()</code> by gt package (https://yutani.rbind.io/post/gather-and-spread-explained-by-gt/). But, after I implemented experimental…<code></code><code></code></a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html">
+<a href="./post/enhancing-gather-and-spread-by-using-bundled-data-frames/index.html" class="no-external">
 <div class="listing-date">
 Feb 3, 2019
 </div>
@@ -752,19 +755,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="15" data-categories="rlang,Windows" data-listing-date-sort="1548342000000" data-listing-file-modified-sort="1660377650216" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<div class="quarto-post image-right" data-index="15" data-categories="rlang,Windows" data-listing-date-sort="1548342000000" data-listing-file-modified-sort="1660377650216" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="419">
 <div class="thumbnail">
-<p><a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html"> <p class="card-img-top"><img src="post\a-survival-guide-to-install-rlang-from-github-on-windows\images\2019-01-25-restart.jpg"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html" class="no-external"></a></p><a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html" class="no-external">
+<p class="card-img-top"><img src="post\a-survival-guide-to-install-rlang-from-github-on-windows\images\2019-01-25-restart.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html">
 <h3 class="no-anchor listing-title">
-A Survival Guide To Install rlang From GitHub On Windows
+<a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html" class="no-external">A Survival Guide To Install rlang From GitHub On Windows</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('rlang'); return false;">
 rlang
@@ -773,14 +776,12 @@ rlang
 Windows
 </div>
 </div>
-<a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html">
 <div class="listing-description">
-I don’t have any strong feelings about OSs. They are just tools. I had been a Mac user for 10+ years since I was 10, and now I’m…
+<a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html" class="no-external">I don’t have any strong feelings about OSs. They are just tools. I had been a Mac user for 10+ years since I was 10, and now I’m using Windows for no reason. All OSs have…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html">
+<a href="./post/a-survival-guide-to-install-rlang-from-github-on-windows/index.html" class="no-external">
 <div class="listing-date">
 Jan 25, 2019
 </div>
@@ -790,19 +791,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="16" data-categories="tidyr,tidy data,gt" data-listing-date-sort="1548255600000" data-listing-file-modified-sort="1660377671824" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<div class="quarto-post image-right" data-index="16" data-categories="tidyr,tidy data,gt" data-listing-date-sort="1548255600000" data-listing-file-modified-sort="1660377671824" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="522">
 <div class="thumbnail">
-<p><a href="./post/gather-and-spread-explained-by-gt/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/gather-and-spread-explained-by-gt/index.html" class="no-external"></a></p><a href="./post/gather-and-spread-explained-by-gt/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/gather-and-spread-explained-by-gt/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/gather-and-spread-explained-by-gt/index.html">
 <h3 class="no-anchor listing-title">
-gather() and spread() Explained By gt
+<a href="./post/gather-and-spread-explained-by-gt/index.html" class="no-external">gather() and spread() Explained By gt</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/gather-and-spread-explained-by-gt/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('tidyr'); return false;">
 tidyr
@@ -814,14 +815,12 @@ tidy data
 gt
 </div>
 </div>
-<a href="./post/gather-and-spread-explained-by-gt/index.html">
 <div class="listing-description">
-This is episode 0 of my long adventure to multi-spread and multi-gather (this is my homework I got at the tidyverse developer day…). This post might seem to introduce the different semantics from the current tidyr’s one, but it’s probably just because my idea is…
+<a href="./post/gather-and-spread-explained-by-gt/index.html" class="no-external">This is episode 0 of my long adventure to multi-spread and multi-gather (this is my homework I got at the tidyverse developer day…). This post might seem to introduce the…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/gather-and-spread-explained-by-gt/index.html">
+<a href="./post/gather-and-spread-explained-by-gt/index.html" class="no-external">
 <div class="listing-date">
 Jan 24, 2019
 </div>
@@ -831,32 +830,30 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="17" data-categories="package development" data-listing-date-sort="1547132400000" data-listing-file-modified-sort="1660377658452" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-right" data-index="17" data-categories="package development" data-listing-date-sort="1547132400000" data-listing-file-modified-sort="1660377658452" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="220">
 <div class="thumbnail">
-<p><a href="./post/a-tip-to-debug-ggplot2/index.html"> <p class="card-img-top"><img src="post\a-tip-to-debug-ggplot2\images\2019-01-11-breakpoint.jpg"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/a-tip-to-debug-ggplot2/index.html" class="no-external"></a></p><a href="./post/a-tip-to-debug-ggplot2/index.html" class="no-external">
+<p class="card-img-top"><img src="post\a-tip-to-debug-ggplot2\images\2019-01-11-breakpoint.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/a-tip-to-debug-ggplot2/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/a-tip-to-debug-ggplot2/index.html">
 <h3 class="no-anchor listing-title">
-A Tip to Debug ggplot2
+<a href="./post/a-tip-to-debug-ggplot2/index.html" class="no-external">A Tip to Debug ggplot2</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/a-tip-to-debug-ggplot2/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('package development'); return false;">
 package development
 </div>
 </div>
-<a href="./post/a-tip-to-debug-ggplot2/index.html">
 <div class="listing-description">
-Since the tidyverse developer day is near, I share my very very secret technique to debug ggplot2. Though this is a very small thing, hope this helps someone a bit.
+<a href="./post/a-tip-to-debug-ggplot2/index.html" class="no-external">Since the tidyverse developer day is near, I share my very very secret technique to debug ggplot2. Though this is a very small thing, hope this helps someone a bit.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/a-tip-to-debug-ggplot2/index.html">
+<a href="./post/a-tip-to-debug-ggplot2/index.html" class="no-external">
 <div class="listing-date">
 Jan 11, 2019
 </div>
@@ -866,19 +863,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="18" data-categories="ggplot2,magick" data-listing-date-sort="1542898800000" data-listing-file-modified-sort="1660377713226" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
+<div class="quarto-post image-right" data-index="18" data-categories="ggplot2,magick" data-listing-date-sort="1542898800000" data-listing-file-modified-sort="1660377713226" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1140">
 <div class="thumbnail">
-<p><a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html"> <img src="./post/how-to-convert-a-human-to-waves-by-magick-package/images/preview.png" class="thumbnail-image"> </a></p>
+<p><a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html" class="no-external"></a></p><a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html" class="no-external">
+<p><img loading="lazy" src="./post/how-to-convert-a-human-to-waves-by-magick-package/images/preview.png" class="thumbnail-image"></p>
+</a><p><a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html">
 <h3 class="no-anchor listing-title">
-How To Convert A Human To Waves By Magick Package
+<a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html" class="no-external">How To Convert A Human To Waves By Magick Package</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('ggplot2'); return false;">
 ggplot2
@@ -887,14 +884,12 @@ ggplot2
 magick
 </div>
 </div>
-<a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html">
 <div class="listing-description">
-I saw this tweet about Mathematica last year, which naturally urged me to write the R version of this code.
+<a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html" class="no-external">I saw this tweet about Mathematica last year, which naturally urged me to write the R version of this code.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html">
+<a href="./post/how-to-convert-a-human-to-waves-by-magick-package/index.html" class="no-external">
 <div class="listing-date">
 Nov 23, 2018
 </div>
@@ -904,19 +899,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="19" data-categories="tidyeval,tidyverse" data-listing-date-sort="1539788400000" data-listing-file-modified-sort="1660377717923" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-right" data-index="19" data-categories="tidyeval,tidyverse" data-listing-date-sort="1539788400000" data-listing-file-modified-sort="1660377717923" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="320">
 <div class="thumbnail">
-<p><a href="./post/quote-while-the-promise-is-hot/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+<p><a href="./post/quote-while-the-promise-is-hot/index.html" class="no-external"></a></p><a href="./post/quote-while-the-promise-is-hot/index.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+</a><p><a href="./post/quote-while-the-promise-is-hot/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/quote-while-the-promise-is-hot/index.html">
 <h3 class="no-anchor listing-title">
-Quote While the Promise Is Hot!
+<a href="./post/quote-while-the-promise-is-hot/index.html" class="no-external">Quote While the Promise Is Hot!</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/quote-while-the-promise-is-hot/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('tidyeval'); return false;">
 tidyeval
@@ -925,14 +920,12 @@ tidyeval
 tidyverse
 </div>
 </div>
-<a href="./post/quote-while-the-promise-is-hot/index.html">
 <div class="listing-description">
-Suppose we want to quote <code>x</code> when <code>x</code> is not <code>NULL</code>. The naive implementation would be like below. Here, <code>y</code> is for comparison. Do you understand why <code>x</code> and <code>y</code> are quoted differently?
+<a href="./post/quote-while-the-promise-is-hot/index.html" class="no-external">Suppose we want to quote <code>x</code> when <code>x</code> is not <code>NULL</code>. The naive implementation would be like below. Here, <code>y</code> is for comparison. Do you understand why <code>x</code> and <code>y</code> are quoted differently?</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/quote-while-the-promise-is-hot/index.html">
+<a href="./post/quote-while-the-promise-is-hot/index.html" class="no-external">
 <div class="listing-date">
 Oct 18, 2018
 </div>
@@ -942,19 +935,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="20" data-categories="tidyverse,ggplot2" data-listing-date-sort="1539097200000" data-listing-file-modified-sort="1660377676879" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-right" data-index="20" data-categories="tidyverse,ggplot2" data-listing-date-sort="1539097200000" data-listing-file-modified-sort="1660377676879" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="356">
 <div class="thumbnail">
-<p><a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html"> <p class="card-img-top"><img src="post\geom-sf-text-and-geom-sf-label-are-coming\index_files\figure-html\manual-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html" class="no-external"></a></p><a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html" class="no-external">
+<p class="card-img-top"><img src="post\geom-sf-text-and-geom-sf-label-are-coming\index_files\figure-html\manual-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html">
 <h3 class="no-anchor listing-title">
-geom_sf_text() and geom_sf_label() Are Coming!
+<a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html" class="no-external">geom_sf_text() and geom_sf_label() Are Coming!</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('tidyverse'); return false;">
 tidyverse
@@ -963,14 +956,12 @@ tidyverse
 ggplot2
 </div>
 </div>
-<a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html">
 <div class="listing-description">
-ggplot2 v3.1.0 will be released soon (hopefully), so let me do a spoiler about a small feature I implemented, <code>geom_sf_label()</code> and <code>geom_sf_text()</code>.
+<a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html" class="no-external">ggplot2 v3.1.0 will be released soon (hopefully), so let me do a spoiler about a small feature I implemented, <code>geom_sf_label()</code> and <code>geom_sf_text()</code>.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html">
+<a href="./post/geom-sf-text-and-geom-sf-label-are-coming/index.html" class="no-external">
 <div class="listing-date">
 Oct 10, 2018
 </div>
@@ -980,32 +971,30 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="21" data-categories="R internal" data-listing-date-sort="1537110000000" data-listing-file-modified-sort="1660377662571" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
+<div class="quarto-post image-right" data-index="21" data-categories="R internal" data-listing-date-sort="1537110000000" data-listing-file-modified-sort="1660377662571" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="982">
 <div class="thumbnail">
-<p><a href="./post/double-dispatch-of-s3-method/index.html"> <p class="card-img-top"><img src="post\double-dispatch-of-s3-method\index_files\figure-html\define-ggplot-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/double-dispatch-of-s3-method/index.html" class="no-external"></a></p><a href="./post/double-dispatch-of-s3-method/index.html" class="no-external">
+<p class="card-img-top"><img src="post\double-dispatch-of-s3-method\index_files\figure-html\define-ggplot-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/double-dispatch-of-s3-method/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/double-dispatch-of-s3-method/index.html">
 <h3 class="no-anchor listing-title">
-Double dispatch of S3 method
+<a href="./post/double-dispatch-of-s3-method/index.html" class="no-external">Double dispatch of S3 method</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/double-dispatch-of-s3-method/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R internal'); return false;">
 R internal
 </div>
 </div>
-<a href="./post/double-dispatch-of-s3-method/index.html">
 <div class="listing-description">
-When I tried to define an S3 class that contains multiple ggplot objects, I’ve faced the lessor-know mechanism of S3 method dispatch, <em>double dispatch</em>.
+<a href="./post/double-dispatch-of-s3-method/index.html" class="no-external">When I tried to define an S3 class that contains multiple ggplot objects, I’ve faced the lessor-know mechanism of S3 method dispatch, <em>double dispatch</em>.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/double-dispatch-of-s3-method/index.html">
+<a href="./post/double-dispatch-of-s3-method/index.html" class="no-external">
 <div class="listing-date">
 Sep 17, 2018
 </div>
@@ -1015,19 +1004,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="22" data-categories="ggplot2,GIS" data-listing-date-sort="1528470000000" data-listing-file-modified-sort="1660377609799" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
+<div class="quarto-post image-right" data-index="22" data-categories="ggplot2,GIS" data-listing-date-sort="1528470000000" data-listing-file-modified-sort="1660377609799" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1376">
 <div class="thumbnail">
-<p><a href="./post/2018-06-09-plot-osm-tiles/index.html"> <p class="card-img-top"><img src="post\2018-06-09-plot-osm-tiles\index_files\figure-html\bbox-plot-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/2018-06-09-plot-osm-tiles/index.html" class="no-external"></a></p><a href="./post/2018-06-09-plot-osm-tiles/index.html" class="no-external">
+<p class="card-img-top"><img src="post\2018-06-09-plot-osm-tiles\index_files\figure-html\bbox-plot-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/2018-06-09-plot-osm-tiles/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2018-06-09-plot-osm-tiles/index.html">
 <h3 class="no-anchor listing-title">
-Plot geom_sf() On OpenStreetMap Tiles
+<a href="./post/2018-06-09-plot-osm-tiles/index.html" class="no-external">Plot geom_sf() On OpenStreetMap Tiles</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2018-06-09-plot-osm-tiles/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('ggplot2'); return false;">
 ggplot2
@@ -1036,14 +1025,12 @@ ggplot2
 GIS
 </div>
 </div>
-<a href="./post/2018-06-09-plot-osm-tiles/index.html">
 <div class="listing-description">
-mapview is a very nice package to explore an <code>sf</code> object. It can overlay <code>sf</code> object on the map images:
+<a href="./post/2018-06-09-plot-osm-tiles/index.html" class="no-external">mapview is a very nice package to explore an <code>sf</code> object. It can overlay <code>sf</code> object on the map images:</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2018-06-09-plot-osm-tiles/index.html">
+<a href="./post/2018-06-09-plot-osm-tiles/index.html" class="no-external">
 <div class="listing-date">
 Jun 9, 2018
 </div>
@@ -1053,19 +1040,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="23" data-categories="gghighlight,ggplot2" data-listing-date-sort="1527951600000" data-listing-file-modified-sort="1660377551057" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
+<div class="quarto-post image-right" data-index="23" data-categories="gghighlight,ggplot2" data-listing-date-sort="1527951600000" data-listing-file-modified-sort="1660377551057" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1062">
 <div class="thumbnail">
-<p><a href="./post/2018-06-03-anatomy-of-gghighlight/index.html"> <p class="card-img-top"><img src="post\2018-06-03-anatomy-of-gghighlight\index_files\figure-html\plot1-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/2018-06-03-anatomy-of-gghighlight/index.html" class="no-external"></a></p><a href="./post/2018-06-03-anatomy-of-gghighlight/index.html" class="no-external">
+<p class="card-img-top"><img src="post\2018-06-03-anatomy-of-gghighlight\index_files\figure-html\plot1-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/2018-06-03-anatomy-of-gghighlight/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2018-06-03-anatomy-of-gghighlight/index.html">
 <h3 class="no-anchor listing-title">
-Anatomy of gghighlight
+<a href="./post/2018-06-03-anatomy-of-gghighlight/index.html" class="no-external">Anatomy of gghighlight</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2018-06-03-anatomy-of-gghighlight/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('gghighlight'); return false;">
 gghighlight
@@ -1074,14 +1061,12 @@ gghighlight
 ggplot2
 </div>
 </div>
-<a href="./post/2018-06-03-anatomy-of-gghighlight/index.html">
 <div class="listing-description">
-I’m overhauling my gghighlight package toward the upcoming release of ggplot2 2.3.0. I think I will introduce about the new <code>gghighlight()</code> soon, but before that, I want to…
+<a href="./post/2018-06-03-anatomy-of-gghighlight/index.html" class="no-external">I’m overhauling my gghighlight package toward the upcoming release of ggplot2 2.3.0. I think I will introduce about the new <code>gghighlight()</code> soon, but before that, I want to…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2018-06-03-anatomy-of-gghighlight/index.html">
+<a href="./post/2018-06-03-anatomy-of-gghighlight/index.html" class="no-external">
 <div class="listing-date">
 Jun 3, 2018
 </div>
@@ -1091,19 +1076,19 @@ Hiroaki Yutani
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="24" data-categories="gghighlight,ggplot2,R package" data-listing-date-sort="1509980400000" data-listing-file-modified-sort="1660377752839" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
+<div class="quarto-post image-right" data-index="24" data-categories="gghighlight,ggplot2,R package" data-listing-date-sort="1509980400000" data-listing-file-modified-sort="1660377752839" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="725">
 <div class="thumbnail">
-<p><a href="./post/2017-11-07-ggplot-add/index.html"> <p class="card-img-top"><img src="post\2017-11-07-ggplot-add\use-geom-highlight-poc-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+<p><a href="./post/2017-11-07-ggplot-add/index.html" class="no-external"></a></p><a href="./post/2017-11-07-ggplot-add/index.html" class="no-external">
+<p class="card-img-top"><img src="post\2017-11-07-ggplot-add\use-geom-highlight-poc-1.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./post/2017-11-07-ggplot-add/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./post/2017-11-07-ggplot-add/index.html">
 <h3 class="no-anchor listing-title">
-An Example Usage of ggplot_add()
+<a href="./post/2017-11-07-ggplot-add/index.html" class="no-external">An Example Usage of ggplot_add()</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./post/2017-11-07-ggplot-add/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('gghighlight'); return false;">
 gghighlight
@@ -1115,14 +1100,12 @@ ggplot2
 R package
 </div>
 </div>
-<a href="./post/2017-11-07-ggplot-add/index.html">
 <div class="listing-description">
-A generic function <code>ggplot_add()</code> was added to ggplot2 by this PR:
+<a href="./post/2017-11-07-ggplot-add/index.html" class="no-external">A generic function <code>ggplot_add()</code> was added to ggplot2 by this PR:</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./post/2017-11-07-ggplot-add/index.html">
+<a href="./post/2017-11-07-ggplot-add/index.html" class="no-external">
 <div class="listing-date">
 Nov 7, 2017
 </div>
@@ -1172,18 +1155,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1215,11 +1187,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1229,8 +1240,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1242,7 +1262,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1286,6 +1429,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1311,6 +1455,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1371,6 +1541,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 
