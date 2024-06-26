@@ -130,7 +130,9 @@ window.Quarto = {
 </script>
 
 <meta name="twitter:title" content="Wannabe Rstats-fu">
-<meta name="twitter:image" content="./post/2021-06-07-gghighlight-032/thumbnail.png">
+<meta name="twitter:image" content="https://yutani.rbind.io/post/2021-06-07-gghighlight-032/thumbnail.png">
+<meta name="twitter:image-height" content="768">
+<meta name="twitter:image-width" content="1248">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -1212,7 +1214,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/yutani\.rbind\.io");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

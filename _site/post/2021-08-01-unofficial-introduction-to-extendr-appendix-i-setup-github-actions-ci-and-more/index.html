@@ -108,7 +108,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <meta name="twitter:title" content="Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI – Wannabe Rstats-fu">
 <meta name="twitter:description" content="Integrate R and Rust with extendr">
-<meta name="twitter:image" content="screenshot_github_release.png">
+<meta name="twitter:image" content="https://yutani.rbind.io/post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/screenshot_github_release.png">
+<meta name="twitter:image-height" content="434">
+<meta name="twitter:image-width" content="732">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -410,7 +412,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/yutani\.rbind\.io");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
