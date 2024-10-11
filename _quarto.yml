@@ -3,6 +3,7 @@ project:
 
 website:
   title: "Wannabe Rstats-fu"
+  site-url: https://yutani.rbind.io
   
   twitter-card: true
   
