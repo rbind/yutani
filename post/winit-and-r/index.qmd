@@ -1,0 +1,393 @@
+---
+title: How To Use Winit With R (Or How To Run Winit On A Non-Main Thread)
+author: Hiroaki Yutani
+date: '2024-10-11'
+categories:
+  - Rust
+  - savvy
+---
+
+The [winit] Rust crate is a cross-platform library about creating and managing windows. If you want to create some GUI with Rust, there are many options. Among these, winit is what you are most likely to rely on indirectly or directly.
+
+For example, [Bevy], the most dominant Rust game engine, uses winit. [Tauri], which they say the next Electron, uses a forked-version of winit. It might be less common to use winit directly, but, when you want just window, not versatile GUI toolkits, it's probably the case (e.g. [Learn Wgpu]).
+
+So, if the urge is to pop up a window and destroy it, winit is the choice.
+After reading this post, you'll probably get some sense to do it properly (but displaying useful things on the window will not be covered here).
+
+## Difference from a standalone GUI
+
+Creating an R package and a standalone GUI app are different things.
+The main difficulty I want to write about today is, whereas a standalone app runs on the main thread, the main thread is for the R session in the case of an R package.
+
+For example, the code below is a typical winit application (derived from [the official document](https://docs.rs/winit/latest/winit/)).
+
+`App` is what actually handles window-related events (user's click, keyboard input, etc). `window_event()` implements what to do when which event comes in. For example, this prints a message and stops the `event_loop` when `WindowEvent::CloseRequested` is passed.
+
+`EventLoop` is what catches such events from OS and window and forwards to `App`.
+
+```rust
+#[derive(Default)]
+struct App {
+    window: Option<Window>,
+}
+
+impl ApplicationHandler for App {
+    ...
+
+    fn window_event(&mut self, event_loop: &ActiveEventLoop, id: WindowId, event: WindowEvent) {
+        match event {
+            WindowEvent::CloseRequested => {
+                println!("The close button was pressed; stopping");
+                self.window = None; // window is automatically closed when dropped
+                event_loop.exit();
+            },
+            ...
+        }
+    }
+}
+
+fn main() {
+    let event_loop = EventLoop::new().unwrap();
+    let mut app = App::default();
+    event_loop.run_app(&mut app);
+}
+```
+
+`event_loop` catches events during `run_app()`. This blocks.
+So, if you call this function in your R session, your console is unusable unless you close the window.
+
+```r
+main()
+```
+
+Yes, this is still useful in some cases. There are many nice R packages that pop up a Shiny window and return some useful value. But, what should we do if we want to use the window concurrently?
+
+## `std::thread::spwan()`
+
+A naive idea is to run this in a new thread.
+In Rust, this can be easily done by [`std::thread::spwan()`](https://doc.rust-lang.org/std/thread/fn.spawn.html). The code would be like this:
+
+```rust
+fn main() {
+    std::thread::spawn(|| {
+        let event_loop = EventLoop::new().unwrap();
+        let mut app = App::default();
+        event_loop.run_app(&mut app);
+    });
+}
+```
+
+Looks fine? Actually, this doesn't raise an error. 
+But, actually, it's just a panic is not propagated to the top.
+If we add two `unwrap()`s below, you'll find an error message complaining that you ran it in a non-main thread.
+
+```rust
+fn main() {
+    std::thread::spawn(|| {
+        ...
+        event_loop.run_app(&mut app).unwrap();
+    })
+    .join()
+    .unwrap();
+}
+```
+
+> Initializing the event loop outside of the main thread is a significant cross-platform compatibility hazard. If you absolutely need to create an EventLoop on a different thread, you can use the `EventLoopBuilderExtX11::any_thread` or `EventLoopBuilderExtWayland::any_thread` functions.
+
+You might wonder, if the problem was "Initializing the event loop outside of the main thread," we can initialize it outside of `std::thread::spawn()`.
+
+``` rust
+fn main() {
+    let event_loop = EventLoop::new().unwrap();
+    std::thread::spawn(move || {
+        let mut app = App::default();
+        event_loop.run_app(&mut app).unwrap();
+    })
+    .join()
+    .unwrap();
+}
+```
+
+But, this doesn't work either. Since `EventLoop` is not `Send`, it cannot be sent to a different thread. You'll get this compilation error:
+
+```
+error[E0277]: `*mut ()` cannot be sent between threads safely
+   --> src/main.rs:49:24
+    |
+49  |       std::thread::spawn(move || {
+    |       ------------------ ^------
+    |       |                  |
+    |  _____|__________________within this `{closure@src/main.rs:49:24: 49:31}`
+    | |     |
+    | |     required by a bound introduced by this call
+50  | |         let mut app = App::default();
+51  | |         event_loop.run_app(&mut app).unwrap();
+52  | |     })
+    | |_____^ `*mut ()` cannot be sent between threads safely
+    |
+    = help: within `{closure@src/main.rs:49:24: 49:31}`, the trait `Send` is not implemented for `*mut ()`, which is required by `{closure@src/main.rs:49:24: 49:31}: Send`
+...
+```
+
+So, are there no way to use a thread?
+
+## `with_any_thread()`
+
+Let's look at the first panic message again. It says there are some functions.
+
+> you can use the `EventLoopBuilderExtX11::any_thread` or `EventLoopBuilderExtWayland::any_thread` functions.
+
+`any_thread()` is a typo of `with_any_thread()`. What is this? The document says:
+
+> ```rust
+> fn with_any_thread(&mut self, any_thread: bool) -> &mut Self
+> ```
+> 
+> Whether to allow the event loop to be created off of the main thread.
+
+Oh, isn't this what we wanted?? Yes, this allows us to run the event loop in a non-main thread. you can use this to write such a `main()` that sleeps 10 seconds as well as running an winit app in a thread.
+
+```rust
+use winit::platform::wayland::EventLoopBuilderExtWayland;
+
+fn main() {
+    std::thread::spawn(|| {
+        let event_loop = EventLoop::builder().with_any_thread(true).build().unwrap();
+        let mut app = App::default();
+        event_loop.run_app(&mut app).unwrap();
+    });
+
+    // sleep instead of waiting for the thread to finish by join().unwrap()
+    std::thread::sleep(std::time::Duration::from_secs(10));
+}
+```
+
+I use `winit::platform::wayland::EventLoopBuilderExtWayland` trait because I ran this on my Linux laptop now. You need to use a proper one corresponding to your platform. But, the problem is...
+
+If you are on macOS, you are lucky because you probably noticed it faster than those who are on Linux or Windows. Yes, the problem is **`with_any_thread()` is unavailable to macOS!**.
+
+I couldn't find a reliable reference, but it seems this limitation is made by macOS itself, not winit. So, there's no hope this will be fixed on winit's side.
+
+[multithreading - Why does MacOS/iOS \*force\* the main thread to be the UI thread, and are there any workarounds? - Stack Overflow](https://stackoverflow.com/questions/74893322/why-does-macos-ios-force-the-main-thread-to-be-the-ui-thread-and-are-there-an)
+
+Anyway, it's a good news that at least Linux and Windows work fine in this way.
+
+Next, before thinking about macOS, let's upgrade the code a bit.
+
+## `EventLoopProxy`
+
+While the spawned thread can serve an winit application without problem, it's a closed world.
+R cannot communicate with the application. So, we need some channel to send a message to the application from outside of the thread.
+
+Winit provides `EventLoopProxy` for such a purpose. Unlike `EventLoop`, `EventLoopProxy` is a `Send` and `Sync`, so this can be passed between threads. Via this proxy, we can send custom messages to the event loop.
+
+First, modify `event_loop` to handle custom messages;
+define an `enum` and create the event loop with `with_user_event()`.
+
+```rust
+enum MyEvent {
+    CloseWindow,
+    ResizeWindow,
+    ...
+}
+```
+
+```rust
+let event_loop = EventLoop::<MyEvent>::with_user_event()
+    .with_any_thread(true)
+    .build()
+    .unwrap()
+```
+
+Also, add `user_event()` implementation to `ApplicationHandler`.
+
+```rust
+impl ApplicationHandler for App {
+    ...
+    fn user_event(&mut self, event_loop: &ActiveEventLoop, event: MyEvent) {
+        match event {
+            MyEvent::CloseWindow => {
+                println!("Closing window from R session");
+                self.window = None;
+                event_loop.exit();
+            }
+            ...
+        }
+```
+
+Now, `App` is ready to accept messages from R!
+
+Next, create a proxy so that we can send messages via it. One tricky thing is that the proxy needs to be created in the thread where the `EventLoop` is created, i.e., the spawned thread. So, we need to pass a channel to the thread to pull the proxy from it (I found this trick in [this SO answer](https://stackoverflow.com/a/76239725)).
+
+The code would be like this:
+
+```rust
+let (ch_send, ch_recv) = std::sync::mpsc::channel();
+
+std::thread::spawn(move || {
+    let event_loop = EventLoop::<MyEvent>::with_user_event()
+        .with_any_thread(true)
+        .build()
+        .unwrap();
+
+    // create and pass a proxy to the outside
+    let proxy = event_loop.create_proxy();
+    ch_send.send(proxy).unwrap();
+
+    let mut app = App::default();
+    event_loop.run_app(&mut app).unwrap();
+});
+
+// get the proxy via channel
+let proxy = ch_recv.recv().unwrap();
+
+// you can send events by calling this from R!!!
+proxy.send(MyEvent::CloseWindow);
+```
+
+Done!
+
+(In the real use case, we want a channel to the opposite direction as well, but let's omit it here for simplicty and go ahead. You can check my actual implementation ([code](https://github.com/yutannihilation/winitRPackage/blob/main/src/rust/winit_r_package/src/spawned_window_controller.rs)).)
+
+## Fork?
+
+Let's think about macOS.
+
+If a thread doesn't work, can we fork the process?
+Forking can be done easier on R than on Rust. On an R session, we can simply call `parallel::mcparallel()`.
+
+Yes, this probably works. The forked process serves a window without interrupting the R session.
+But, since it's a different process, it doesn't automatically have a communication method with the original process; `EventLoopProxy` works only on the same process.
+
+So, as this anyway requires me to implement some IPC things, I decided to run a winit app server as a separate process.
+
+## Server
+
+This time, since this is a dedicated process for winit, we can just let `event_loop.run_app()` occupy the main thread.
+
+Accordingly, the receiver of incoming messages needs to run on a spawned thread.
+It just forwards the message to the event loop via proxy.
+
+For connection, I use [ipc-channel crate](https://github.com/servo/ipc-channel) in this example, but there ara variety of choices (I also tried [tonic](https://docs.rs/tonic/latest/tonic/)).
+
+```rust
+fn main() {
+    let event_loop = EventLoop::<MyEvent>::with_user_event()
+        .with_any_thread(true)
+        .build()
+        .unwrap();
+
+    let proxy = event_loop.create_proxy();
+
+    let (rx_server, rx_server_name) = IpcOneShotServer::<MyEvent>::new().unwrap();
+
+    // outputs the server name (e.g. socket file) so that a client can connect
+    println!("{rx_server_name}");
+
+    // Wait for the first message (and discard it)
+    let (rx, _event) = rx_server.accept().unwrap();
+
+    std::thread::spawn(move || loop {
+        let event = rx.recv().unwrap();
+        proxy.send_event(event).unwrap();
+    });
+
+    let mut app = App::default();
+    event_loop.run_app(&mut app);
+}
+```
+
+On the client side, you can connect to the server by using the server name.
+
+``` rust
+let tx: IpcSender<MyEvent> = IpcSender::connect(tx_server_name).unwrap();
+```
+
+Note that, ipc-channel sends an object by serializing with serde.
+So, you need to derive `Serialize` and `Deserialize` on it.
+ipc-channel can also send and receive bytes, so if you are not satisfied with serde, you can write your own serialization (or of course use a different crate).
+
+```rust
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+enum MyEvent {
+    CloseWindow,
+    ResizeWindow,
+    ...
+}
+```
+
+## Caveats
+
+Confession: I don't have macOS, so I'm not sure if this specific implementation works on macOS. However, I believe the idea should be valid. So, please let me know if this doesn't work for you!
+
+One more concern is performance.
+IPC is probably slow compared to spawned because different processes cannot share memories without using shared memory explicitly. Regarding my use case, this will be a problem to display a large raster image. They say [XPC](https://developer.apple.com/documentation/xpc) is better in performance, so it might be worth investigating.
+
+## An example R package
+
+I created an R package to demonstrate the idea I discussed here.
+Unfortunately, the implementation got a bit complicated due to macOS support (I don't know why, but it doesn't compile on macOS when winit is used within an R package...), but I hope the actual code would help you to figure out what I couldn't explain well here. Feedback is welcome!
+
+<https://github.com/yutannihilation/winitRPackage>
+
+This package can be installed from R-universe, so you can try this without Rust installed.
+
+```r
+install.packages("winitRPackage",
+  repos = c('https://yutannihilation.r-universe.dev', 'https://cloud.r-project.org')
+)
+```
+
+### Usages
+
+First, please run `download_server()` to download the server binary.
+This will be used by `ExternalWindowController`.
+
+```r
+library(winitRPackage)
+
+download_server()
+```
+
+### Use an external process
+
+```r
+x <- ExternalWindowController$new()
+
+# create a new window titled "foo"
+x$open_window("foo")
+
+# get the window size
+x$get_window_size()
+#> [1] 800 600
+
+# close the window
+x$close_window()
+```
+
+### Use a spawned process
+
+(As described above, this doesn't work on macOS)
+
+```r
+x <- SpawnedWindowController$new()
+
+# create a new window titled "foo"
+x$open_window("foo")
+
+# get the window size
+x$get_window_size()
+#> [1] 800 600
+
+# close the window
+x$close_window()
+```
+
+
+[winit]: https://docs.rs/winit/latest/winit/
+[Tauri]: https://v2.tauri.app/
+[Bevy]: https://bevyengine.org/
+[Learn Wgpu]: https://sotrh.github.io/learn-wgpu/
+
