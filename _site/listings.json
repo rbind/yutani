@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/post/rust-cache-and-r/index.html",
       "/post/winit-and-r/index.html",
       "/post/intro-to-savvy-part1/index.html",
       "/post/dont-panic-we-can-unwind/index.html",

@@ -1,0 +1,90 @@
+---
+title: Use `rust-cache` GitHub Actions For R Package
+author: Hiroaki Yutani
+date: '2024-10-16'
+categories:
+  - Rust
+  - GitHub Actions
+image: images/macos.png
+---
+
+This is a quick note about how to use [the `rust-cache` action](https://github.com/Swatinem/rust-cache/) on a repository of an R package.
+
+### Problem
+
+`rust-cache` doesn't work with [the `r-lib/actions/check-r-package` action](https://github.com/r-lib/actions/tree/v2-branch/check-r-package) without a tweak. Why?
+This is because `check-r-package` runs the check on a new directory, `"check"` by default.
+
+An naive idea is to set `workspaces` parameter of `rust-cache` to the `check` dir. Like this.
+
+```yaml
+- uses: Swatinem/rust-cache@v2
+  with:
+    workspaces: check/src/rust
+
+- uses: r-lib/actions/check-r-package@v2
+  with:
+    upload-results: 'never'
+    error-on: '"error"'
+    build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+```
+
+But, this doesn't work. `check-r-package` is done on the tarball of the package,
+so it's not possible to inject the cache into it.
+
+### Idea
+
+My workaround is to change the target dir of `cargo build` to an absolute path.
+On a GitHub Actions runner, there are many [environmental variables](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables) are available.
+I chose `GITHUB_WORKSPACE` to detect if the check is executed on GitHub Actions and, at the same time, to know the location of the workspace.
+
+You can check the actual settings on [my repo](https://github.com/yutannihilation/winitRPackage), but here's the simpler version:
+
+**`configure`**:
+```sh
+# In order to use rust-cache action, target dir needs to be a fixed, existing path.
+if [ -d "${GITHUB_WORKSPACE}" ]; then
+  CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/src/rust/target"
+  echo "Detected GitHub Actions envvar. Using ${CARGO_TARGET_DIR} for the target dir of cargo"
+else
+  CARGO_TARGET_DIR='$(CURDIR)/rust/target'
+fi
+
+sed \
+  -e "s|@CARGO_TARGET_DIR@|${CARGO_TARGET_DIR}|" \
+  src/Makevars.in > src/Makevars
+```
+
+**`src/Makevars.in`**:
+```makefile
+CARGO_BUILD_ARGS = ... --target-dir @CARGO_TARGET_DIR@
+...
+$(STATLIB):
+	export PATH="$(PATH):$(HOME)/.cargo/bin" && \
+	  cargo build $(CARGO_BUILD_ARGS)
+```
+
+By doing above, `cargo build` invoked by `r-lib/actions/check-r-package` always refers to the existing directory, `src/rust/target`.
+So, we can restore the cache into it.
+
+```yaml
+- uses: Swatinem/rust-cache@v2
+  with:
+    workspaces: src/rust
+```
+
+That's all. This should work.
+
+## Caveats
+
+While this works, I see some crates are always recompiled. It seems this happens on Windows more frequently.
+I tried to investigate, but couldn't find the root cause... Probably some [`rerun-if-changed`] settings matters?
+If you know the answer, I'd really appreciate it.
+
+Anyway, as this problem exists, please use this technique at your own risk. In some cases, using `rust-cache` might increase the CI time.
+
+**macOS**:  
+![](./images/macos.png){width=70%}
+
+**Windows**:  
+![](./images/windows.png){width=70%}

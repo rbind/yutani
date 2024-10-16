@@ -7,10 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Hiroaki Yutani">
-<meta name="dcterms.date" content="2021-08-01">
-<meta name="description" content="Integrate R and Rust with extendr">
+<meta name="dcterms.date" content="2024-10-16">
 
-<title>Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI – Wannabe Rstats-fu</title>
+<title>Use rust-cache GitHub Actions For R Package – Wannabe Rstats-fu</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -106,11 +105,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<meta name="twitter:title" content="Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI – Wannabe Rstats-fu">
-<meta name="twitter:description" content="Integrate R and Rust with extendr">
-<meta name="twitter:image" content="https://yutani.rbind.io/post/2021-08-01-unofficial-introduction-to-extendr-appendix-i-setup-github-actions-ci-and-more/screenshot_github_release.png">
-<meta name="twitter:image-height" content="434">
-<meta name="twitter:image-width" content="732">
+<meta name="twitter:title" content="Use rust-cache GitHub Actions For R Package – Wannabe Rstats-fu">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="https://yutani.rbind.io/post/rust-cache-and-r/images/macos.png">
+<meta name="twitter:image-height" content="472">
+<meta name="twitter:image-width" content="568">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -156,15 +155,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Unofficial Introduction To extendr (Appendix I): Setup GitHub Actions CI</h1>
-                  <div>
-        <div class="description">
-          <p>Integrate R and Rust with extendr</p>
-        </div>
-      </div>
-                          <div class="quarto-categories">
+      <h1 class="title">Use <code>rust-cache</code> GitHub Actions For R Package</h1>
+                                <div class="quarto-categories">
                 <div class="quarto-category">Rust</div>
-                <div class="quarto-category">extendr</div>
+                <div class="quarto-category">GitHub Actions</div>
               </div>
                   </div>
   </div>
@@ -182,7 +176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">August 1, 2021</p>
+        <p class="date">October 16, 2024</p>
       </div>
     </div>
     
@@ -197,10 +191,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#setup-rust-toolchain" id="toc-setup-rust-toolchain" class="nav-link active" data-scroll-target="#setup-rust-toolchain">Setup Rust toolchain</a></li>
-  <li><a href="#provide-precompiled-binaries-for-windows" id="toc-provide-precompiled-binaries-for-windows" class="nav-link" data-scroll-target="#provide-precompiled-binaries-for-windows">Provide precompiled binaries for Windows</a></li>
-  <li><a href="#other-topics-i-couldnt-cover" id="toc-other-topics-i-couldnt-cover" class="nav-link" data-scroll-target="#other-topics-i-couldnt-cover">Other topics I couldn’t cover</a></li>
-  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
+  <li><a href="#problem" id="toc-problem" class="nav-link active" data-scroll-target="#problem">Problem</a></li>
+  <li><a href="#idea" id="toc-idea" class="nav-link" data-scroll-target="#idea">Idea</a></li>
+  <li><a href="#caveats" id="toc-caveats" class="nav-link" data-scroll-target="#caveats">Caveats</a></li>
   </ul>
 </nav>
 </nav>
@@ -215,111 +208,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p><a href="https://github.com/extendr/extendr">extendr</a> is a project that provides an interface between R and Rust. In <a href="https://yutani.rbind.io/#category:extendr">the series of posts</a>, I explained how to use extendr, but, this time, let me pick a complementary topic. The CI setup is important to develop a package and it’s not difficult to tweak the existing GitHub Actions (GHA) settings to compile Rust code. By using GHA, you can even provide precompiled binaries via GitHub releases.</p>
-<section id="setup-rust-toolchain" class="level2">
-<h2 class="anchored" data-anchor-id="setup-rust-toolchain">Setup Rust toolchain</h2>
-<p>A GitHub repository for R package development typically has such a YAML for testing:</p>
-<p><a href="https://github.com/r-lib/actions/blob/master/examples/check-standard.yaml" class="uri">https://github.com/r-lib/actions/blob/master/examples/check-standard.yaml</a></p>
-<p>To test a package using extendr, it’s as easy as to just add the steps to setup Rust toolchain. Note that the runners might already have Rust toolchain installed, but these steps ensure the intended toolchain is used.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Set up Rust</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions-rs/toolchain@v1</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">with</span><span class="kw">:</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toolchain</span><span class="kw">:</span><span class="at"> stable</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">default</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Additional Rust set up for Windows</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">if</span><span class="kw">:</span><span class="at"> runner.os == 'Windows'</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">  run</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    rustup target add i686-pc-windows-gnu</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    rustup target add x86_64-pc-windows-gnu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>If you want to run tests also on the nightly toolchain, you can include the channel in the build matrix like this<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="kw">{</span><span class="fu">os</span><span class="kw">:</span><span class="at"> windows-latest</span><span class="kw">,</span><span class="at"> </span><span class="fu">r</span><span class="kw">:</span><span class="at"> </span><span class="st">'release'</span><span class="kw">,</span><span class="at"> </span><span class="fu">rust</span><span class="kw">:</span><span class="at"> </span><span class="st">'stable'</span><span class="kw">}</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="kw">{</span><span class="fu">os</span><span class="kw">:</span><span class="at"> macOS-latest</span><span class="kw">,</span><span class="at">   </span><span class="fu">r</span><span class="kw">:</span><span class="at"> </span><span class="st">'release'</span><span class="kw">,</span><span class="at"> </span><span class="fu">rust</span><span class="kw">:</span><span class="at"> </span><span class="st">'stable'</span><span class="kw">}</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="kw">{</span><span class="fu">os</span><span class="kw">:</span><span class="at"> ubuntu-20.04</span><span class="kw">,</span><span class="at">   </span><span class="fu">r</span><span class="kw">:</span><span class="at"> </span><span class="st">'release'</span><span class="kw">,</span><span class="at"> </span><span class="fu">rust</span><span class="kw">:</span><span class="at"> </span><span class="st">'stable'</span><span class="kw">,</span><span class="at">  </span><span class="fu">rspm</span><span class="kw">:</span><span class="at"> </span><span class="st">"..."</span><span class="kw">}</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="kw">{</span><span class="fu">os</span><span class="kw">:</span><span class="at"> ubuntu-20.04</span><span class="kw">,</span><span class="at">   </span><span class="fu">r</span><span class="kw">:</span><span class="at"> </span><span class="st">'devel'</span><span class="kw">,</span><span class="at">   </span><span class="fu">rust</span><span class="kw">:</span><span class="at"> </span><span class="st">'stable'</span><span class="kw">,</span><span class="at">  </span><span class="fu">rspm</span><span class="kw">:</span><span class="at"> </span><span class="st">"..."</span><span class="kw">}</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="kw">{</span><span class="fu">os</span><span class="kw">:</span><span class="at"> ubuntu-20.04</span><span class="kw">,</span><span class="at">   </span><span class="fu">r</span><span class="kw">:</span><span class="at"> </span><span class="st">'release'</span><span class="kw">,</span><span class="at"> </span><span class="fu">rust</span><span class="kw">:</span><span class="at"> </span><span class="st">'nightly'</span><span class="kw">,</span><span class="at"> </span><span class="fu">rspm</span><span class="kw">:</span><span class="at"> </span><span class="st">"..."</span><span class="kw">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>and specify the channel in the <code>actions-rs/toolchain@v1</code> step:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Set up Rust</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions-rs/toolchain@v1</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">with</span><span class="kw">:</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toolchain</span><span class="kw">:</span><span class="at"> ${{ matrix.config.rust }}</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">default</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You might need more setups depending on the crates you use, but basically that’s all you need to do.</p>
+<p>This is a quick note about how to use <a href="https://github.com/Swatinem/rust-cache/">the <code>rust-cache</code> action</a> on a repository of an R package.</p>
+<section id="problem" class="level3">
+<h3 class="anchored" data-anchor-id="problem">Problem</h3>
+<p><code>rust-cache</code> doesn’t work with <a href="https://github.com/r-lib/actions/tree/v2-branch/check-r-package">the <code>r-lib/actions/check-r-package</code> action</a> without a tweak. Why? This is because <code>check-r-package</code> runs the check on a new directory, <code>"check"</code> by default.</p>
+<p>An naive idea is to set <code>workspaces</code> parameter of <code>rust-cache</code> to the <code>check</code> dir. Like this.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> Swatinem/rust-cache@v2</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">workspaces</span><span class="kw">:</span><span class="at"> check/src/rust</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> r-lib/actions/check-r-package@v2</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">upload-results</span><span class="kw">:</span><span class="at"> </span><span class="st">'never'</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">error-on</span><span class="kw">:</span><span class="at"> </span><span class="st">'"error"'</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">build_args</span><span class="kw">:</span><span class="at"> </span><span class="st">'c("--no-manual","--compact-vignettes=gs+qpdf")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>But, this doesn’t work. <code>check-r-package</code> is done on the tarball of the package, so it’s not possible to inject the cache into it.</p>
 </section>
-<section id="provide-precompiled-binaries-for-windows" class="level2">
-<h2 class="anchored" data-anchor-id="provide-precompiled-binaries-for-windows">Provide precompiled binaries for Windows</h2>
-<p>As you might have already noticed, <a href="https://github.com/extendr/libR-sys/#installation">the setup instruction</a> for Windows is a bit complex compared to other OSes (i.e., Linux and macOS). So, it might be worth considering providing the precompiled static libraries, just like <a href="https://github.com/rwinlib">rwinlib</a> does for many C++ libraries.</p>
-<p>Other motivation is that some of CRAN machines don’t have Rust toolchain. If the package author wants to submit their package to CRAN, such a mechanism is needed.</p>
-<p>(edit: it seems <a href="https://github.com/yutannihilation/string2path/issues/8">macOS is also the case</a>, but I don’t find what’s the best way to solve this. I’ll probably write another post for this.)</p>
-<p>There probably isn’t a single standard way to achieve this, but let me share what I did for my package, <a href="https://github.com/yutannihilation/string2path">string2path</a> here. YMMV, of course.</p>
-<p>I used <a href="https://github.com/softprops/action-gh-release"><code>softprops/action-gh-release</code> action</a> to publish the binaries as a GitHub release. The setting would be like this:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rename the binaries before uploading so that we can distinguish them easily.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Tweak staticlib</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">if</span><span class="kw">:</span><span class="at"> runner.os == 'Windows'</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">  run</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    mv ./check/string2path.Rcheck/00_pkg_src/string2path/src-i386/rust/target/i686-pc-windows-gnu/release/libstring2path.a \</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      i686-pc-windows-gnu-libstring2path.a</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    mv ./check/string2path.Rcheck/00_pkg_src/string2path/src-x64/rust/target/x86_64-pc-windows-gnu/release/libstring2path.a \</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      x86_64-pc-windows-gnu-libstring2path.a</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Release</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> softprops/action-gh-release@v1</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">  # only run this on a tag event</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">if</span><span class="kw">:</span><span class="at"> runner.os == 'Windows' &amp;&amp; startsWith(github.ref, 'refs/tags/')</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">with</span><span class="kw">:</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">fail_on_unmatched_files</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">    files</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      i686-pc-windows-gnu-libstring2path.a</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      x86_64-pc-windows-gnu-libstring2path.a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>With this setup, you can publish the binaries by pushing tags. For example, let’s create <code>windows_20210801-3</code> tag and push it.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> tag windows_20210801-3</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin windows_20210801-3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Then, the GHA will publish the corresponding release like this:</p>
-<p><img src="./screenshot_github_release.png" class="img-fluid"></p>
-<p>Next, tweak <code>src/Makefile.win</code> as follows to allow users to download the binaries when <code>cargo</code> is not available. There might be more nicer code to choose the latest release automatically, but I think it’s safe to specify a fixed tag name, though it’s a bit tiresome to update this manually every time you update Rust code.</p>
-<p>(edit: I found this violates the CRAN policy. A package is not allowed to write “anywhere else on the file system apart from the R session’s temporary directory. You need to set <code>CARGO_HOME</code> envvar to some temporary directory to avoid this.)</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">CRATE</span> <span class="ch">=</span><span class="st"> foo   </span><span class="co"># your crate name</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">BASE_TAG</span> <span class="ch">=</span><span class="st"> windows_20210801-3  </span><span class="co"># the tag you want to use</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># c.f. https://stackoverflow.com/a/34756868</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that this assignment (`:=`) is not available on Solaris, so you need to</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># add "GNU make" to SystemRequirements field on DESCRIPTION, even though this</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># can never compile on Solaris anyway...</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="dt">CARGO_EXISTS</span> <span class="ch">:=</span><span class="st"> </span><span class="ch">$(</span><span class="kw">shell</span><span class="st"> cargo --version 2&gt; /dev/null</span><span class="ch">)</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ..snip...</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="dv">$(STATLIB):</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="cf">ifdef</span> CARGO_EXISTS</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    cargo build --target=<span class="ch">$(</span><span class="dt">TARGET</span><span class="ch">)</span> --lib --release --manifest-path=./rust/Cargo.toml</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    mkdir -p <span class="ch">$(</span><span class="dt">LIBDIR</span><span class="ch">)</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    curl -L -o <span class="ch">$(</span><span class="dt">STATLIB</span><span class="ch">)</span> https://github.com/yutannihilation/<span class="ch">$(</span><span class="dt">CRATE</span><span class="ch">)</span>/releases/download/<span class="ch">$(</span><span class="dt">BASE_TAG</span><span class="ch">)</span>/<span class="ch">$(</span><span class="dt">TARGET</span><span class="ch">)</span>-lib<span class="ch">$(</span><span class="dt">CRATE</span><span class="ch">)</span>.a</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="cf">endif</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>One caveat is that this won’t work when <code>cargo</code> is installed but with the GNU toolchain (extendr requires the MSVC toolchain on Windows). I guess some friendlier check can be done in <code>configure.win</code>, but this post won’t look into the details.</p>
+<section id="idea" class="level3">
+<h3 class="anchored" data-anchor-id="idea">Idea</h3>
+<p>My workaround is to change the target dir of <code>cargo build</code> to an absolute path. On a GitHub Actions runner, there are many <a href="https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables">environmental variables</a> are available. I chose <code>GITHUB_WORKSPACE</code> to detect if the check is executed on GitHub Actions and, at the same time, to know the location of the workspace.</p>
+<p>You can check the actual settings on <a href="https://github.com/yutannihilation/winitRPackage">my repo</a>, but here’s the simpler version:</p>
+<p><strong><code>configure</code></strong>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In order to use rust-cache action, target dir needs to be a fixed, existing path.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-d</span> <span class="st">"</span><span class="va">${GITHUB_WORKSPACE}</span><span class="st">"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="va">CARGO_TARGET_DIR</span><span class="op">=</span><span class="st">"</span><span class="va">${GITHUB_WORKSPACE}</span><span class="st">/src/rust/target"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">"Detected GitHub Actions envvar. Using </span><span class="va">${CARGO_TARGET_DIR}</span><span class="st"> for the target dir of cargo"</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="va">CARGO_TARGET_DIR</span><span class="op">=</span><span class="st">'$(CURDIR)/rust/target'</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="dt">\</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">-e</span> <span class="st">"s|@CARGO_TARGET_DIR@|</span><span class="va">${CARGO_TARGET_DIR}</span><span class="st">|"</span> <span class="dt">\</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  src/Makevars.in <span class="op">&gt;</span> src/Makevars</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong><code>src/Makevars.in</code></strong>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">CARGO_BUILD_ARGS</span> <span class="ch">=</span><span class="st"> ... --target-dir </span><span class="fl">@CARGO_TARGET_DIR@</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="dv">$(STATLIB):</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="kw">export</span><span class="dt"> PATH</span><span class="ch">=</span><span class="st">"</span><span class="ch">$(</span><span class="dt">PATH</span><span class="ch">)</span><span class="st">:</span><span class="ch">$(</span><span class="dt">HOME</span><span class="ch">)</span><span class="st">/.cargo/bin" &amp;&amp; </span><span class="ch">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">      cargo build </span><span class="ch">$(</span><span class="dt">CARGO_BUILD_ARGS</span><span class="ch">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>By doing above, <code>cargo build</code> invoked by <code>r-lib/actions/check-r-package</code> always refers to the existing directory, <code>src/rust/target</code>. So, we can restore the cache into it.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> Swatinem/rust-cache@v2</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">workspaces</span><span class="kw">:</span><span class="at"> src/rust</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>That’s all. This should work.</p>
 </section>
-<section id="other-topics-i-couldnt-cover" class="level2">
-<h2 class="anchored" data-anchor-id="other-topics-i-couldnt-cover">Other topics I couldn’t cover</h2>
-<ul>
-<li><a href="https://github.com/mozilla/sccache"><code>sccache</code></a>: Builds can be faster by using sccache, a ccache-like compiler caching tool for Rust. <a href="https://www.infinyon.com/blog/2021/04/github-actions-best-practices/#optimizing-rusts-build-speed-with-sccache">A blog post</a> describes how to use this on GHA, but I don’t think I understand it to the extent where I can explain it here in clear words, sorry…</li>
-<li>How to run tests on Rust’s side?: This post doesn’t explain how to run Rust tests (i.e., <code>cargo test</code>) or lints (i.e., <code>cargo fmt</code>, and <code>cargo clippy</code>). I even don’t figure out what tests should live in R or in Rust.</li>
-</ul>
-</section>
-<section id="example" class="level2">
-<h2 class="anchored" data-anchor-id="example">Example</h2>
-<p>Here’s the real example of the settings on my repo:</p>
-<p><a href="https://github.com/yutannihilation/string2path/blob/main/.github/workflows/check-pak.yaml" class="uri">https://github.com/yutannihilation/string2path/blob/main/.github/workflows/check-pak.yaml</a></p>
+<section id="caveats" class="level2">
+<h2 class="anchored" data-anchor-id="caveats">Caveats</h2>
+<p>While this works, I see some crates are always recompiled. It seems this happens on Windows more frequently. I tried to investigate, but couldn’t find the root cause… Probably some [<code>rerun-if-changed</code>] settings matters? If you know the answer, I’d really appreciate it.</p>
+<p>Anyway, as this problem exists, please use this technique at your own risk. In some cases, using <code>rust-cache</code> might increase the CI time.</p>
+<p><strong>macOS</strong>:<br>
+<img src="./images/macos.png" class="img-fluid" style="width:70.0%"></p>
+<p><strong>Windows</strong>:<br>
+<img src="./images/windows.png" class="img-fluid" style="width:70.0%"></p>
 
 
 </section>
 
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>On Windows, you need to use <code>'stalble-msvc'</code>, not <code>'stable-gnu'</code>, but msvc should be the default so you can just specify <code>'stable'</code><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section></div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
