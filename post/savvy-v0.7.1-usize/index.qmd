@@ -13,7 +13,7 @@ I found some trickiness during implementing it, so I write a blog post.
 
 ## `.Machine$integer.max`?
 
-As you know, R's integer is 32-bit. A 32-bit integer can represent up to `2^31 - 1`.
+As you know, R's integer is 32-bit. A 32-bit singed integer can represent up to `2^31 - 1` (31-bit, becuase 1-bit is for the sign).
 If the number exceeds the range, `NA_integer_` is returned.
 
 ```{r}
@@ -91,12 +91,12 @@ usize_to_string_scalar(9007199254740992)
 #> Error: 9007199254740992.0 is out of range that can be safely converted to usize
 ```
 
-So, is 2^53 large enough? I'm not sure. It depends. You might want to use bit64 in the end.
-But, it's a probably good news that we can live without bit64 package to some extent.
+So, is 2^53 large enough? I'm not sure. It depends. You might want to use [the bit64 package](https://cran.r-project.org/web/packages/bit64/index.html) in the end.
+But, it's a probably good news that we can live without bit64 to some extent.
 
 ## Appendix: JavaScript
 
 By the way, it seems this is the strategy of JavaScript.
-Before `BigInt`, JavaScript uses that double-precision floating point both for integer numbers and floating point number.
+Before `BigInt`, JavaScript uses that double-precision floating point both for integer number and floating point number.
 
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+<https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER>
