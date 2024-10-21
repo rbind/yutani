@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Hiroaki Yutani">
-<meta name="dcterms.date" content="2023-06-10">
+<meta name="dcterms.date" content="2024-10-21">
 
-<title>Rust 1.70 And Build Failures On Windows – Wannabe Rstats-fu</title>
+<title>What Is The Maximum Integer(-ish) Number That R Can Safely Handle? – Wannabe Rstats-fu</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -105,9 +105,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<meta name="twitter:title" content="Rust 1.70 And Build Failures On Windows – Wannabe Rstats-fu">
+<meta name="twitter:title" content="What Is The Maximum Integer(-ish) Number That R Can Safely Handle? – Wannabe Rstats-fu">
 <meta name="twitter:description" content="">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yutani.rbind.io/post/savvy-v0.7.1-usize/images/IEEE_754_Double_Floating_Point_Format.svg.png">
+<meta name="twitter:image-height" content="130">
+<meta name="twitter:image-width" content="640">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="floating nav-fixed">
@@ -152,10 +155,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Rust 1.70 And Build Failures On Windows</h1>
+      <h1 class="title">What Is The Maximum Integer(-ish) Number That R Can Safely Handle?</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">Rust</div>
-                <div class="quarto-category">extendr</div>
+                <div class="quarto-category">savvy</div>
               </div>
                   </div>
   </div>
@@ -173,7 +176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">June 10, 2023</p>
+        <p class="date">October 21, 2024</p>
       </div>
     </div>
     
@@ -188,8 +191,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#error" id="toc-error" class="nav-link active" data-scroll-target="#error">Error</a></li>
-  <li><a href="#warning" id="toc-warning" class="nav-link" data-scroll-target="#warning">Warning</a></li>
+  <li><a href="#machineinteger.max" id="toc-machineinteger.max" class="nav-link active" data-scroll-target="#machineinteger.max"><code>.Machine$integer.max</code>?</a></li>
+  <li><a href="#double-precision-floating-point" id="toc-double-precision-floating-point" class="nav-link" data-scroll-target="#double-precision-floating-point">Double-precision floating-point</a></li>
+  <li><a href="#check-the-answer" id="toc-check-the-answer" class="nav-link" data-scroll-target="#check-the-answer">Check the answer</a></li>
+  <li><a href="#appendix-javascript" id="toc-appendix-javascript" class="nav-link" data-scroll-target="#appendix-javascript">Appendix: JavaScript</a></li>
   </ul>
 </nav>
 </nav>
@@ -204,54 +209,92 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>This is a quick notice for developers of R packages using Rust. I posted the same thing on <a href="https://stat.ethz.ch/pipermail/r-package-devel/2023q2/009229.html">the R-devel-package mailing list</a>, so if you already read it, you don’t need to read this post.</p>
-<p>Rust 1.70 was released on June 1st, 2023 <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. If you use Rust in your R package, you’ll probably start to see an error and a warning on the final linking step of Windows builds.</p>
-<section id="error" class="level1">
-<h1>Error</h1>
-<p>The first thing you’ll notice is that linking fails with errors like this one:</p>
-<pre><code>...snip...\std\src\sys\windows/handle.rs:290: undefined reference to `NtWriteFile'</code></pre>
-<p>This is because Rust 1.70 started to use several Windows APIs defined in <code>NTDLL.DLL</code> <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. So, this can be easily fixed by adding <code>-lntdll</code> to <code>PKG_LIBS</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">PKG_LIBS</span> <span class="ch">=</span><span class="st"> ...snip... -lntdll</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Recently, I released a new version of <a href="https://github.com/yutannihilation/savvy">savvy</a>, a simple R extension interface using Rust, with improvement about a conversion to <code>usize</code>. I found some trickiness during implementing it, so I write a blog post.</p>
+<section id="machineinteger.max" class="level2">
+<h2 class="anchored" data-anchor-id="machineinteger.max"><code>.Machine$integer.max</code>?</h2>
+<p>As you know, R’s integer is 32-bit. A 32-bit integer can represent up to <code>2^31 - 1</code>. If the number exceeds the range, <code>NA_integer_</code> is returned.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> .Machine<span class="sc">$</span>integer.max</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2147483647</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">+</span> <span class="dv">1</span>L</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in x + 1L: NAs produced by integer overflow</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+</div>
+<p>But, you still can play with such a large number by treating it as numeric.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># adding a numeric makes the result numeric</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>x <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2147483648</code></pre>
+</div>
+</div>
+<p>So, apparently, <code>.Machine$integer.max</code> is not the limit. A numeric can represent integer numbers to some extent. But, to what extent exactly? That’s the question.</p>
 </section>
-<section id="warning" class="level1">
-<h1>Warning</h1>
-<p>This one is a bit tricky, After modifying <code>PKG_LIBS</code>, your build should succeed, but you might or might not see a lot of warnings like this one:</p>
-<pre><code>Warning: corrupt .drectve at end of def file</code></pre>
-<p>This is because Rust 1.70 upgraded LLVM to version 16, and LLVM generates a binary containing directives that only the very latest version (2.40) of GNU linker can understand <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. What’s fortunate is that the latest Rtools43 uses Binutils 2.40, so this warning won’t happen if you target only R &gt;= 4.3. However, the following cases might be a problem:</p>
-<ol type="1">
-<li>On R &lt; 4.3</li>
-<li>On R &gt;= 4.3 with outdated Rtools43 (this rarely happens except when you installed Rtools43 before the release of R 4.3)</li>
-</ol>
-<p>Unfortunately, it seems there’s no option to suppress this warning, so there’s no way to save <code>R CMD check</code> from failing if you run it with <code>--as-cran</code> and treat warnings as failure. In other words, if you are a maintainer of some R package on CRAN, you might need to consider giving up your package on oldrel when the CRAN Windows server upgrades Rust (I heard the current installed version is 1.69, but I’m not sure).</p>
-<p>For non-CRAN packages, I think you can ignore the warnings. The directive is added in order to reduce the number of exported symbols so that it won’t overflow <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. So, it should be fine if it doesn’t overflow in actual. But, I’m not an expert here, so please decide at your own risk.</p>
-<p>For example, you can tweak the GitHub Actions settings like the following to allow warnings on R 4.2 or before.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Check R version</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">id</span><span class="kw">:</span><span class="at"> error-on</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">  run</span><span class="kw">: </span><span class="ch">|</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    output &lt;- Sys.getenv("GITHUB_OUTPUT")</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    if (.Platform$OS.type == "windows" &amp;&amp; getRversion() &lt; "4.3.0") {</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      cat('level=error', file = output, append = TRUE)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    } else {</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      cat('level=warning', file = output, append = TRUE)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">shell</span><span class="kw">:</span><span class="at"> Rscript {0}</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> r-lib/actions/check-r-package@v2</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">with</span><span class="kw">:</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">error-on</span><span class="kw">:</span><span class="at"> </span><span class="st">'"${{ steps.error-on.outputs.level }}"'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Hope this helps.</p>
+<section id="double-precision-floating-point" class="level2">
+<h2 class="anchored" data-anchor-id="double-precision-floating-point">Double-precision floating-point</h2>
+<p>In order to know the answer, we need to look at how a numeric is represented in memory. R’s numeric is a double-precision floating-point, which follows <a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format">the IEEE 754 standard</a>. The format is like this:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./images/IEEE_754_Double_Floating_Point_Format.svg.png" class="img-fluid figure-img"></p>
+<figcaption>IEEE 754 Double Floating Point Format (This image from <a href="https://en.wikipedia.org/wiki/File:IEEE_754_Double_Floating_Point_Format.svg">Wikipedia</a> by Codekaizen is licensed under CC BY-SA 4.0)</figcaption>
+</figure>
+</div>
+<p>To get straight to the point, this can represent up to <code>2^53 - 1</code>. The fraction part has 52-bit, plus the exponent part is used to represent 0, so <code>52 + 1 = 53</code>. For more details, please refer to the Wikipedia article!</p>
+</section>
+<section id="check-the-answer" class="level2">
+<h2 class="anchored" data-anchor-id="check-the-answer">Check the answer</h2>
+<p>Okay, let’s confirm. <code>2^53 - 1</code> is <code>9007199254740991</code>. If we add 1 to it, R can still do integer calculation correctly.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">9007199254740991</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(x) <span class="sc">-</span> <span class="fu">round</span>(x <span class="sc">+</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -1</code></pre>
+</div>
+</div>
+<p>However, if we go further, R can no longer detect the difference of 1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(x <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">-</span> <span class="fu">round</span>(x <span class="sc">+</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>So, this is the limit. Up to <code>2^53 - 1</code>, a numeric can safely represent an integer value.</p>
+<p>To be clear, by “safely”, I don’t mean we can treat such an integer-ish numeric just the same as a usual integer. Integer arithmetic and floating-point arithmetic are different. But, still, this is a useful fact especially to those who write C/C++ or Rust-powered R packages.</p>
+<p>In my case of the savvy Rust framework, this means savvy can safely accept integer-ish user input up to <code>2^53</code> and convert it to <code>usize</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode rust code-with-copy"><code class="sourceCode rust"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="pp">savvy::</span><span class="op">{</span>NumericScalar<span class="op">,</span> Sexp<span class="op">,</span> savvy<span class="op">};</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>savvy<span class="at">]</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> usize_to_string_scalar(x<span class="op">:</span> NumericScalar) <span class="op">-&gt;</span> <span class="pp">savvy::</span><span class="dt">Result</span><span class="op">&lt;</span>Sexp<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> x_usize <span class="op">=</span> x<span class="op">.</span>as_usize()<span class="op">?;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    x_usize<span class="op">.</span>to_string()<span class="op">.</span>try_into()</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">usize_to_string_scalar</span>(.Machine<span class="sc">$</span>integer.max <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "2147483648"</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2^53 - 1 is okay</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">usize_to_string_scalar</span>(<span class="dv">9007199254740991</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "9007199254740991"</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2^53 is rejected</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">usize_to_string_scalar</span>(<span class="dv">9007199254740992</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error: 9007199254740992.0 is out of range that can be safely converted to usize</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So, is 2^53 large enough? I’m not sure. It depends. You might want to use bit64 in the end. But, it’s a probably good news that we can live without bit64 package to some extent.</p>
+</section>
+<section id="appendix-javascript" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-javascript">Appendix: JavaScript</h2>
+<p>By the way, it seems this is the strategy of JavaScript. Before <code>BigInt</code>, JavaScript uses that double-precision floating point both for integer numbers and floating point number.</p>
+<p>https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER</p>
 
 
 </section>
-<aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr>
-<ol>
-<li id="fn1"><p><a href="https://blog.rust-lang.org/2023/06/01/Rust-1.70.0.html" class="uri">https://blog.rust-lang.org/2023/06/01/Rust-1.70.0.html</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p><a href="https://en.wikipedia.org/wiki/Microsoft_Windows_library_files#NTDLL.DLL" class="uri">https://en.wikipedia.org/wiki/Microsoft_Windows_library_files#NTDLL.DLL</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p><a href="https://github.com/rust-lang/rust/issues/112368#issuecomment-1581917714" class="uri">https://github.com/rust-lang/rust/issues/112368#issuecomment-1581917714</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p><a href="https://github.com/llvm/llvm-project/commit/c5b3de6745c37dd991430b9b88ff97c35b6fc455" class="uri">https://github.com/llvm/llvm-project/commit/c5b3de6745c37dd991430b9b88ff97c35b6fc455</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</aside>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
