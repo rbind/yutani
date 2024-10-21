@@ -212,7 +212,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Recently, I released a new version of <a href="https://github.com/yutannihilation/savvy">savvy</a>, a simple R extension interface using Rust, with improvement about a conversion to <code>usize</code>. I found some trickiness during implementing it, so I write a blog post.</p>
 <section id="machineinteger.max" class="level2">
 <h2 class="anchored" data-anchor-id="machineinteger.max"><code>.Machine$integer.max</code>?</h2>
-<p>As you know, R’s integer is 32-bit. A 32-bit integer can represent up to <code>2^31 - 1</code>. If the number exceeds the range, <code>NA_integer_</code> is returned.</p>
+<p>As you know, R’s integer is 32-bit. A 32-bit singed integer can represent up to <code>2^31 - 1</code> (31-bit, becuase 1-bit is for the sign). If the number exceeds the range, <code>NA_integer_</code> is returned.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> .Machine<span class="sc">$</span>integer.max</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -286,12 +286,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2^53 is rejected</span></span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">usize_to_string_scalar</span>(<span class="dv">9007199254740992</span>)</span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error: 9007199254740992.0 is out of range that can be safely converted to usize</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>So, is 2^53 large enough? I’m not sure. It depends. You might want to use bit64 in the end. But, it’s a probably good news that we can live without bit64 package to some extent.</p>
+<p>So, is 2^53 large enough? I’m not sure. It depends. You might want to use <a href="https://cran.r-project.org/web/packages/bit64/index.html">the bit64 package</a> in the end. But, it’s a probably good news that we can live without bit64 to some extent.</p>
 </section>
 <section id="appendix-javascript" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-javascript">Appendix: JavaScript</h2>
-<p>By the way, it seems this is the strategy of JavaScript. Before <code>BigInt</code>, JavaScript uses that double-precision floating point both for integer numbers and floating point number.</p>
-<p>https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER</p>
+<p>By the way, it seems this is the strategy of JavaScript. Before <code>BigInt</code>, JavaScript uses that double-precision floating point both for integer number and floating point number.</p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER" class="uri">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER</a></p>
 
 
 </section>
