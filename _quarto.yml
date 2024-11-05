@@ -12,8 +12,6 @@ website:
   navbar:
     right:
       - about.qmd
-      - icon: twitter
-        href: https://twitter.com/yutannihilat_en
       - icon: github
         href: https://github.com/yutannihilation
 

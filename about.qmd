@@ -4,9 +4,6 @@ image: assets/icon.jpg
 about:
   template: jolla
   links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/yutannihilat_en
     - icon: github
       text: Github
       href: https://github.com/yutannihilation
