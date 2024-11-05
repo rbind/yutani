@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/post/savvy-v0.7.1-usize/index.html",
       "/post/rust-cache-and-r/index.html",
       "/post/winit-and-r/index.html",
       "/post/intro-to-savvy-part1/index.html",
