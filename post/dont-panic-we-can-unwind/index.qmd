@@ -107,6 +107,7 @@ You might wonder what `| 1` does. This is a trick called
 ["tagged pointer"][tagged pointer], using a few of the least significant bits 
 to store additional information. This time, the implementation uses the lowest
 bit as an error flag.
+
 [tagged pointer]: https://en.wikipedia.org/wiki/Tagged_pointer
 
 Of course, tagged pointer is not the only answer. For example, you can probably

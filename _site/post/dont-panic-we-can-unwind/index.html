@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-529db68cabd0583c09855e93865038ae.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-05022f3f33ec56ac26f328456fb20c5d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,7 +107,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <meta name="twitter:title" content="Don’t panic!, We Can Unwind On Rust – Wannabe Rstats-fu">
 <meta name="twitter:description" content="">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yutani.rbind.io/post/dont-panic-we-can-unwind/wrapper-c-function.png">
+<meta name="twitter:image-height" content="619">
+<meta name="twitter:image-width" content="800">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="floating nav-fixed">
@@ -267,7 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="tagged-pointer" class="level4">
 <h4 class="anchored" data-anchor-id="tagged-pointer">Tagged pointer</h4>
-<p>You might wonder what <code>| 1</code> does. This is a trick called <a href="#tagged-pointer">“tagged pointer”</a>, using a few of the least significant bits to store additional information. This time, the implementation uses the lowest bit as an error flag. <a href="#tagged-pointer">tagged pointer</a>: https://en.wikipedia.org/wiki/Tagged_pointer</p>
+<p>You might wonder what <code>| 1</code> does. This is a trick called <a href="https://en.wikipedia.org/wiki/Tagged_pointer">“tagged pointer”</a>, using a few of the least significant bits to store additional information. This time, the implementation uses the lowest bit as an error flag.</p>
 <p>Of course, tagged pointer is not the only answer. For example, you can probably define a struct or enum to share the definition between Rust and C. But, I use tagged <code>SEXP</code> because it’s simpler in the sense it doesn’t require additional allocation.</p>
 <p>Also note that I could just return <code>Result</code> here and create the tagged <code>SEXP</code> later. It’s just a matter of preferences.</p>
 </section>
@@ -492,8 +495,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -604,7 +605,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

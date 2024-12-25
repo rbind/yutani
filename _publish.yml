@@ -1,4 +1,4 @@
 - source: project
   netlify:
     - id: 08198e47-0aea-4861-bc2b-7a1e4c962f83
-      url: 'https://yutani.rbind.io'
+      url: https://yutani.rbind.io
